@@ -5,9 +5,13 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && env-cmd -f ./config/.env.production node dist/index.js",
+    "start": "tsc && npm run env-cmd:prod -- node dist/index.js",
+    "env-cmd:prod": "env-cmd -f ./config/.env.production",
+    "env-cmd:dev": "env-cmd -f ./config/.env.development",
     "start:dev": "env-cmd -f ./config/.env.development ts-node-dev src/index.ts",
-    "migration:dev:create": "env-cmd -f ./config/.env.development mikro-orm migration:create"
+    "migration:dev:create:initial": "npm run env-cmd:dev -- mikro-orm migration:create --initial",
+    "migration:dev:create": "npm run env-cmd:dev -- mikro-orm migration:create",
+    "migration:dev:up": "npm run env-cmd:dev -- mikro-orm migration:up"
   },
   "keywords": [],
   "author": "",

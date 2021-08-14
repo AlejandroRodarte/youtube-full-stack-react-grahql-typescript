@@ -20,6 +20,10 @@ const main = async () => {
     // is does NOT invoke the Post constructor: created_at and updated_at fail
     // await orm.em.nativeInsert(Post, { title: 'My second post.' });
 
+    // fetching all posts
+    const posts = await orm.em.find(Post, {});
+    console.log(posts);
+
 };
 
 main();
