@@ -1,10 +1,18 @@
-import { MikroORM } from '@mikro-orm/core';
+import createConnection from './db/orm';
+import { Post } from './db/orm/entities/Post';
 
-import config from './mikro-orm.config';
+const main = async (): Promise<Error | undefined> => {
 
-const main = async () => {
-    const orm = await MikroORM.init(config);
-    await orm.getMigrator().up();
+    const [orm, error] = await createConnection();
+    if (typeof orm === 'undefined') return error;
+
+    const posts = await orm.em.find(Post, {});
+    console.log(posts);
+
+    return undefined;
+
 };
 
-main();
+main().then((error) => {
+    if (error) console.log(error)
+});
