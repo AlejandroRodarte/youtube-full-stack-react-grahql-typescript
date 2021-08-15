@@ -1,13 +1,19 @@
 import createConnection from './db/orm';
-import { Post } from './db/orm/entities/Post';
+import createApp from './create-app';
 
 const main = async (): Promise<Error | undefined> => {
 
-    const [orm, error] = await createConnection();
-    if (typeof orm === 'undefined') return error;
+    const [orm, ormError] = await createConnection();
+    if (typeof orm === 'undefined') return ormError;
 
-    const posts = await orm.em.find(Post, {});
-    console.log(posts);
+    const port = +(process.env.PORT || '3001');
+
+    const [app, appError] = await createApp();
+    if (typeof app === 'undefined') return appError;
+
+    app.listen(port, () => {
+        console.log(`Server listening on port ${port}.`);
+    });
 
     return undefined;
 
