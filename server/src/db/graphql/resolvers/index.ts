@@ -1,7 +1,8 @@
-import { NonEmptyArray } from 'type-graphql';
+import { NonEmptyArray } from 'type-graphql'
 
-import HelloResolver from './hello-resolver';
+import HelloResolver from './hello-resolver'
+import PostsResolver from './posts-resolver'
 
-const resolvers: NonEmptyArray<Function> = [HelloResolver];
+const resolvers: NonEmptyArray<Function> = [HelloResolver, PostsResolver]
 
-export default resolvers;
+export default resolvers

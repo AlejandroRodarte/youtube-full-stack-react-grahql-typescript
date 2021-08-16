@@ -1,0 +1,76 @@
+type Query {
+  hello: String!
+  posts: GetPostsResponse!
+  post(id: Int!): GetPostResponse!
+}
+
+type GetPostsResponse {
+  status: Int!
+  message: String!
+  data: GetPostsData!
+}
+
+type GetPostsData {
+  posts: [Post!]!
+}
+
+type Post {
+  id: Float!
+  createdAt: String!
+  updatedAt: String!
+  title: String!
+}
+
+type GetPostResponse {
+  status: Int!
+  message: String!
+  data: GetPostData!
+}
+
+type GetPostData {
+  post: Post!
+}
+
+type Mutation {
+  addPost(data: AddPostInput!): AddPostResponse!
+  editPost(data: EditPostInput!, id: Int!): EditPostResponse!
+  deletePost(id: Int!): DeletePostResponse!
+}
+
+type AddPostResponse {
+  status: Int!
+  message: String!
+  data: AddPostData!
+}
+
+type AddPostData {
+  newPost: Post!
+}
+
+input AddPostInput {
+  title: String!
+}
+
+type EditPostResponse {
+  status: Int!
+  message: String!
+  data: EditPostData!
+}
+
+type EditPostData {
+  updatedPost: Post!
+}
+
+input EditPostInput {
+  title: String
+}
+
+type DeletePostResponse {
+  status: Int!
+  message: String!
+  data: DeletePostData!
+}
+
+type DeletePostData {
+  id: Int!
+}
