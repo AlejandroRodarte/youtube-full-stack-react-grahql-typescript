@@ -5,7 +5,7 @@ import { ApplicationContext } from '../../../types/db/graphql'
 import { Post } from '../../orm/entities'
 import { AddPostInput, EditPostInput } from '../inputs/posts'
 import PostsClasses from '../objects/responses/posts'
-import ApplicationErrorResponse from '../error/application-error-response'
+import generateFieldErrors from '../objects/responses/util/functions/generate-field-errors'
 
 @Resolver()
 export default class PostsResolver {
@@ -15,10 +15,10 @@ export default class PostsResolver {
   ) {
     try {
       const posts = await db.find(Post, {})
-      const response = new PostsClasses.responses.GetPostsResponse(200, 'Posts have been fetched.', new PostsClasses.data.GetPostsData(posts))
+      const response = new PostsClasses.responses.GetPostsResponse(200, 'Posts have been fetched.', 'POSTS_FETCHED', new PostsClasses.data.GetPostsData(posts))
       return response
     } catch (e) {
-      throw new ApplicationErrorResponse(400, 'There was an error querying the posts.', 'QUERY_POSTS_ERROR')
+      return new PostsClasses.responses.GetPostsResponse(400, 'There was an error fetching the posts.', 'QUERY_POSTS_ERROR', undefined, [])
     }
   }
 
@@ -29,12 +29,11 @@ export default class PostsResolver {
   ) {
     try {
       const post = await db.findOne(Post, { id })
-      if (!post) throw new ApplicationErrorResponse(404, 'Post not found.', 'POST_NOT_FOUND')
-      const response = new PostsClasses.responses.GetPostResponse(200, 'Post has been fetched.', new PostsClasses.data.GetPostData(post))
+      if (!post) return new PostsClasses.responses.GetPostResponse(404, 'There post was not found.', 'POST_NOT_FOUND', undefined, [])
+      const response = new PostsClasses.responses.GetPostResponse(200, 'Post has been fetched.', 'POST_FETCHED', new PostsClasses.data.GetPostData(post))
       return response
     } catch (e) {
-      if (e instanceof ApplicationErrorResponse) throw e
-      else throw new ApplicationErrorResponse(400, 'There was an error querying the post.', 'QUERY_POST_ERROR')
+      return new PostsClasses.responses.GetPostResponse(400, 'There was an error fetching the post.', 'QUERY_POST_ERROR', undefined, [])
     }
   }
 
@@ -43,13 +42,15 @@ export default class PostsResolver {
     @Arg('data', () => AddPostInput) data: AddPostInput,
     @Ctx() { db }: ApplicationContext
   ) {
+    const fieldErrors = generateFieldErrors<AddPostInput>(data)
+    if (fieldErrors.length > 0) return new PostsClasses.responses.AddPostResponse(400, 'There was validation errors while validating the post.', 'MUTATION_ADD_POST_VALIDATION_ERROR', undefined, fieldErrors)
     const post = db.create(Post, data)
     try {
       await db.persistAndFlush(post)
-      const response = new PostsClasses.responses.AddPostResponse(201, 'Post created.', new PostsClasses.data.AddPostData(post))
+      const response = new PostsClasses.responses.AddPostResponse(201, 'Post created.', 'POST_CREATED', new PostsClasses.data.AddPostData(post))
       return response
     } catch (e) {
-      throw new ApplicationErrorResponse(400, 'There was an error adding the post.', 'ADD_POST_ERROR')
+      return new PostsClasses.responses.AddPostResponse(400, 'There was an error adding the post.', 'MUTATION_ADD_POST_ERROR', undefined, [])
     }
   }
 
@@ -60,15 +61,16 @@ export default class PostsResolver {
     @Ctx() { db }: ApplicationContext
   ) {
     try {
+      const fieldErrors = generateFieldErrors<EditPostInput>(data)
+      if (fieldErrors.length > 0) return new PostsClasses.responses.EditPostResponse(400, 'There was validation errors while validating the post.', 'MUTATION_EDIT_POST_VALIDATION_ERROR', undefined, fieldErrors)
       const post = await db.findOne(Post, { id })
-      if (!post) throw new ApplicationErrorResponse(404, 'Post not found.', 'POST_NOT_FOUND')
+      if (!post) return new PostsClasses.responses.EditPostResponse(404, 'There post was not found.', 'POST_NOT_FOUND', undefined, [])
       const updatedPost = wrap(post).assign({ ...data })
       await db.persistAndFlush(updatedPost)
-      const response = new PostsClasses.responses.EditPostResponse(201, 'Post updated.', new PostsClasses.data.EditPostData(updatedPost))
+      const response = new PostsClasses.responses.EditPostResponse(201, 'Post updated.', 'POST_UPDATED', new PostsClasses.data.EditPostData(updatedPost))
       return response
     } catch (e) {
-      if (e instanceof ApplicationErrorResponse) throw e
-      else throw new ApplicationErrorResponse(400, 'There was an error editing the post.', 'EDIT_POST_ERROR')
+      return new PostsClasses.responses.EditPostResponse(400, 'There was an error editing the post.', 'MUTATION_EDIT_POST_ERROR', undefined, [])
     }
   }
 
@@ -79,13 +81,12 @@ export default class PostsResolver {
   ) {
     try {
       const post = await db.findOne(Post, { id })
-      if (!post) throw new ApplicationErrorResponse(404, 'Post not found.', 'POST_NOT_FOUND')
+      if (!post) return new PostsClasses.responses.DeletePostResponse(404, 'There post was not found.', 'POST_NOT_FOUND', undefined, [])
       await db.nativeDelete(Post, { id })
-      const response = new PostsClasses.responses.DeletePostResponse(200, 'Post deleted.', new PostsClasses.data.DeletePostData(id))
+      const response = new PostsClasses.responses.DeletePostResponse(200, 'Post deleted.', 'POST_DELETED', new PostsClasses.data.DeletePostData(id))
       return response
     } catch (e) {
-      if (e instanceof ApplicationErrorResponse) throw e
-      else throw new ApplicationErrorResponse(400, 'There was an error deleting the post.', 'DELETE_POST_ERROR')
+      return new PostsClasses.responses.DeletePostResponse(400, 'There was an error deleting the post.', 'MUTATION_DELETE_POST_ERROR', undefined, [])
     }
   }
 }

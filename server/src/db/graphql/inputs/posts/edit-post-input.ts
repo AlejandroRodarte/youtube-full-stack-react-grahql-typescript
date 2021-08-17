@@ -4,6 +4,6 @@ import { Field, InputType } from 'type-graphql'
 @InputType()
 export class EditPostInput {
   @Field(() => String, { nullable: true })
-  @Length(1, 50)
+  @Length(5, 50)
   title?: string
 }

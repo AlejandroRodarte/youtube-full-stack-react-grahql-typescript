@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int, ClassType } from 'type-graphql'
 
-export default function ApplicationResponse<T> (TClass: ClassType<T>) {
+export default function ApplicationResponse<T, U> (TClass: ClassType<T>, UClass: ClassType<U>) {
   @ObjectType({ isAbstract: true })
   abstract class ApplicationResponseClass {
     @Field(() => Int)
@@ -9,13 +9,21 @@ export default function ApplicationResponse<T> (TClass: ClassType<T>) {
     @Field(() => String)
     message!: string
 
-    @Field(() => TClass)
-    data!: T
+    @Field(() => String)
+    code: string
 
-    constructor (status: number, message: string, data: T) {
+    @Field(() => TClass, { nullable: true })
+    data?: T
+
+    @Field(() => [UClass], { nullable: true })
+    errors?: U[]
+
+    constructor (status: number, message: string, code: string, data?: T, errors?: U[]) {
       this.status = status
       this.message = message
+      this.code = code
       this.data = data
+      this.errors = errors
     }
   }
   return ApplicationResponseClass

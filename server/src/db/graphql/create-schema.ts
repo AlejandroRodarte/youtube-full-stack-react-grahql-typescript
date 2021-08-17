@@ -6,7 +6,8 @@ import { CreateSchemaTuple } from '../../types/db/graphql'
 const createSchema = async (): Promise<CreateSchemaTuple> => {
   try {
     const schema = await buildSchema({
-      resolvers
+      resolvers,
+      validate: false
     })
     return [schema, undefined]
   } catch (e) {

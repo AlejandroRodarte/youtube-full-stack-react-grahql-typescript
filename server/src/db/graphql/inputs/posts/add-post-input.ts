@@ -4,6 +4,6 @@ import { Field, InputType } from 'type-graphql'
 @InputType()
 export class AddPostInput {
   @Field(() => String)
-  @Length(1, 50)
+  @Length(5, 50)
   title: string
 }
