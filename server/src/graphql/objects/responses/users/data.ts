@@ -1,6 +1,6 @@
 import { ObjectType, Field } from 'type-graphql'
 
-import { User } from '../../../../orm/entities/user'
+import { User } from '../../../../db/orm/entities/user'
 
 @ObjectType()
 export class RegisterUserData {

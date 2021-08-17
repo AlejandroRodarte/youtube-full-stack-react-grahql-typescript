@@ -1,7 +1,7 @@
 import express from 'express'
 
-import createApolloServer from './db/graphql/create-apollo-server'
 import { CreateAppTuple } from './types/app'
+import createApolloServer from './graphql/apollo/create-apollo-server'
 
 const createApp = async (): Promise<CreateAppTuple> => {
   const [apolloServer, apolloServerError] = await createApolloServer()

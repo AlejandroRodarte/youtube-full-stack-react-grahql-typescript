@@ -1,5 +1,4 @@
 type Query {
-  hello: String!
   posts: GetPostsResponse!
   post(id: Int!): GetPostResponse!
 }

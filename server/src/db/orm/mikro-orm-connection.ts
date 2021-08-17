@@ -1,7 +1,7 @@
 import { MikroORM } from '@mikro-orm/core'
 
 import config from './mikro-orm.config'
-import { CreateConnectionTuple } from '../../types/db/orm'
+import { CreateConnectionTuple } from '../../types/db'
 
 export namespace MikroORMConnection {
     const tuple: CreateConnectionTuple = [undefined, undefined]

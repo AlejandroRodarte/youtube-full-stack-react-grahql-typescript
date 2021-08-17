@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from 'type-graphql'
 
-import { Post } from '../../../../orm/entities/post'
+import { Post } from '../../../../db/orm/entities/post'
 
 @ObjectType()
 export class GetPostsData {

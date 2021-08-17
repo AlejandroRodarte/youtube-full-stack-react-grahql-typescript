@@ -1,11 +1,11 @@
 import { Resolver, Query, Ctx, Arg, Int, Mutation } from 'type-graphql'
 import { wrap } from '@mikro-orm/core'
 
-import { ApplicationContext } from '../../../types/db/graphql'
-import { Post } from '../../orm/entities'
 import { AddPostInput, EditPostInput } from '../inputs/posts'
 import PostsClasses from '../objects/responses/posts'
-import generateFieldErrors from '../objects/responses/util/functions/generate-field-errors'
+import { ApplicationContext } from '../../types/graphql'
+import { Post } from '../../db/orm/entities/post'
+import generateFieldErrors from '../../util/functions/graphql/responses/generate-field-errors'
 
 @Resolver()
 export default class PostsResolver {

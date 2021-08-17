@@ -2,10 +2,10 @@ import { Resolver, Arg, Ctx, Mutation } from 'type-graphql'
 import argon2 from 'argon2'
 
 import { RegisterUserInput } from '../inputs/users'
-import { ApplicationContext } from '../../../types/db/graphql'
-import { User } from '../../orm/entities/User'
 import UsersClasses from '../objects/responses/users'
-import generateFieldErrors from '../objects/responses/util/functions/generate-field-errors'
+import { ApplicationContext } from '../../types/graphql'
+import generateFieldErrors from '../../util/functions/graphql/responses/generate-field-errors'
+import { User } from '../../db/orm/entities'
 
 @Resolver()
 export default class UserResolver {

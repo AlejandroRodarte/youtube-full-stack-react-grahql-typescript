@@ -1,7 +1,7 @@
 import { buildSchema } from 'type-graphql'
 
-import resolvers from './resolvers'
-import { CreateSchemaTuple } from '../../types/db/graphql'
+import resolvers from '../resolvers'
+import { CreateSchemaTuple } from '../../types/graphql'
 
 const createSchema = async (): Promise<CreateSchemaTuple> => {
   try {
