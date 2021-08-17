@@ -1,5 +1,6 @@
 import { Post } from './post'
+import { User } from './User'
 
-const entities = [Post]
+const entities = [Post, User]
 
-export { entities as default, Post }
+export { entities as default, Post, User }

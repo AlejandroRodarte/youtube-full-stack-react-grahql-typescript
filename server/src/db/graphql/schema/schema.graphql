@@ -35,6 +35,7 @@ type Mutation {
   addPost(data: AddPostInput!): AddPostResponse!
   editPost(data: EditPostInput!, id: Int!): EditPostResponse!
   deletePost(id: Int!): DeletePostResponse!
+  register(data: RegisterUserInput!): RegisterUserResponse!
 }
 
 type AddPostResponse {
@@ -73,4 +74,26 @@ type DeletePostResponse {
 
 type DeletePostData {
   id: Int!
+}
+
+type RegisterUserResponse {
+  status: Int!
+  message: String!
+  data: RegisterUserData!
+}
+
+type RegisterUserData {
+  newUser: User!
+}
+
+type User {
+  id: Float!
+  createdAt: String!
+  updatedAt: String!
+  username: String!
+}
+
+input RegisterUserInput {
+  username: String!
+  password: String!
 }
