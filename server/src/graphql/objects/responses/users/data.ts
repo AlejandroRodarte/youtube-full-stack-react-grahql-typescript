@@ -11,3 +11,13 @@ export class RegisterUserData {
     this.newUser = user
   }
 }
+
+@ObjectType()
+export class LoginUserData {
+  @Field(() => User)
+  user!: User
+
+  constructor (user: User) {
+    this.user = user
+  }
+}
