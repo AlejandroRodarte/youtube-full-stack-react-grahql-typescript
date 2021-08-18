@@ -8,7 +8,7 @@
     "start": "tsc && npm run env-cmd:prod -- node dist/index.js",
     "env-cmd:prod": "env-cmd -f ./config/.env.production",
     "env-cmd:dev": "env-cmd -f ./config/.env.development",
-    "start:dev": "env-cmd -f ./config/.env.development ts-node-dev src/index.ts",
+    "start:dev": "env-cmd -f ./config/.env.development ts-node-dev --transpile-only src/index.ts",
     "migration:dev:create:initial": "npm run env-cmd:dev -- mikro-orm migration:create --initial",
     "migration:dev:create": "npm run env-cmd:dev -- mikro-orm migration:create",
     "migration:dev:up": "npm run env-cmd:dev -- mikro-orm migration:up"
@@ -17,8 +17,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/connect-redis": "^0.0.17",
     "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.4",
     "@types/node": "^16.6.1",
+    "@types/redis": "^2.8.31",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
     "@typescript-eslint/parser": "^4.29.1",
     "env-cmd": "^10.1.0",
@@ -38,9 +41,12 @@
     "apollo-server-express": "^3.1.2",
     "argon2": "^0.28.2",
     "class-validator": "^0.13.1",
+    "connect-redis": "^6.0.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.2",
     "graphql": "^15.5.1",
     "pg": "^8.7.1",
+    "redis": "^3.1.2",
     "type-graphql": "^1.1.1"
   },
   "mikro-orm": {

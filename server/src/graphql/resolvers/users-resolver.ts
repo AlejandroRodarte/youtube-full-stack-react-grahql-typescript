@@ -15,7 +15,7 @@ export default class UserResolver {
   @Mutation(() => UsersClasses.responses.RegisterUserResponse)
   async register (
     @Arg('data', () => RegisterUserInput) data: RegisterUserInput,
-    @Ctx() { db }: ApplicationContext
+    @Ctx() { db, req }: ApplicationContext
   ) {
     const fieldErrors = generateFieldErrors<RegisterUserInput>(data)
     if (fieldErrors.length > 0) return new UsersClasses.responses.RegisterUserResponse(400, 'There was validation errors while validating the user.', 'MUTATION_REGISTER_VALIDATION_ERROR', undefined, fieldErrors)
@@ -26,6 +26,7 @@ export default class UserResolver {
         password: hashedPassword
       })
       await db.persistAndFlush(user)
+      req.session.userId = user.id
       const response = new UsersClasses.responses.RegisterUserResponse(201, 'User registered.', 'USER_REGISTERED', new UsersClasses.data.RegisterUserData(user))
       return response
     } catch (e) {
@@ -37,7 +38,7 @@ export default class UserResolver {
   @Mutation(() => UsersClasses.responses.LoginUserResponse)
   async login (
     @Arg('data', () => LoginUserInput) data: LoginUserInput,
-    @Ctx() { db }: ApplicationContext
+    @Ctx() { db, req }: ApplicationContext
   ) {
     const fieldErrors = generateFieldErrors<LoginUserInput>(data)
     if (fieldErrors.length > 0) return new UsersClasses.responses.LoginUserResponse(400, 'There was validation errors while validating the login data.', 'MUTATION_LOGIN_VALIDATION_ERROR', undefined, fieldErrors)
@@ -46,6 +47,8 @@ export default class UserResolver {
       if (!user) return new UsersClasses.responses.LoginUserResponse(404, 'The user was not found.', 'USER_NOT_FOUND_ERROR', undefined, [new FieldError('username', ['That username does not exist.'])])
       const isCorrectPassword = await argon2.verify(user.password, data.password)
       if (!isCorrectPassword) return new UsersClasses.responses.LoginUserResponse(401, 'The password is incorrect.', 'USER_PASSWORD_INCORRECT_ERROR', undefined, [new FieldError('password', ['Wrong password.'])])
+      // we can store anything inside req.session
+      req.session.userId = user.id
       return new UsersClasses.responses.LoginUserResponse(200, 'User logged in.', 'USER_LOGGED_IN', new UsersClasses.data.LoginUserData(user))
     } catch (e) {
       return new UsersClasses.responses.LoginUserResponse(401, 'There was an error logging in the user.', 'MUTATION_LOGIN_ERROR', undefined, [])
