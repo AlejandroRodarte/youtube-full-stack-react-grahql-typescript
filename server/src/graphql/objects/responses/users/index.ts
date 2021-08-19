@@ -1,14 +1,16 @@
-import { RegisterUserData, LoginUserData } from './data'
-import { RegisterUserResponse, LoginUserResponse } from './responses'
+import { RegisterUserData, LoginUserData, MeUserData } from './data'
+import { RegisterUserResponse, LoginUserResponse, MeUserResponse } from './responses'
 
 const responses = {
   RegisterUserResponse,
-  LoginUserResponse
+  LoginUserResponse,
+  MeUserResponse
 }
 
 const data = {
   RegisterUserData,
-  LoginUserData
+  LoginUserData,
+  MeUserData
 }
 
 const classes = {

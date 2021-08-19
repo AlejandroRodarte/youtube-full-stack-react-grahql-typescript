@@ -21,3 +21,6 @@ export class LoginUserData {
     this.user = user
   }
 }
+
+@ObjectType()
+export class MeUserData extends LoginUserData {}

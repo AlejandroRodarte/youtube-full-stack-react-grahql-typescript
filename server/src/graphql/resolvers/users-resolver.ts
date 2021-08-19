@@ -8,6 +8,7 @@ import { User } from '../../db/orm/entities'
 import { UniqueConstraintViolationException } from '@mikro-orm/core'
 import { RegisterArgsSchema, LoginArgsSchema } from '../args/schemas/mutation/users'
 import ValidateArgs from '../../generator/graphql/middleware/validate-args'
+import Auth from '../middleware/auth'
 
 @Resolver()
 export default class UserResolver {
@@ -120,5 +121,34 @@ export default class UserResolver {
           'MUTATION_LOGIN_ERROR'
         )
     }
+  }
+
+  @Mutation(() => UsersClasses.responses.MeUserResponse)
+  @UseMiddleware(Auth)
+  async me (
+    @Ctx() { db, req }: ApplicationContext
+  ) {
+    const user = await db.findOne(User, { id: req.session.userId })
+
+    if (!user) {
+      return new UsersClasses
+        .responses
+        .MeUserResponse(
+          404,
+          'The user was not found.',
+          'USER_NOT_FOUND_ERROR'
+        )
+    }
+
+    return new UsersClasses
+      .responses
+      .MeUserResponse(
+        200,
+        'User information fetched',
+        'USER_FETCHED',
+        new UsersClasses
+          .data
+          .MeUserData(user)
+      )
   }
 }

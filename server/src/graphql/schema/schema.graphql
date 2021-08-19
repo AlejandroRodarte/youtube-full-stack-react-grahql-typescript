@@ -47,6 +47,7 @@ type Mutation {
   deletePost(id: Int!): DeletePostResponse!
   register(data: RegisterUserInput!): RegisterUserResponse!
   login(data: LoginUserInput!): LoginUserResponse!
+  me: MeUserResponse!
 }
 
 type AddPostResponse {
@@ -132,4 +133,16 @@ type LoginUserData {
 input LoginUserInput {
   username: String!
   password: String!
+}
+
+type MeUserResponse {
+  status: Int!
+  message: String!
+  code: String!
+  data: MeUserData
+  errors: [FieldError!]
+}
+
+type MeUserData {
+  user: User!
 }
