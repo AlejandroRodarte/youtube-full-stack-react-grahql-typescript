@@ -10,4 +10,7 @@ const sessionStore = new RedisStore({
   disableTouch: true // keep the session forever
 })
 
-export { sessionStore as default, redisClient }
+export {
+  sessionStore as default,
+  redisClient
+}

@@ -5,16 +5,31 @@ import { AddPostData, EditPostData, GetPostsData, GetPostData, DeletePostData } 
 import { FieldError } from '../error/field-error'
 
 @ObjectType()
-export class GetPostsResponse extends ApplicationResponse(GetPostsData, FieldError) {}
+export class GetPostsResponse extends ApplicationResponse(
+  GetPostsData,
+  FieldError
+) {}
 
 @ObjectType()
-export class GetPostResponse extends ApplicationResponse(GetPostData, FieldError) {}
+export class GetPostResponse extends ApplicationResponse(
+  GetPostData,
+  FieldError
+) {}
 
 @ObjectType()
-export class AddPostResponse extends ApplicationResponse(AddPostData, FieldError) {}
+export class AddPostResponse extends ApplicationResponse(
+  AddPostData,
+  FieldError
+) {}
 
 @ObjectType()
-export class EditPostResponse extends ApplicationResponse(EditPostData, FieldError) {}
+export class EditPostResponse extends ApplicationResponse(
+  EditPostData,
+  FieldError
+) {}
 
 @ObjectType()
-export class DeletePostResponse extends ApplicationResponse(DeletePostData, FieldError) {}
+export class DeletePostResponse extends ApplicationResponse(
+  DeletePostData,
+  FieldError
+) {}

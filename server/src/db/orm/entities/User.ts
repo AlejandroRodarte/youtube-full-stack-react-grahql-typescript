@@ -13,12 +13,18 @@ export class User {
   createdAt = new Date()
 
   @Field(() => String)
-  @Property({ type: 'date', onUpdate: () => new Date() })
+  @Property({
+    type: 'date',
+    onUpdate: () => new Date()
+  })
   updatedAt = new Date()
 
   // set this field unique on the database
   @Field()
-  @Property({ type: 'text', unique: true })
+  @Property({
+    type: 'text',
+    unique: true
+  })
   username!: string
 
   // note how we do not use @Field here

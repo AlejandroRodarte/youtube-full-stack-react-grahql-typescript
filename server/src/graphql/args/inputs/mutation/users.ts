@@ -12,4 +12,7 @@ class RegisterUserInput {
 @InputType()
 class LoginUserInput extends RegisterUserInput {}
 
-export { RegisterUserInput, LoginUserInput }
+export {
+  RegisterUserInput,
+  LoginUserInput
+}

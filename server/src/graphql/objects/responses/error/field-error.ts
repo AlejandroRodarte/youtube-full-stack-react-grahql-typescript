@@ -14,7 +14,12 @@ export class FieldError {
   @Field(() => String)
   message: string
 
-  constructor (path: string, type: string, label: string, message: string) {
+  constructor (
+    path: string,
+    type: string,
+    label: string,
+    message: string
+  ) {
     this.path = path
     this.type = type
     this.label = label

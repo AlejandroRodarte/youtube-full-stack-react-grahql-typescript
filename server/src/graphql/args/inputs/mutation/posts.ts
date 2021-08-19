@@ -8,8 +8,14 @@ class AddPostInput {
 
 @InputType()
 class EditPostInput {
-  @Field(() => String, { nullable: true })
+  @Field(
+    () => String,
+    { nullable: true }
+  )
   title?: string
 }
 
-export { AddPostInput, EditPostInput }
+export {
+  AddPostInput,
+  EditPostInput
+}

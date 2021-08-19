@@ -11,7 +11,10 @@ const cookieOptions: CookieOptions = {
       ? 'none'
       : 'lax', // protection against CSRF
   secure:
-    (process.env.NODE_ENV === 'development' && process.env.CLIENT_NICKNAME === 'apollo-studio') ||
+    (
+      process.env.NODE_ENV === 'development' &&
+      process.env.CLIENT_NICKNAME === 'apollo-studio'
+    ) ||
     (process.env.NODE_ENV === 'production')
 }
 
@@ -20,7 +23,9 @@ const sessionOptions: SessionOptions = {
   store: sessionStore,
   saveUninitialized: false,
   cookie: cookieOptions,
-  secret: process.env.REDIS_SESSION_SECRET || 'dont-ever-think-this-would-be-the-real-secret',
+  secret:
+    process.env.REDIS_SESSION_SECRET ||
+    'dont-ever-think-this-would-be-the-real-secret',
   resave: false
 }
 

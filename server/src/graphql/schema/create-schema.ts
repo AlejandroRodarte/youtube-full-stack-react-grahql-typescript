@@ -9,9 +9,16 @@ const createSchema = async (): Promise<CreateSchemaTuple> => {
       resolvers,
       validate: false
     })
-    return [schema, undefined]
+
+    return [
+      schema,
+      undefined
+    ]
   } catch (e) {
-    return [undefined, e]
+    return [
+      undefined,
+      e
+    ]
   }
 }
 

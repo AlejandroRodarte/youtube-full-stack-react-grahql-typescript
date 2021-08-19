@@ -5,7 +5,7 @@ import { Post } from '../../../../db/orm/entities/post'
 @ObjectType()
 export class GetPostsData {
   @Field(() => [Post])
-  posts!: Post[]
+  posts: Post[]
 
   constructor (posts: Post[]) {
     this.posts = posts
@@ -25,7 +25,7 @@ export class GetPostData {
 @ObjectType()
 export class AddPostData {
   @Field(() => Post)
-  newPost!: Post
+  newPost: Post
 
   constructor (post: Post) {
     this.newPost = post
@@ -35,7 +35,7 @@ export class AddPostData {
 @ObjectType()
 export class EditPostData {
   @Field(() => Post)
-  updatedPost!: Post
+  updatedPost: Post
 
   constructor (post: Post) {
     this.updatedPost = post
@@ -45,7 +45,7 @@ export class EditPostData {
 @ObjectType()
 export class DeletePostData {
   @Field(() => Int)
-  id!: number
+  id: number
 
   constructor (id: number) {
     this.id = id

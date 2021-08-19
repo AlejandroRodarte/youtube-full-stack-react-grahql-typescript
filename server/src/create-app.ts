@@ -7,13 +7,32 @@ import { corsOptions, sessionOptions } from './settings'
 import mountLocalHttpsServer from './util/functions/server/mount-local-https-server'
 
 const createApp = async (): Promise<CreateAppTuple> => {
-  const [apolloServer, apolloServerError] = await createApolloServer()
-  if (typeof apolloServer === 'undefined') return [undefined, apolloServerError]
+  const [
+    apolloServer,
+    apolloServerError
+  ] = await createApolloServer()
+
+  if (typeof apolloServer === 'undefined') {
+    return [
+      undefined,
+      apolloServerError
+    ]
+  }
+
   const app = express()
   app.use(session(sessionOptions))
-  apolloServer.applyMiddleware({ app, cors: corsOptions })
+
+  apolloServer.applyMiddleware({
+    app,
+    cors: corsOptions
+  })
+
   if (process.env.NODE_ENV === 'development') return mountLocalHttpsServer(app)
-  return [app, undefined]
+
+  return [
+    app,
+    undefined
+  ]
 }
 
 export default createApp

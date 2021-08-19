@@ -5,7 +5,15 @@ import { FieldError } from '../../../../graphql/objects/responses/error/field-er
 export default function generateFieldErrors (details: Joi.ValidationErrorItem[]) {
   return details.map((error) => {
     const dotPath = error.path.join('.')
-    const label = (error.context && error.context.label) ? error.context.label : dotPath
-    return new FieldError(dotPath, error.type, label, error.message)
+
+    const label =
+      (error.context && error.context.label) ? error.context.label : dotPath
+
+    return new FieldError(
+      dotPath,
+      error.type,
+      label,
+      error.message
+    )
   })
 }

@@ -5,7 +5,7 @@ import { User } from '../../../../db/orm/entities/user'
 @ObjectType()
 export class RegisterUserData {
   @Field(() => User)
-  newUser!: User
+  newUser: User
 
   constructor (user: User) {
     this.newUser = user
@@ -15,7 +15,7 @@ export class RegisterUserData {
 @ObjectType()
 export class LoginUserData {
   @Field(() => User)
-  user!: User
+  user: User
 
   constructor (user: User) {
     this.user = user
