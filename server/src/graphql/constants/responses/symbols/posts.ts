@@ -1,0 +1,13 @@
+export const POSTS_FETCHED = Symbol('POSTS_FETCHED')
+export const POST_FETCHED = Symbol('POST_FETCHED')
+export const POST_CREATED = Symbol('POST_CREATED')
+export const POST_UPDATED = Symbol('POST_UPDATED')
+export const POST_DELETED = Symbol('POST_DELETED')
+
+export const QUERY_POSTS_ERROR = Symbol('QUERY_POSTS_ERROR')
+export const QUERY_POST_ERROR = Symbol('QUERY_POST_ERROR')
+export const MUTATION_ADD_POST_ERROR = Symbol('MUTATION_ADD_POST_ERROR')
+export const MUTATION_EDIT_POST_ERROR = Symbol('MUTATION_EDIT_POST_ERROR')
+export const MUTATION_DELETE_POST_ERROR = Symbol('MUTATION_DELETE_POST_ERROR')
+
+export const POST_NOT_FOUND = Symbol('POST_NOT_FOUND')

@@ -1,0 +1,2 @@
+export const ARGS_VALIDATION_ERROR = Symbol('ARGS_VALIDATION_ERROR')
+export const UNAUTHORIZED = Symbol('UNAUTHORIZED')

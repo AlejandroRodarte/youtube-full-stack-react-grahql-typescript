@@ -8,6 +8,8 @@ import { Post } from '../../db/orm/entities/post'
 import ValidateArgs from '../../generator/graphql/middleware/validate-args'
 import { AddPostArgsSchema, EditPostArgsSchema, DeletePostArgsSchema } from '../args/schemas/mutation/posts'
 import { PostArgsSchema } from '../args/schemas/query/posts'
+import * as PostsSymbols from '../constants/responses/symbols/posts'
+import postsPayloads from '../constants/responses/payloads/posts'
 @Resolver()
 export default class PostsResolver {
   @Query(() => PostsClasses.responses.GetPostsResponse)
@@ -24,9 +26,9 @@ export default class PostsResolver {
         new PostsClasses
           .responses
           .GetPostsResponse(
-            200,
-            'Posts have been fetched.',
-            'POSTS_FETCHED',
+            postsPayloads.success[PostsSymbols.POSTS_FETCHED].httpCode,
+            postsPayloads.success[PostsSymbols.POSTS_FETCHED].code,
+            postsPayloads.success[PostsSymbols.POSTS_FETCHED].message,
             new PostsClasses
               .data
               .GetPostsData(posts)
@@ -37,9 +39,9 @@ export default class PostsResolver {
       return new PostsClasses
         .responses
         .GetPostsResponse(
-          400,
-          'There was an error fetching the posts.',
-          'QUERY_POSTS_ERROR'
+          postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].httpCode,
+          postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].code,
+          postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].message
         )
     }
   }
@@ -60,9 +62,9 @@ export default class PostsResolver {
         return new PostsClasses
           .responses
           .GetPostResponse(
-            404,
-            'There post was not found.',
-            'POST_NOT_FOUND'
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message
           )
       }
 
@@ -70,9 +72,9 @@ export default class PostsResolver {
         new PostsClasses
           .responses
           .GetPostResponse(
-            200,
-            'Post has been fetched.',
-            'POST_FETCHED',
+            postsPayloads.success[PostsSymbols.POST_FETCHED].httpCode,
+            postsPayloads.success[PostsSymbols.POST_FETCHED].code,
+            postsPayloads.success[PostsSymbols.POST_FETCHED].message,
             new PostsClasses
               .data
               .GetPostData(post)
@@ -83,9 +85,9 @@ export default class PostsResolver {
       return new PostsClasses
         .responses
         .GetPostResponse(
-          400,
-          'There was an error fetching the post.',
-          'QUERY_POST_ERROR'
+          postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].httpCode,
+          postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].code,
+          postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].message
         )
     }
   }
@@ -108,9 +110,9 @@ export default class PostsResolver {
         new PostsClasses
           .responses
           .AddPostResponse(
-            201,
-            'Post created.',
-            'POST_CREATED',
+            postsPayloads.success[PostsSymbols.POST_CREATED].httpCode,
+            postsPayloads.success[PostsSymbols.POST_CREATED].code,
+            postsPayloads.success[PostsSymbols.POST_CREATED].message,
             new PostsClasses
               .data
               .AddPostData(post)
@@ -121,9 +123,9 @@ export default class PostsResolver {
       return new PostsClasses
         .responses
         .AddPostResponse(
-          400,
-          'There was an error adding the post.',
-          'MUTATION_ADD_POST_ERROR'
+          postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].httpCode,
+          postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].code,
+          postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].message
         )
     }
   }
@@ -145,9 +147,9 @@ export default class PostsResolver {
         return new PostsClasses
           .responses
           .EditPostResponse(
-            404,
-            'There post was not found.',
-            'POST_NOT_FOUND'
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message
           )
       }
 
@@ -158,9 +160,9 @@ export default class PostsResolver {
         new PostsClasses
           .responses
           .EditPostResponse(
-            201,
-            'Post updated.',
-            'POST_UPDATED',
+            postsPayloads.success[PostsSymbols.POST_UPDATED].httpCode,
+            postsPayloads.success[PostsSymbols.POST_UPDATED].code,
+            postsPayloads.success[PostsSymbols.POST_UPDATED].message,
             new PostsClasses
               .data
               .EditPostData(updatedPost)
@@ -171,9 +173,9 @@ export default class PostsResolver {
       return new PostsClasses
         .responses
         .EditPostResponse(
-          400,
-          'There was an error editing the post.',
-          'MUTATION_EDIT_POST_ERROR'
+          postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].httpCode,
+          postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].code,
+          postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].message
         )
     }
   }
@@ -194,9 +196,9 @@ export default class PostsResolver {
         return new PostsClasses
           .responses
           .DeletePostResponse(
-            404,
-            'There post was not found.',
-            'POST_NOT_FOUND'
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message
           )
       }
 
@@ -209,9 +211,9 @@ export default class PostsResolver {
         new PostsClasses
           .responses
           .DeletePostResponse(
-            200,
-            'Post deleted.',
-            'POST_DELETED',
+            postsPayloads.success[PostsSymbols.POST_DELETED].httpCode,
+            postsPayloads.success[PostsSymbols.POST_DELETED].code,
+            postsPayloads.success[PostsSymbols.POST_DELETED].message,
             new PostsClasses
               .data
               .DeletePostData(id)
@@ -222,9 +224,9 @@ export default class PostsResolver {
       return new PostsClasses
         .responses
         .DeletePostResponse(
-          400,
-          'There was an error deleting the post.',
-          'MUTATION_DELETE_POST_ERROR'
+          postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].httpCode,
+          postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].code,
+          postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].message
         )
     }
   }

@@ -5,10 +5,14 @@ import { RegisterUserInput, LoginUserInput } from '../args/inputs/mutation/users
 import UsersClasses from '../objects/responses/users'
 import { ApplicationContext } from '../../types/graphql'
 import { User } from '../../db/orm/entities'
-import { UniqueConstraintViolationException } from '@mikro-orm/core'
+import { DriverException } from '@mikro-orm/core'
 import { RegisterArgsSchema, LoginArgsSchema } from '../args/schemas/mutation/users'
 import ValidateArgs from '../../generator/graphql/middleware/validate-args'
 import Auth from '../middleware/auth'
+import * as UsersSymbols from '../constants/responses/symbols/users'
+import usersPayloads from '../constants/responses/payloads/users'
+import * as DriverExceptionSymbols from '../../db/orm/constants/driver-exception/symbols'
+import driverExceptionCodes from '../../db/orm/constants/driver-exception/codes'
 
 @Resolver()
 export default class UserResolver {
@@ -33,9 +37,9 @@ export default class UserResolver {
         new UsersClasses
           .responses
           .RegisterUserResponse(
-            201,
-            'User registered.',
-            'USER_REGISTERED',
+            usersPayloads.success[UsersSymbols.USER_REGISTERED].httpCode,
+            usersPayloads.success[UsersSymbols.USER_REGISTERED].code,
+            usersPayloads.success[UsersSymbols.USER_REGISTERED].message,
             new UsersClasses
               .data
               .RegisterUserData(user)
@@ -43,22 +47,25 @@ export default class UserResolver {
 
       return response
     } catch (e) {
-      if (e instanceof UniqueConstraintViolationException && e.code === '23505') {
+      if (
+        e instanceof DriverException &&
+        e.code === driverExceptionCodes[DriverExceptionSymbols.UNIQUE_CONSTRAINT_VIOLATION_EXCEPTION]
+      ) {
         return new UsersClasses
           .responses
           .RegisterUserResponse(
-            400,
-            'That username is already taken.',
-            'USERNAME_EXISTS_ERROR'
+            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].httpCode,
+            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].code,
+            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].message
           )
       }
 
       return new UsersClasses
         .responses
         .RegisterUserResponse(
-          400,
-          'There was an error registering the user.',
-          'MUTATION_REGISTER_ERROR'
+          usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].httpCode,
+          usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].code,
+          usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].message
         )
     }
   }
@@ -79,9 +86,9 @@ export default class UserResolver {
         return new UsersClasses
           .responses
           .LoginUserResponse(
-            404,
-            'The user was not found.',
-            'USER_NOT_FOUND_ERROR'
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].httpCode,
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code,
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message
           )
       }
 
@@ -94,9 +101,9 @@ export default class UserResolver {
         return new UsersClasses
           .responses
           .LoginUserResponse(
-            401,
-            'The password is incorrect.',
-            'USER_PASSWORD_INCORRECT_ERROR'
+            usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].httpCode,
+            usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].code,
+            usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].message
           )
       }
 
@@ -105,9 +112,9 @@ export default class UserResolver {
       return new UsersClasses
         .responses
         .LoginUserResponse(
-          200,
-          'User logged in.',
-          'USER_LOGGED_IN',
+          usersPayloads.success[UsersSymbols.USER_LOGGED_IN].httpCode,
+          usersPayloads.success[UsersSymbols.USER_LOGGED_IN].code,
+          usersPayloads.success[UsersSymbols.USER_LOGGED_IN].message,
           new UsersClasses
             .data
             .LoginUserData(user)
@@ -116,9 +123,9 @@ export default class UserResolver {
       return new UsersClasses
         .responses
         .LoginUserResponse(
-          401,
-          'There was an error logging in the user.',
-          'MUTATION_LOGIN_ERROR'
+          usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].httpCode,
+          usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].code,
+          usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].message
         )
     }
   }
@@ -128,27 +135,37 @@ export default class UserResolver {
   async me (
     @Ctx() { db, req }: ApplicationContext
   ) {
-    const user = await db.findOne(User, { id: req.session.userId })
+    try {
+      const user = await db.findOne(User, { id: req.session.userId })
 
-    if (!user) {
+      if (!user) {
+        return new UsersClasses
+          .responses
+          .MeUserResponse(
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].httpCode,
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code,
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message
+          )
+      }
+
       return new UsersClasses
         .responses
         .MeUserResponse(
-          404,
-          'The user was not found.',
-          'USER_NOT_FOUND_ERROR'
+          usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].httpCode,
+          usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].code,
+          usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].message,
+          new UsersClasses
+            .data
+            .MeUserData(user)
+        )
+    } catch (e) {
+      return new UsersClasses
+        .responses
+        .RegisterUserResponse(
+          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].httpCode,
+          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].code,
+          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].message
         )
     }
-
-    return new UsersClasses
-      .responses
-      .MeUserResponse(
-        200,
-        'User information fetched',
-        'USER_FETCHED',
-        new UsersClasses
-          .data
-          .MeUserData(user)
-      )
   }
 }
