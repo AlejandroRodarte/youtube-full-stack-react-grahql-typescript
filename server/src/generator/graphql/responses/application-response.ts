@@ -4,10 +4,10 @@ export default function ApplicationResponse<T, U> (TClass: ClassType<T>, UClass:
   @ObjectType({ isAbstract: true })
   abstract class ApplicationResponseClass {
     @Field(() => Int)
-    status!: number
+    status: number
 
     @Field(() => String)
-    message!: string
+    message: string
 
     @Field(() => String)
     code: string

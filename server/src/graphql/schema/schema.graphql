@@ -8,7 +8,7 @@ type GetPostsResponse {
   message: String!
   code: String!
   data: GetPostsData
-  errors: [String!]
+  errors: [FieldError!]
 }
 
 type GetPostsData {
@@ -22,12 +22,19 @@ type Post {
   title: String!
 }
 
+type FieldError {
+  path: String!
+  type: String!
+  label: String!
+  message: String!
+}
+
 type GetPostResponse {
   status: Int!
   message: String!
   code: String!
   data: GetPostData
-  errors: [String!]
+  errors: [FieldError!]
 }
 
 type GetPostData {
@@ -52,11 +59,6 @@ type AddPostResponse {
 
 type AddPostData {
   newPost: Post!
-}
-
-type FieldError {
-  field: String!
-  messages: [String!]!
 }
 
 input AddPostInput {
@@ -84,7 +86,7 @@ type DeletePostResponse {
   message: String!
   code: String!
   data: DeletePostData
-  errors: [String!]
+  errors: [FieldError!]
 }
 
 type DeletePostData {
