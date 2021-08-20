@@ -29,8 +29,8 @@ export default function ValidateArgs (argsSchema: Joi.ObjectSchema<any>) {
 
     return new ApplicationResponseClass(
       middlewarePayloads.error[MiddlewareSymbols.ARGS_VALIDATION_ERROR].httpCode,
-      middlewarePayloads.error[MiddlewareSymbols.ARGS_VALIDATION_ERROR].code,
       middlewarePayloads.error[MiddlewareSymbols.ARGS_VALIDATION_ERROR].message,
+      middlewarePayloads.error[MiddlewareSymbols.ARGS_VALIDATION_ERROR].code,
       undefined,
       fieldErrors
     )

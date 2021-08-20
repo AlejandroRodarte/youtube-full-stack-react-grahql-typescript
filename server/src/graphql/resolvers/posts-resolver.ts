@@ -27,8 +27,8 @@ export default class PostsResolver {
           .responses
           .GetPostsResponse(
             postsPayloads.success[PostsSymbols.POSTS_FETCHED].httpCode,
-            postsPayloads.success[PostsSymbols.POSTS_FETCHED].code,
             postsPayloads.success[PostsSymbols.POSTS_FETCHED].message,
+            postsPayloads.success[PostsSymbols.POSTS_FETCHED].code,
             new PostsClasses
               .data
               .GetPostsData(posts)
@@ -40,8 +40,8 @@ export default class PostsResolver {
         .responses
         .GetPostsResponse(
           postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].httpCode,
-          postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].code,
-          postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].message
+          postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].message,
+          postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].code
         )
     }
   }
@@ -63,8 +63,8 @@ export default class PostsResolver {
           .responses
           .GetPostResponse(
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
-            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
-            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message,
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code
           )
       }
 
@@ -73,8 +73,8 @@ export default class PostsResolver {
           .responses
           .GetPostResponse(
             postsPayloads.success[PostsSymbols.POST_FETCHED].httpCode,
-            postsPayloads.success[PostsSymbols.POST_FETCHED].code,
             postsPayloads.success[PostsSymbols.POST_FETCHED].message,
+            postsPayloads.success[PostsSymbols.POST_FETCHED].code,
             new PostsClasses
               .data
               .GetPostData(post)
@@ -86,8 +86,8 @@ export default class PostsResolver {
         .responses
         .GetPostResponse(
           postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].httpCode,
-          postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].code,
-          postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].message
+          postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].message,
+          postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].code
         )
     }
   }
@@ -111,8 +111,8 @@ export default class PostsResolver {
           .responses
           .AddPostResponse(
             postsPayloads.success[PostsSymbols.POST_CREATED].httpCode,
-            postsPayloads.success[PostsSymbols.POST_CREATED].code,
             postsPayloads.success[PostsSymbols.POST_CREATED].message,
+            postsPayloads.success[PostsSymbols.POST_CREATED].code,
             new PostsClasses
               .data
               .AddPostData(post)
@@ -124,8 +124,8 @@ export default class PostsResolver {
         .responses
         .AddPostResponse(
           postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].httpCode,
-          postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].code,
-          postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].message
+          postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].message,
+          postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].code
         )
     }
   }
@@ -148,8 +148,8 @@ export default class PostsResolver {
           .responses
           .EditPostResponse(
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
-            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
-            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message,
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code
           )
       }
 
@@ -161,8 +161,8 @@ export default class PostsResolver {
           .responses
           .EditPostResponse(
             postsPayloads.success[PostsSymbols.POST_UPDATED].httpCode,
-            postsPayloads.success[PostsSymbols.POST_UPDATED].code,
             postsPayloads.success[PostsSymbols.POST_UPDATED].message,
+            postsPayloads.success[PostsSymbols.POST_UPDATED].code,
             new PostsClasses
               .data
               .EditPostData(updatedPost)
@@ -174,8 +174,8 @@ export default class PostsResolver {
         .responses
         .EditPostResponse(
           postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].httpCode,
-          postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].code,
-          postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].message
+          postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].message,
+          postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].code
         )
     }
   }
@@ -197,8 +197,8 @@ export default class PostsResolver {
           .responses
           .DeletePostResponse(
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
-            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
-            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message,
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code
           )
       }
 
@@ -212,8 +212,8 @@ export default class PostsResolver {
           .responses
           .DeletePostResponse(
             postsPayloads.success[PostsSymbols.POST_DELETED].httpCode,
-            postsPayloads.success[PostsSymbols.POST_DELETED].code,
             postsPayloads.success[PostsSymbols.POST_DELETED].message,
+            postsPayloads.success[PostsSymbols.POST_DELETED].code,
             new PostsClasses
               .data
               .DeletePostData(id)
@@ -225,8 +225,8 @@ export default class PostsResolver {
         .responses
         .DeletePostResponse(
           postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].httpCode,
-          postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].code,
-          postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].message
+          postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].message,
+          postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].code
         )
     }
   }

@@ -38,8 +38,8 @@ export default class UserResolver {
           .responses
           .RegisterUserResponse(
             usersPayloads.success[UsersSymbols.USER_REGISTERED].httpCode,
-            usersPayloads.success[UsersSymbols.USER_REGISTERED].code,
             usersPayloads.success[UsersSymbols.USER_REGISTERED].message,
+            usersPayloads.success[UsersSymbols.USER_REGISTERED].code,
             new UsersClasses
               .data
               .RegisterUserData(user)
@@ -55,8 +55,8 @@ export default class UserResolver {
           .responses
           .RegisterUserResponse(
             usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].httpCode,
-            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].code,
-            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].message
+            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].message,
+            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].code
           )
       }
 
@@ -64,8 +64,8 @@ export default class UserResolver {
         .responses
         .RegisterUserResponse(
           usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].httpCode,
-          usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].code,
-          usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].message
+          usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].message,
+          usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].code
         )
     }
   }
@@ -87,8 +87,8 @@ export default class UserResolver {
           .responses
           .LoginUserResponse(
             usersPayloads.error[UsersSymbols.USER_NOT_FOUND].httpCode,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message,
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code
           )
       }
 
@@ -102,8 +102,8 @@ export default class UserResolver {
           .responses
           .LoginUserResponse(
             usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].httpCode,
-            usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].code,
-            usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].message
+            usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].message,
+            usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].code
           )
       }
 
@@ -113,8 +113,8 @@ export default class UserResolver {
         .responses
         .LoginUserResponse(
           usersPayloads.success[UsersSymbols.USER_LOGGED_IN].httpCode,
-          usersPayloads.success[UsersSymbols.USER_LOGGED_IN].code,
           usersPayloads.success[UsersSymbols.USER_LOGGED_IN].message,
+          usersPayloads.success[UsersSymbols.USER_LOGGED_IN].code,
           new UsersClasses
             .data
             .LoginUserData(user)
@@ -124,8 +124,8 @@ export default class UserResolver {
         .responses
         .LoginUserResponse(
           usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].httpCode,
-          usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].code,
-          usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].message
+          usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].message,
+          usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].code
         )
     }
   }
@@ -143,8 +143,8 @@ export default class UserResolver {
           .responses
           .MeUserResponse(
             usersPayloads.error[UsersSymbols.USER_NOT_FOUND].httpCode,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message,
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code
           )
       }
 
@@ -152,8 +152,8 @@ export default class UserResolver {
         .responses
         .MeUserResponse(
           usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].httpCode,
-          usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].code,
           usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].message,
+          usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].code,
           new UsersClasses
             .data
             .MeUserData(user)
@@ -163,8 +163,8 @@ export default class UserResolver {
         .responses
         .RegisterUserResponse(
           usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].httpCode,
-          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].code,
-          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].message
+          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].message,
+          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].code
         )
     }
   }
