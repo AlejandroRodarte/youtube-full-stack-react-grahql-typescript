@@ -1,5 +1,6 @@
 import express from 'express'
 import session from 'express-session'
+import cors from 'cors'
 
 import { CreateAppTuple } from './types/app'
 import createApolloServer from './graphql/apollo/create-apollo-server'
@@ -20,11 +21,13 @@ const createApp = async (): Promise<CreateAppTuple> => {
   }
 
   const app = express()
+
+  app.use(cors(corsOptions))
   app.use(session(sessionOptions))
 
   apolloServer.applyMiddleware({
     app,
-    cors: corsOptions
+    cors: false
   })
 
   if (process.env.NODE_ENV === 'development') return mountLocalHttpsServer(app)
