@@ -30,7 +30,11 @@ const createApp = async (): Promise<CreateAppTuple> => {
     cors: false
   })
 
-  if (process.env.NODE_ENV === 'development') return mountLocalHttpsServer(app)
+  if (
+    (process.env.NODE_ENV === 'development' &&
+    process.env.CLIENT_NICKNAME === 'apollo-studio') ||
+    process.env.NODE_ENV === 'production'
+  ) return mountLocalHttpsServer(app)
 
   return [
     app,

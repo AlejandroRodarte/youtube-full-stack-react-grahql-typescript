@@ -1,0 +1,21 @@
+mutation Register($registerData: RegisterUserInput!) {
+  register(data: $registerData) {
+    status
+    message
+    code
+    data {
+      newUser {
+        id
+        createdAt
+        updatedAt
+        username
+      }
+    }
+    errors {
+      path
+      type
+      label
+      message
+    }
+  }
+}

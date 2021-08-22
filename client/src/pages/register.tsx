@@ -4,9 +4,8 @@ import Wrapper from '../components/ui/wrappers/Wrapper'
 import InputField from '../components/ui/forms/inputs/InputField'
 import { Box, Button } from '@chakra-ui/react'
 import { RegisterForm } from '../types/forms'
-import { useMutation } from 'urql'
-import { MutationSymbols, mutationOperations } from '../graphql/operations/users'
-import { RegisterArgsInput, RegisterUserInput } from '../types/graphql/args'
+import { RegisterArgsInput, RegisterUserInput } from '../types/graphql/args/users'
+import { useRegisterMutation } from '../generated/graphql'
 
 interface RegisterProps {}
 
@@ -16,7 +15,7 @@ const Register: React.FC<RegisterProps> = () => {
     password: ''
   }
 
-  const [, register] = useMutation(mutationOperations[MutationSymbols.REGISTER_MUTATION])
+  const [, register] = useRegisterMutation()
 
   const onSubmit = (form: RegisterForm) => {
     const registerUserInput: RegisterUserInput = form
