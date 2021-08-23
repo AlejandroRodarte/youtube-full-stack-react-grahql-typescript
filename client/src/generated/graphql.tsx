@@ -215,6 +215,13 @@ export type User = {
   username: Scalars['String'];
 };
 
+export type LoginMutationVariables = Exact<{
+  loginData: LoginUserInput;
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginUserResponse', status: number, message: string, code: string, data?: Maybe<{ __typename?: 'LoginUserData', user: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
+
 export type RegisterMutationVariables = Exact<{
   registerData: RegisterUserInput;
 }>;
@@ -223,6 +230,33 @@ export type RegisterMutationVariables = Exact<{
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterUserResponse', status: number, message: string, code: string, data?: Maybe<{ __typename?: 'RegisterUserData', newUser: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
 
 
+export const LoginDocument = gql`
+    mutation Login($loginData: LoginUserInput!) {
+  login(data: $loginData) {
+    status
+    message
+    code
+    data {
+      user {
+        id
+        createdAt
+        updatedAt
+        username
+      }
+    }
+    errors {
+      path
+      type
+      label
+      message
+    }
+  }
+}
+    `;
+
+export function useLoginMutation() {
+  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
 export const RegisterDocument = gql`
     mutation Register($registerData: RegisterUserInput!) {
   register(data: $registerData) {

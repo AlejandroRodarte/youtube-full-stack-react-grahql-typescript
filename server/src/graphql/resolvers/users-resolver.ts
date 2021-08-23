@@ -91,7 +91,9 @@ export default class UserResolver {
           .LoginUserResponse(
             usersPayloads.error[UsersSymbols.USER_NOT_FOUND].httpCode,
             usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code,
+            undefined,
+            [new FieldError('data.username', 'db.notexists', 'Username', 'That username does not exist.')]
           )
       }
 

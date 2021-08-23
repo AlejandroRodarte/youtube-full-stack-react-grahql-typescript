@@ -1,7 +1,4 @@
-export interface RegisterUserInput {
-  username: string
-  password: string
-}
+import { RegisterUserInput } from '../../../../generated/graphql'
 
 export interface RegisterArgsInput {
   registerData: RegisterUserInput

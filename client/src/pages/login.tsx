@@ -1,42 +1,42 @@
 import React from 'react'
 import { FormikHelpers } from 'formik'
 import Wrapper from '../components/ui/wrappers/Wrapper'
-import { RegisterArgsInput, RegisterArgsErrors } from '../types/graphql/args/users/register'
-import { RegisterUserInput, useRegisterMutation } from '../generated/graphql'
+import { LoginArgsInput, LoginArgsErrors } from '../types/graphql/args/users/login'
+import { LoginUserInput, useLoginMutation } from '../generated/graphql'
 import mapFieldErrors from '../util/functions/map-field-errors'
 import unflatten from '../util/functions/unflatten-object'
 import { useRouter } from 'next/router'
 import CredentialsForm from '../components/ui/forms/auth/CredentialsForm'
 import { CredentialsForm as CredentialsFormInterface } from './../types/forms'
 
-interface RegisterProps {}
+interface LoginProps {}
 
-const Register: React.FC<RegisterProps> = () => {
+const Login: React.FC<LoginProps> = () => {
   const credentialsFormInitialValues: CredentialsFormInterface = {
     username: '',
     password: ''
   }
 
   const router = useRouter()
-  const [, register] = useRegisterMutation()
+  const [, login] = useLoginMutation()
 
   const onSubmit = async (
     form: CredentialsFormInterface,
     { setErrors }: FormikHelpers<CredentialsFormInterface>
   ) => {
-    const registerUserInput: RegisterUserInput = form
-    const registerArgsInput: RegisterArgsInput = { registerData: registerUserInput }
+    const loginUserInput: LoginUserInput = form
+    const loginArgsInput: LoginArgsInput = { loginData: loginUserInput }
 
-    const response = await register(registerArgsInput)
+    const response = await login(loginArgsInput)
 
-    if (response.data?.register.errors) {
-      const mappedFieldErrors = mapFieldErrors(response.data.register.errors)
-      const unflattenedErrors = unflatten<RegisterArgsErrors>(mappedFieldErrors)
+    if (response.data?.login.errors) {
+      const mappedFieldErrors = mapFieldErrors(response.data.login.errors)
+      const unflattenedErrors = unflatten<LoginArgsErrors>(mappedFieldErrors)
       setErrors(unflattenedErrors.data)
       return
     }
 
-    if (response.data?.register.data) {
+    if (response.data?.login.data) {
       router.push('/')
     }
   }
@@ -46,10 +46,10 @@ const Register: React.FC<RegisterProps> = () => {
       <CredentialsForm
         initialValues={ credentialsFormInitialValues }
         onSubmit={ onSubmit }
-        submitButtonText="Register"
+        submitButtonText="Login"
       />
     </Wrapper>
   )
 }
 
-export default Register
+export default Login
