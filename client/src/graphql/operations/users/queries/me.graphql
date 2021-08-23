@@ -1,0 +1,21 @@
+query Me {
+  me {
+    status
+    message
+    code
+    data {
+      user {
+        id
+        createdAt
+        updatedAt
+        username
+      }
+    }
+    errors {
+      path
+      type
+      label
+      message
+    }
+  }
+}

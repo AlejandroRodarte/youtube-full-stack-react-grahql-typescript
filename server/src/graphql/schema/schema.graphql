@@ -1,6 +1,7 @@
 type Query {
   posts: GetPostsResponse!
   post(id: Int!): GetPostResponse!
+  me: MeUserResponse!
 }
 
 type GetPostsResponse {
@@ -41,13 +42,31 @@ type GetPostData {
   post: Post!
 }
 
+type MeUserResponse {
+  status: Int!
+  message: String!
+  code: String!
+  data: MeUserData
+  errors: [FieldError!]
+}
+
+type MeUserData {
+  user: User!
+}
+
+type User {
+  id: Float!
+  createdAt: String!
+  updatedAt: String!
+  username: String!
+}
+
 type Mutation {
   addPost(data: AddPostInput!): AddPostResponse!
   editPost(data: EditPostInput!, id: Int!): EditPostResponse!
   deletePost(id: Int!): DeletePostResponse!
   register(data: RegisterUserInput!): RegisterUserResponse!
   login(data: LoginUserInput!): LoginUserResponse!
-  me: MeUserResponse!
 }
 
 type AddPostResponse {
@@ -106,13 +125,6 @@ type RegisterUserData {
   newUser: User!
 }
 
-type User {
-  id: Float!
-  createdAt: String!
-  updatedAt: String!
-  username: String!
-}
-
 input RegisterUserInput {
   username: String!
   password: String!
@@ -133,16 +145,4 @@ type LoginUserData {
 input LoginUserInput {
   username: String!
   password: String!
-}
-
-type MeUserResponse {
-  status: Int!
-  message: String!
-  code: String!
-  data: MeUserData
-  errors: [FieldError!]
-}
-
-type MeUserData {
-  user: User!
 }

@@ -1,4 +1,4 @@
-import { Resolver, Arg, Ctx, Mutation, UseMiddleware } from 'type-graphql'
+import { Resolver, Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql'
 import argon2 from 'argon2'
 
 import { RegisterUserInput, LoginUserInput } from '../args/inputs/mutation/users'
@@ -137,7 +137,7 @@ export default class UserResolver {
     }
   }
 
-  @Mutation(() => UsersClasses.responses.MeUserResponse)
+  @Query(() => UsersClasses.responses.MeUserResponse)
   @UseMiddleware(Auth)
   async me (
     @Ctx() { db, req }: ApplicationContext
