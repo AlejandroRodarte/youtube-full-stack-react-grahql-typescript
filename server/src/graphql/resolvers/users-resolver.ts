@@ -13,6 +13,7 @@ import * as UsersSymbols from '../constants/responses/symbols/users'
 import usersPayloads from '../constants/responses/payloads/users'
 import * as DriverExceptionSymbols from '../../db/orm/constants/driver-exception/symbols'
 import driverExceptionCodes from '../../db/orm/constants/driver-exception/codes'
+import { FieldError } from '../objects/responses/error'
 
 @Resolver()
 export default class UserResolver {
@@ -56,7 +57,9 @@ export default class UserResolver {
           .RegisterUserResponse(
             usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].httpCode,
             usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].message,
-            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].code
+            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].code,
+            undefined,
+            [new FieldError('data.username', 'db.nonunique', 'Username', 'That username is already taken')]
           )
       }
 
@@ -103,7 +106,9 @@ export default class UserResolver {
           .LoginUserResponse(
             usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].httpCode,
             usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].message,
-            usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].code
+            usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].code,
+            undefined,
+            [new FieldError('data.password', 'db.wrongpassword', 'Password', 'The password is wrong.')]
           )
       }
 

@@ -1,11 +1,14 @@
 import React from 'react'
-import { Form, Formik } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import InputField from '../components/ui/forms/inputs/InputField'
 import { Box, Button } from '@chakra-ui/react'
 import { RegisterForm } from '../types/forms'
-import { RegisterArgsInput, RegisterUserInput } from '../types/graphql/args/users'
+import { RegisterArgsInput, RegisterUserInput, RegisterArgsErrors } from '../types/graphql/args/users'
 import { useRegisterMutation } from '../generated/graphql'
+import mapFieldErrors from '../util/functions/map-field-errors'
+import unflatten from '../util/functions/unflatten-object'
+import { useRouter } from 'next/router'
 
 interface RegisterProps {}
 
@@ -15,12 +18,28 @@ const Register: React.FC<RegisterProps> = () => {
     password: ''
   }
 
+  const router = useRouter()
   const [, register] = useRegisterMutation()
 
-  const onSubmit = (form: RegisterForm) => {
+  const onSubmit = async (
+    form: RegisterForm,
+    { setErrors }: FormikHelpers<RegisterForm>
+  ) => {
     const registerUserInput: RegisterUserInput = form
     const registerArgsInput: RegisterArgsInput = { registerData: registerUserInput }
-    return register(registerArgsInput)
+
+    const response = await register(registerArgsInput)
+
+    if (response.data?.register.errors) {
+      const mappedFieldErrors = mapFieldErrors(response.data.register.errors)
+      const unflattenedErrors = unflatten<RegisterArgsErrors>(mappedFieldErrors)
+      setErrors(unflattenedErrors.data)
+      return
+    }
+
+    if (response.data?.register.data) {
+      router.push('/')
+    }
   }
 
   return (
