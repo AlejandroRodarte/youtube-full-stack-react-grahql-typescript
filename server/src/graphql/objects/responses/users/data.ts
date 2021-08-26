@@ -24,3 +24,13 @@ export class LoginUserData {
 
 @ObjectType()
 export class MeUserData extends LoginUserData {}
+
+@ObjectType()
+export class LogoutUserData {
+  @Field(() => Boolean)
+  wasSessionDestroyed: boolean
+
+  constructor (wasSessionDestroyed: boolean) {
+    this.wasSessionDestroyed = wasSessionDestroyed
+  }
+}

@@ -14,6 +14,7 @@ import usersPayloads from '../constants/responses/payloads/users'
 import * as DriverExceptionSymbols from '../../db/orm/constants/driver-exception/symbols'
 import driverExceptionCodes from '../../db/orm/constants/driver-exception/codes'
 import { FieldError } from '../objects/responses/error'
+import * as ExpressSessionConstants from '../../redis/constants'
 
 @Resolver()
 export default class UserResolver {
@@ -184,5 +185,45 @@ export default class UserResolver {
           req.body.operationName
         )
     }
+  }
+
+  @Mutation(() => UsersClasses.responses.LogoutUserResponse)
+  @UseMiddleware(Auth)
+  async logout (
+    @Ctx() { req, res }: ApplicationContext
+  ) {
+    const wasSessionDestroyed = await new Promise<boolean>((resolve) => {
+      res.clearCookie(ExpressSessionConstants.SESSION_COOKIE_NAME)
+
+      req
+        .session
+        .destroy((error) => {
+          if (error) resolve(false)
+          resolve(true)
+        })
+    })
+
+    if (wasSessionDestroyed) {
+      return new UsersClasses
+        .responses
+        .LogoutUserResponse(
+          usersPayloads.success[UsersSymbols.USER_LOGGED_OUT].httpCode,
+          usersPayloads.success[UsersSymbols.USER_LOGGED_OUT].message,
+          usersPayloads.success[UsersSymbols.USER_LOGGED_OUT].code,
+          req.body.operationName,
+          new UsersClasses
+            .data
+            .LogoutUserData(wasSessionDestroyed)
+        )
+    }
+
+    return new UsersClasses
+      .responses
+      .LogoutUserResponse(
+        usersPayloads.error[UsersSymbols.MUTATION_LOGOUT_ERROR].httpCode,
+        usersPayloads.error[UsersSymbols.MUTATION_LOGOUT_ERROR].message,
+        usersPayloads.error[UsersSymbols.MUTATION_LOGOUT_ERROR].code,
+        req.body.operationName
+      )
   }
 }

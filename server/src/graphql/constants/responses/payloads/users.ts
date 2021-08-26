@@ -16,6 +16,11 @@ const codesAndMessages = {
       httpCode: 200,
       code: 'OWN_USER_FETCHED',
       message: 'Your user information has been fetched.'
+    },
+    [UsersSymbols.USER_LOGGED_OUT]: {
+      httpCode: 200,
+      code: 'USER_LOGGED_OUT',
+      message: 'The user has logged out successfully.'
     }
   },
   error: {
@@ -33,6 +38,11 @@ const codesAndMessages = {
       httpCode: 400,
       code: 'MUTATION_ME_ERROR',
       message: 'An error has occured while fetching your user information.'
+    },
+    [UsersSymbols.MUTATION_LOGOUT_ERROR]: {
+      httpCode: 400,
+      code: 'MUTATION_LOGOUT_ERROR',
+      message: 'An error has occured while logging out the user.'
     },
     [UsersSymbols.USERNAME_ALREADY_EXISTS]: {
       httpCode: 400,

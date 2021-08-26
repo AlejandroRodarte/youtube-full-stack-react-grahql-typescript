@@ -70,6 +70,7 @@ type Mutation {
   deletePost(id: Int!): DeletePostResponse!
   register(data: RegisterUserInput!): RegisterUserResponse!
   login(data: LoginUserInput!): LoginUserResponse!
+  logout: LogoutUserResponse!
 }
 
 type AddPostResponse {
@@ -153,4 +154,17 @@ type LoginUserData {
 input LoginUserInput {
   username: String!
   password: String!
+}
+
+type LogoutUserResponse {
+  status: Int!
+  message: String!
+  code: String!
+  _kind: String
+  data: LogoutUserData
+  errors: [FieldError!]
+}
+
+type LogoutUserData {
+  wasSessionDestroyed: Boolean!
 }
