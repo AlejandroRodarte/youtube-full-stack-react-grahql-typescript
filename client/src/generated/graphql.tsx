@@ -1,5 +1,5 @@
-import gql from 'graphql-tag';
-import * as Urql from 'urql';
+import gql from 'graphql-tag'
+import * as Urql from 'urql'
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -125,6 +125,21 @@ export type LoginUserResponse = {
   errors?: Maybe<Array<FieldError>>;
 };
 
+export type LogoutUserData = {
+  __typename?: 'LogoutUserData';
+  wasSessionDestroyed: Scalars['Boolean'];
+};
+
+export type LogoutUserResponse = {
+  __typename?: 'LogoutUserResponse';
+  status: Scalars['Int'];
+  message: Scalars['String'];
+  code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
+  data?: Maybe<LogoutUserData>;
+  errors?: Maybe<Array<FieldError>>;
+};
+
 export type MeUserData = {
   __typename?: 'MeUserData';
   user: User;
@@ -147,29 +162,25 @@ export type Mutation = {
   deletePost: DeletePostResponse;
   register: RegisterUserResponse;
   login: LoginUserResponse;
+  logout: LogoutUserResponse;
 };
-
 
 export type MutationAddPostArgs = {
   data: AddPostInput;
 };
-
 
 export type MutationEditPostArgs = {
   data: EditPostInput;
   id: Scalars['Int'];
 };
 
-
 export type MutationDeletePostArgs = {
   id: Scalars['Int'];
 };
 
-
 export type MutationRegisterArgs = {
   data: RegisterUserInput;
 };
-
 
 export type MutationLoginArgs = {
   data: LoginUserInput;
@@ -189,7 +200,6 @@ export type Query = {
   post: GetPostResponse;
   me: MeUserResponse;
 };
-
 
 export type QueryPostArgs = {
   id: Scalars['Int'];
@@ -227,21 +237,21 @@ export type LoginMutationVariables = Exact<{
   loginData: LoginUserInput;
 }>;
 
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'LoginUserData', user: { __typename?: 'User', id: number, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'LoginUserData', user: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'LogoutUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'LogoutUserData', wasSessionDestroyed: boolean }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type RegisterMutationVariables = Exact<{
   registerData: RegisterUserInput;
 }>;
 
-
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'RegisterUserData', newUser: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'RegisterUserData', newUser: { __typename?: 'User', id: number, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
-
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'MeUserData', user: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
-
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'MeUserData', user: { __typename?: 'User', id: number, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export const LoginDocument = gql`
     mutation Login($loginData: LoginUserInput!) {
@@ -253,23 +263,40 @@ export const LoginDocument = gql`
     data {
       user {
         id
-        createdAt
-        updatedAt
         username
       }
     }
     errors {
       path
-      type
-      label
       message
     }
   }
 }
-    `;
+    `
 
-export function useLoginMutation() {
-  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+export function useLoginMutation () {
+  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument)
+};
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout {
+    status
+    message
+    code
+    _kind
+    data {
+      wasSessionDestroyed
+    }
+    errors {
+      path
+      message
+    }
+  }
+}
+    `
+
+export function useLogoutMutation () {
+  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument)
 };
 export const RegisterDocument = gql`
     mutation Register($registerData: RegisterUserInput!) {
@@ -281,23 +308,19 @@ export const RegisterDocument = gql`
     data {
       newUser {
         id
-        createdAt
-        updatedAt
         username
       }
     }
     errors {
       path
-      type
-      label
       message
     }
   }
 }
-    `;
+    `
 
-export function useRegisterMutation() {
-  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+export function useRegisterMutation () {
+  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument)
 };
 export const MeDocument = gql`
     query Me {
@@ -309,21 +332,17 @@ export const MeDocument = gql`
     data {
       user {
         id
-        createdAt
-        updatedAt
         username
       }
     }
     errors {
       path
-      type
-      label
       message
     }
   }
 }
-    `;
+    `
 
-export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
+export function useMeQuery (options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MeQuery>({ query: MeDocument, ...options })
 };

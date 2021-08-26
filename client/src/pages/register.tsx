@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { FormikHelpers } from 'formik'
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import { RegisterArgsErrors } from '../types/graphql/args/users/register'
@@ -20,7 +20,7 @@ const Register: React.FC<RegisterProps> = () => {
   const router = useRouter()
   const [, register] = useRegisterMutation()
 
-  const onSubmit = async (
+  const onSubmit = useCallback(async (
     form: CredentialsFormInterface,
     { setErrors }: FormikHelpers<CredentialsFormInterface>
   ) => {
@@ -39,7 +39,7 @@ const Register: React.FC<RegisterProps> = () => {
     if (response.data?.register.data) {
       router.push('/')
     }
-  }
+  }, [register, router])
 
   return (
     <Wrapper>

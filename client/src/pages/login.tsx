@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { FormikHelpers } from 'formik'
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import { LoginArgsErrors } from '../types/graphql/args/users/login'
@@ -20,7 +20,7 @@ const Login: React.FC<LoginProps> = () => {
   const router = useRouter()
   const [, login] = useLoginMutation()
 
-  const onSubmit = async (
+  const onSubmit = useCallback(async (
     form: CredentialsFormInterface,
     { setErrors }: FormikHelpers<CredentialsFormInterface>
   ) => {
@@ -39,7 +39,7 @@ const Login: React.FC<LoginProps> = () => {
     if (response.data?.login.data) {
       router.push('/')
     }
-  }
+  }, [login, router])
 
   return (
     <Wrapper>

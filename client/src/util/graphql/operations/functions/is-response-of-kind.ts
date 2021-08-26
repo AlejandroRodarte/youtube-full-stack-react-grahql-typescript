@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
 type KindableResponse<T> = {
   __typename?: 'Query' | 'Mutation' | 'Subscription'
 } & {
-  [key in keyof T]: {
+  [K in keyof T]: T[K] & {
     _kind?: string
   }
 }

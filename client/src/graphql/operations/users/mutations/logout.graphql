@@ -1,14 +1,11 @@
-query Me {
-  me {
+mutation Logout {
+  logout {
     status
     message
     code
     _kind
     data {
-      user {
-        id
-        username
-      }
+      wasSessionDestroyed
     }
     errors {
       path

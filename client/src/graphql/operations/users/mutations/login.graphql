@@ -7,15 +7,11 @@ mutation Login($loginData: LoginUserInput!) {
     data {
       user {
         id
-        createdAt
-        updatedAt
         username
       }
     }
     errors {
       path
-      type
-      label
       message
     }
   }

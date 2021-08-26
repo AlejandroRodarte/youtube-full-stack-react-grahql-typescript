@@ -7,15 +7,11 @@ mutation Register($registerData: RegisterUserInput!) {
     data {
       newUser {
         id
-        createdAt
-        updatedAt
         username
       }
     }
     errors {
       path
-      type
-      label
       message
     }
   }
