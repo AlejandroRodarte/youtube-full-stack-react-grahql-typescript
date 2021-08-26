@@ -3,6 +3,7 @@ mutation Login($loginData: LoginUserInput!) {
     status
     message
     code
+    _kind
     data {
       user {
         id

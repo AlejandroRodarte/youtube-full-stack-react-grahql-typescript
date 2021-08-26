@@ -1813,12 +1813,20 @@
     "@typescript-eslint/types" "4.29.2"
     "eslint-visitor-keys" "^2.0.0"
 
-"@urql/core@^2.1.4":
+"@urql/core@^2.1.4", "@urql/core@>=2.3.0":
   "integrity" "sha512-pBw3LxqoYroXlLb+jvWrLyNpGl2WRvga9ZSco99aG/o/pMKb5ugfDVPPGPE7UCh7IGI4rb/2xPEmkiWdrtYbkg=="
   "resolved" "https://registry.npmjs.org/@urql/core/-/core-2.3.0.tgz"
   "version" "2.3.0"
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.0"
+    "wonka" "^4.0.14"
+
+"@urql/exchange-graphcache@^4.3.0":
+  "integrity" "sha512-r2jiBOS6yFYck0X/mPOnxa7Yvi+wH84O18kUAaCxxes238Miztz4DSf4ICXg5xlxWBuxKJelLibZT4spfRR3Xw=="
+  "resolved" "https://registry.npmjs.org/@urql/exchange-graphcache/-/exchange-graphcache-4.3.0.tgz"
+  "version" "4.3.0"
+  dependencies:
+    "@urql/core" ">=2.3.0"
     "wonka" "^4.0.14"
 
 "abort-controller@3.0.0":

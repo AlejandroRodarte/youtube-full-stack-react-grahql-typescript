@@ -28,6 +28,7 @@ export type AddPostResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
   data?: Maybe<AddPostData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -42,6 +43,7 @@ export type DeletePostResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
   data?: Maybe<DeletePostData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -60,6 +62,7 @@ export type EditPostResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
   data?: Maybe<EditPostData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -82,6 +85,7 @@ export type GetPostResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
   data?: Maybe<GetPostData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -96,6 +100,7 @@ export type GetPostsResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
   data?: Maybe<GetPostsData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -115,6 +120,7 @@ export type LoginUserResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
   data?: Maybe<LoginUserData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -129,6 +135,7 @@ export type MeUserResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
   data?: Maybe<MeUserData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -203,6 +210,7 @@ export type RegisterUserResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
   data?: Maybe<RegisterUserData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -220,19 +228,19 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginUserResponse', status: number, message: string, code: string, data?: Maybe<{ __typename?: 'LoginUserData', user: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'LoginUserData', user: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
 
 export type RegisterMutationVariables = Exact<{
   registerData: RegisterUserInput;
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterUserResponse', status: number, message: string, code: string, data?: Maybe<{ __typename?: 'RegisterUserData', newUser: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'RegisterUserData', newUser: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeUserResponse', status: number, message: string, code: string, data?: Maybe<{ __typename?: 'MeUserData', user: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'MeUserData', user: { __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, type: string, label: string, message: string }>> } };
 
 
 export const LoginDocument = gql`
@@ -241,6 +249,7 @@ export const LoginDocument = gql`
     status
     message
     code
+    _kind
     data {
       user {
         id
@@ -268,6 +277,7 @@ export const RegisterDocument = gql`
     status
     message
     code
+    _kind
     data {
       newUser {
         id
@@ -295,6 +305,7 @@ export const MeDocument = gql`
     status
     message
     code
+    _kind
     data {
       user {
         id

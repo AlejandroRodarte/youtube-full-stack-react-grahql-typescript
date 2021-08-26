@@ -3,6 +3,7 @@ query Me {
     status
     message
     code
+    _kind
     data {
       user {
         id

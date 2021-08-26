@@ -41,6 +41,7 @@ export default class UserResolver {
             usersPayloads.success[UsersSymbols.USER_REGISTERED].httpCode,
             usersPayloads.success[UsersSymbols.USER_REGISTERED].message,
             usersPayloads.success[UsersSymbols.USER_REGISTERED].code,
+            req.body.operationName,
             new UsersClasses
               .data
               .RegisterUserData(user)
@@ -58,6 +59,7 @@ export default class UserResolver {
             usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].httpCode,
             usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].message,
             usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].code,
+            req.body.operationName,
             undefined,
             [new FieldError('data.username', 'db.nonunique', 'Username', 'That username is already taken')]
           )
@@ -68,7 +70,8 @@ export default class UserResolver {
         .RegisterUserResponse(
           usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].httpCode,
           usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].message,
-          usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].code
+          usersPayloads.error[UsersSymbols.MUTATION_REGISTER_ERROR].code,
+          req.body.operationName
         )
     }
   }
@@ -92,6 +95,7 @@ export default class UserResolver {
             usersPayloads.error[UsersSymbols.USER_NOT_FOUND].httpCode,
             usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message,
             usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code,
+            req.body.operationName,
             undefined,
             [new FieldError('data.username', 'db.notexists', 'Username', 'That username does not exist.')]
           )
@@ -109,6 +113,7 @@ export default class UserResolver {
             usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].httpCode,
             usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].message,
             usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].code,
+            req.body.operationName,
             undefined,
             [new FieldError('data.password', 'db.wrongpassword', 'Password', 'The password is wrong.')]
           )
@@ -122,6 +127,7 @@ export default class UserResolver {
           usersPayloads.success[UsersSymbols.USER_LOGGED_IN].httpCode,
           usersPayloads.success[UsersSymbols.USER_LOGGED_IN].message,
           usersPayloads.success[UsersSymbols.USER_LOGGED_IN].code,
+          req.body.operationName,
           new UsersClasses
             .data
             .LoginUserData(user)
@@ -132,7 +138,8 @@ export default class UserResolver {
         .LoginUserResponse(
           usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].httpCode,
           usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].message,
-          usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].code
+          usersPayloads.error[UsersSymbols.MUTATION_LOGIN_ERROR].code,
+          req.body.operationName
         )
     }
   }
@@ -151,7 +158,8 @@ export default class UserResolver {
           .MeUserResponse(
             usersPayloads.error[UsersSymbols.USER_NOT_FOUND].httpCode,
             usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code
+            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code,
+            req.body.operationName
           )
       }
 
@@ -161,6 +169,7 @@ export default class UserResolver {
           usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].httpCode,
           usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].message,
           usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].code,
+          req.body.operationName,
           new UsersClasses
             .data
             .MeUserData(user)
@@ -171,7 +180,8 @@ export default class UserResolver {
         .RegisterUserResponse(
           usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].httpCode,
           usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].message,
-          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].code
+          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].code,
+          req.body.operationName
         )
     }
   }

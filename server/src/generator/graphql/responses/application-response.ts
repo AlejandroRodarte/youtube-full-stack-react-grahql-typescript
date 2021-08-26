@@ -16,6 +16,12 @@ export default function ApplicationResponse<T, U> (
     code: string
 
     @Field(
+      () => String,
+      { nullable: true }
+    )
+    _kind?: string
+
+    @Field(
       () => TClass,
       { nullable: true }
     )
@@ -31,12 +37,14 @@ export default function ApplicationResponse<T, U> (
       status: number,
       message: string,
       code: string,
+      kind?: string,
       data?: T,
       errors?: U[]
     ) {
       this.status = status
       this.message = message
       this.code = code
+      this._kind = kind
       this.data = data
       this.errors = errors
     }

@@ -3,6 +3,7 @@ mutation Register($registerData: RegisterUserInput!) {
     status
     message
     code
+    _kind
     data {
       newUser {
         id

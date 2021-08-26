@@ -1,10 +1,10 @@
 import React from 'react'
 import { FormikHelpers } from 'formik'
 import Wrapper from '../components/ui/wrappers/Wrapper'
-import { LoginArgsInput, LoginArgsErrors } from '../types/graphql/args/users/login'
-import { LoginUserInput, useLoginMutation } from '../generated/graphql'
-import mapFieldErrors from '../util/functions/map-field-errors'
-import unflatten from '../util/functions/unflatten-object'
+import { LoginArgsErrors } from '../types/graphql/args/users/login'
+import { LoginUserInput, useLoginMutation, LoginMutationVariables } from '../generated/graphql'
+import mapFieldErrors from '../util/common/functions/map-field-errors'
+import unflatten from '../util/common/functions/unflatten-object'
 import { useRouter } from 'next/router'
 import CredentialsForm from '../components/ui/forms/auth/CredentialsForm'
 import { CredentialsForm as CredentialsFormInterface } from './../types/forms'
@@ -25,7 +25,7 @@ const Login: React.FC<LoginProps> = () => {
     { setErrors }: FormikHelpers<CredentialsFormInterface>
   ) => {
     const loginUserInput: LoginUserInput = form
-    const loginArgsInput: LoginArgsInput = { loginData: loginUserInput }
+    const loginArgsInput: LoginMutationVariables = { loginData: loginUserInput }
 
     const response = await login(loginArgsInput)
 

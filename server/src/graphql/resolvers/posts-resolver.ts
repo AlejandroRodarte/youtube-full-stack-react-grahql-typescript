@@ -14,7 +14,7 @@ import postsPayloads from '../constants/responses/payloads/posts'
 export default class PostsResolver {
   @Query(() => PostsClasses.responses.GetPostsResponse)
   async posts (
-    @Ctx() { db }: ApplicationContext
+    @Ctx() { db, req }: ApplicationContext
   ) {
     try {
       const posts = await db.find(
@@ -29,6 +29,7 @@ export default class PostsResolver {
             postsPayloads.success[PostsSymbols.POSTS_FETCHED].httpCode,
             postsPayloads.success[PostsSymbols.POSTS_FETCHED].message,
             postsPayloads.success[PostsSymbols.POSTS_FETCHED].code,
+            req.body.operationName,
             new PostsClasses
               .data
               .GetPostsData(posts)
@@ -41,7 +42,8 @@ export default class PostsResolver {
         .GetPostsResponse(
           postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].httpCode,
           postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].message,
-          postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].code
+          postsPayloads.error[PostsSymbols.QUERY_POSTS_ERROR].code,
+          req.body.operationName
         )
     }
   }
@@ -50,7 +52,7 @@ export default class PostsResolver {
   @UseMiddleware(ValidateArgs(PostArgsSchema))
   async post (
     @Arg('id', () => Int) id: number,
-    @Ctx() { db }: ApplicationContext
+    @Ctx() { db, req }: ApplicationContext
   ) {
     try {
       const post = await db.findOne(
@@ -64,7 +66,8 @@ export default class PostsResolver {
           .GetPostResponse(
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message,
-            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
+            req.body.operationName
           )
       }
 
@@ -75,6 +78,7 @@ export default class PostsResolver {
             postsPayloads.success[PostsSymbols.POST_FETCHED].httpCode,
             postsPayloads.success[PostsSymbols.POST_FETCHED].message,
             postsPayloads.success[PostsSymbols.POST_FETCHED].code,
+            req.body.operationName,
             new PostsClasses
               .data
               .GetPostData(post)
@@ -87,7 +91,8 @@ export default class PostsResolver {
         .GetPostResponse(
           postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].httpCode,
           postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].message,
-          postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].code
+          postsPayloads.error[PostsSymbols.QUERY_POST_ERROR].code,
+          req.body.operationName
         )
     }
   }
@@ -96,7 +101,7 @@ export default class PostsResolver {
   @UseMiddleware(ValidateArgs(AddPostArgsSchema))
   async addPost (
     @Arg('data', () => AddPostInput) data: AddPostInput,
-    @Ctx() { db }: ApplicationContext
+    @Ctx() { db, req }: ApplicationContext
   ) {
     const post = db.create(
       Post,
@@ -113,6 +118,7 @@ export default class PostsResolver {
             postsPayloads.success[PostsSymbols.POST_CREATED].httpCode,
             postsPayloads.success[PostsSymbols.POST_CREATED].message,
             postsPayloads.success[PostsSymbols.POST_CREATED].code,
+            req.body.operationName,
             new PostsClasses
               .data
               .AddPostData(post)
@@ -125,7 +131,8 @@ export default class PostsResolver {
         .AddPostResponse(
           postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].httpCode,
           postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].message,
-          postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].code
+          postsPayloads.error[PostsSymbols.MUTATION_ADD_POST_ERROR].code,
+          req.body.operationName
         )
     }
   }
@@ -135,7 +142,7 @@ export default class PostsResolver {
   async editPost (
     @Arg('id', () => Int) id: number,
     @Arg('data', () => EditPostInput) data: EditPostInput,
-    @Ctx() { db }: ApplicationContext
+    @Ctx() { db, req }: ApplicationContext
   ) {
     try {
       const post = await db.findOne(
@@ -149,7 +156,8 @@ export default class PostsResolver {
           .EditPostResponse(
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message,
-            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
+            req.body.operationName
           )
       }
 
@@ -163,6 +171,7 @@ export default class PostsResolver {
             postsPayloads.success[PostsSymbols.POST_UPDATED].httpCode,
             postsPayloads.success[PostsSymbols.POST_UPDATED].message,
             postsPayloads.success[PostsSymbols.POST_UPDATED].code,
+            req.body.operationName,
             new PostsClasses
               .data
               .EditPostData(updatedPost)
@@ -175,7 +184,8 @@ export default class PostsResolver {
         .EditPostResponse(
           postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].httpCode,
           postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].message,
-          postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].code
+          postsPayloads.error[PostsSymbols.MUTATION_EDIT_POST_ERROR].code,
+          req.body.operationName
         )
     }
   }
@@ -184,7 +194,7 @@ export default class PostsResolver {
   @UseMiddleware(ValidateArgs(DeletePostArgsSchema))
   async deletePost (
     @Arg('id', () => Int) id: number,
-    @Ctx() { db }: ApplicationContext
+    @Ctx() { db, req }: ApplicationContext
   ) {
     try {
       const post = await db.findOne(
@@ -198,7 +208,8 @@ export default class PostsResolver {
           .DeletePostResponse(
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message,
-            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code
+            postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
+            req.body.operationName
           )
       }
 
@@ -214,6 +225,7 @@ export default class PostsResolver {
             postsPayloads.success[PostsSymbols.POST_DELETED].httpCode,
             postsPayloads.success[PostsSymbols.POST_DELETED].message,
             postsPayloads.success[PostsSymbols.POST_DELETED].code,
+            req.body.operationName,
             new PostsClasses
               .data
               .DeletePostData(id)
@@ -226,7 +238,8 @@ export default class PostsResolver {
         .DeletePostResponse(
           postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].httpCode,
           postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].message,
-          postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].code
+          postsPayloads.error[PostsSymbols.MUTATION_DELETE_POST_ERROR].code,
+          req.body.operationName
         )
     }
   }
