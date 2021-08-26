@@ -233,6 +233,10 @@ export type User = {
   username: Scalars['String'];
 };
 
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'GetPostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'GetPostsData', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+
 export type LoginMutationVariables = Exact<{
   loginData: LoginUserInput;
 }>;
@@ -253,6 +257,32 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeUserResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'MeUserData', user: { __typename?: 'User', id: number, username: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
+export const PostsDocument = gql`
+    query Posts {
+  posts {
+    status
+    message
+    code
+    _kind
+    data {
+      posts {
+        id
+        createdAt
+        updatedAt
+        title
+      }
+    }
+    errors {
+      path
+      message
+    }
+  }
+}
+    `
+
+export function usePostsQuery (options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options })
+};
 export const LoginDocument = gql`
     mutation Login($loginData: LoginUserInput!) {
   login(data: $loginData) {

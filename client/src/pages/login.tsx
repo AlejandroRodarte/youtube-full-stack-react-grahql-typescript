@@ -8,6 +8,8 @@ import unflatten from '../util/common/functions/unflatten-object'
 import { useRouter } from 'next/router'
 import CredentialsForm from '../components/ui/forms/auth/CredentialsForm'
 import { CredentialsForm as CredentialsFormInterface } from './../types/forms'
+import { withUrqlClient } from 'next-urql'
+import nextUrqlClientConfig from '../graphql/urql/client-config'
 
 interface LoginProps {}
 
@@ -52,4 +54,4 @@ const Login: React.FC<LoginProps> = () => {
   )
 }
 
-export default Login
+export default withUrqlClient(nextUrqlClientConfig)(Login)

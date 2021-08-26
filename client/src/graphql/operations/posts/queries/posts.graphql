@@ -1,0 +1,20 @@
+query Posts {
+  posts {
+    status
+    message
+    code
+    _kind
+    data {
+      posts {
+        id
+        createdAt
+        updatedAt
+        title
+      }
+    }
+    errors {
+      path
+      message
+    }
+  }
+}
