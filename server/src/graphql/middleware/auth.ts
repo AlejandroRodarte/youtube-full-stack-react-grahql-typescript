@@ -19,7 +19,8 @@ const Auth: MiddlewareFn<ApplicationContext> = async (
   return new ApplicationResponseClass(
     middlewarePayloads.error[MiddlewareSymbols.UNAUTHORIZED].httpCode,
     middlewarePayloads.error[MiddlewareSymbols.UNAUTHORIZED].message,
-    middlewarePayloads.error[MiddlewareSymbols.UNAUTHORIZED].code
+    middlewarePayloads.error[MiddlewareSymbols.UNAUTHORIZED].code,
+    req.body.operationName
   )
 }
 

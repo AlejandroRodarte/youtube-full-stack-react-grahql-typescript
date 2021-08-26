@@ -10,7 +10,7 @@ import middlewarePayloads from '../../../graphql/constants/responses/payloads/mi
 
 export default function ValidateArgs (argsSchema: Joi.ObjectSchema<any>) {
   const middleware: MiddlewareFn<ApplicationContext> = async (
-    { args },
+    { context: { req }, args },
     next
   ) => {
     const validationResults = argsSchema.validate(
@@ -31,6 +31,7 @@ export default function ValidateArgs (argsSchema: Joi.ObjectSchema<any>) {
       middlewarePayloads.error[MiddlewareSymbols.ARGS_VALIDATION_ERROR].httpCode,
       middlewarePayloads.error[MiddlewareSymbols.ARGS_VALIDATION_ERROR].message,
       middlewarePayloads.error[MiddlewareSymbols.ARGS_VALIDATION_ERROR].code,
+      req.body.operationName,
       undefined,
       fieldErrors
     )
