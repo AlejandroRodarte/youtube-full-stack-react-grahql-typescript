@@ -21,6 +21,11 @@ const userPayloads = {
       httpCode: 200,
       code: 'USER_LOGGED_OUT',
       message: 'The user has logged out successfully.'
+    },
+    [UsersSymbols.RESET_PASSWORD_EMAIL_SENT]: {
+      httpCode: 200,
+      code: 'RESET_PASSWORD_EMAIL_SENT',
+      message: 'The reset password email has been sent.'
     }
   },
   error: {
@@ -38,6 +43,11 @@ const userPayloads = {
       httpCode: 400,
       code: 'MUTATION_LOGOUT_ERROR',
       message: 'An error has occured while logging out the user.'
+    },
+    [UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR]: {
+      httpCode: 400,
+      code: 'MUTATION_FORGOT_PASSWORD_ERROR',
+      message: 'An error has occured while sending the recovery password email.'
     },
     [UsersSymbols.USERNAME_ALREADY_EXISTS]: {
       httpCode: 400,

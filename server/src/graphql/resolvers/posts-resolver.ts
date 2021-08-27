@@ -1,7 +1,8 @@
-import { Resolver, Query, Ctx, Arg, Int, Mutation, UseMiddleware } from 'type-graphql'
+import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware } from 'type-graphql'
 import { wrap } from '@mikro-orm/core'
 
-import { AddPostInput, EditPostInput } from '../args/inputs/mutation/posts'
+import { AddPostInput, EditPostInput, DeletePostInput } from '../args/inputs/mutation/posts'
+import { PostInput } from '../args/inputs/query/posts'
 import PostsClasses from '../objects/responses/posts'
 import { ApplicationContext } from '../../types/graphql'
 import { Post } from '../../db/orm/entities/post'
@@ -10,6 +11,8 @@ import { AddPostArgsSchema, EditPostArgsSchema, DeletePostArgsSchema } from '../
 import { PostArgsSchema } from '../args/schemas/query/posts'
 import * as PostsSymbols from '../constants/responses/symbols/posts'
 import postsPayloads from '../constants/responses/payloads/posts'
+import { FieldError } from '../objects/responses/error'
+
 @Resolver()
 export default class PostsResolver {
   @Query(() => PostsClasses.responses.GetPostsResponse)
@@ -51,13 +54,13 @@ export default class PostsResolver {
   @Query(() => PostsClasses.responses.GetPostResponse)
   @UseMiddleware(ValidateArgs(PostArgsSchema))
   async post (
-    @Arg('id', () => Int) id: number,
+    @Arg('data', () => PostInput) data: PostInput,
     @Ctx() { db, req }: ApplicationContext
   ) {
     try {
       const post = await db.findOne(
         Post,
-        { id }
+        { id: data.id }
       )
 
       if (!post) {
@@ -67,7 +70,16 @@ export default class PostsResolver {
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message,
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
-            req.body.operationName
+            req.body.operationName,
+            undefined,
+            [
+              new FieldError(
+                'data.id',
+                'db.notfound',
+                'Post ID',
+                'There is no post with that ID.'
+              )
+            ]
           )
       }
 
@@ -140,14 +152,13 @@ export default class PostsResolver {
   @Mutation(() => PostsClasses.responses.EditPostResponse)
   @UseMiddleware(ValidateArgs(EditPostArgsSchema))
   async editPost (
-    @Arg('id', () => Int) id: number,
     @Arg('data', () => EditPostInput) data: EditPostInput,
     @Ctx() { db, req }: ApplicationContext
   ) {
     try {
       const post = await db.findOne(
         Post,
-        { id }
+        { id: data.id }
       )
 
       if (!post) {
@@ -157,11 +168,20 @@ export default class PostsResolver {
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message,
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
-            req.body.operationName
+            req.body.operationName,
+            undefined,
+            [
+              new FieldError(
+                'data.id',
+                'db.notfound',
+                'Post ID',
+                'There is no post with that ID.'
+              )
+            ]
           )
       }
 
-      const updatedPost = wrap(post).assign({ ...data })
+      const updatedPost = wrap(post).assign({ ...data.fields })
       await db.persistAndFlush(updatedPost)
 
       const response =
@@ -193,13 +213,13 @@ export default class PostsResolver {
   @Mutation(() => PostsClasses.responses.DeletePostResponse)
   @UseMiddleware(ValidateArgs(DeletePostArgsSchema))
   async deletePost (
-    @Arg('id', () => Int) id: number,
+    @Arg('data', () => DeletePostInput) data: DeletePostInput,
     @Ctx() { db, req }: ApplicationContext
   ) {
     try {
       const post = await db.findOne(
         Post,
-        { id }
+        { id: data.id }
       )
 
       if (!post) {
@@ -209,13 +229,22 @@ export default class PostsResolver {
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].httpCode,
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].message,
             postsPayloads.error[PostsSymbols.POST_NOT_FOUND].code,
-            req.body.operationName
+            req.body.operationName,
+            undefined,
+            [
+              new FieldError(
+                'data.id',
+                'db.notfound',
+                'Post ID',
+                'There is no post with that ID.'
+              )
+            ]
           )
       }
 
       await db.nativeDelete(
         Post,
-        { id }
+        { id: data.id }
       )
 
       const response =
@@ -228,7 +257,7 @@ export default class PostsResolver {
             req.body.operationName,
             new PostsClasses
               .data
-              .DeletePostData(id)
+              .DeletePostData(data.id)
           )
 
       return response

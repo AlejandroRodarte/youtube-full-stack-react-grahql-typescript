@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { FormikHelpers } from 'formik'
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import { RegisterArgsErrors } from '../types/graphql/args/users/register'
-import { RegisterUserInput, useRegisterMutation, RegisterMutationVariables } from '../generated/graphql'
+import { RegisterInput, useRegisterMutation, RegisterMutationVariables } from '../generated/graphql'
 import mapFieldErrors from '../util/common/functions/map-field-errors'
 import unflatten from '../util/common/functions/unflatten-object'
 import { useRouter } from 'next/router'
@@ -48,8 +48,8 @@ const Register: React.FC<RegisterProps> = () => {
     form: RegisterForm,
     { setErrors }: FormikHelpers<RegisterForm>
   ) => {
-    const registerUserInput: RegisterUserInput = form
-    const registerArgsInput: RegisterMutationVariables = { registerData: registerUserInput }
+    const registerInput: RegisterInput = form
+    const registerArgsInput: RegisterMutationVariables = { registerData: registerInput }
 
     const response = await register(registerArgsInput)
 

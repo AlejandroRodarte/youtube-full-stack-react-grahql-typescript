@@ -1,4 +1,4 @@
-mutation Login($loginData: LoginUserInput!) {
+mutation Login($loginData: LoginInput!) {
   login(data: $loginData) {
     status
     message

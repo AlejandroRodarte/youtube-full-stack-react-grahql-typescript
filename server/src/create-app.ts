@@ -30,7 +30,7 @@ const createApp = async (): Promise<CreateAppTuple> => {
     cors: false
   })
 
-  if (process.env.HTTPS_SERVER === 'true') return mountLocalHttpsServer(app)
+  if (process.env.LOCAL_HTTPS_SERVER === 'true') return mountLocalHttpsServer(app)
 
   return [
     app,

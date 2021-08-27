@@ -3,6 +3,7 @@ import { SqlEntityManager, PostgreSqlDriver } from '@mikro-orm/postgresql'
 import { ApolloServer, ExpressContext } from 'apollo-server-express'
 import { Request, Response } from 'express'
 import { GraphQLSchema } from 'graphql'
+import { Redis } from 'ioredis'
 
 export type CreateSchemaTuple = [
   GraphQLSchema | undefined,
@@ -20,4 +21,5 @@ export type ApplicationContext = {
   db:
     SqlEntityManager<PostgreSqlDriver> &
     EntityManager<IDatabaseDriver<Connection>>
+  redis: Redis
 }

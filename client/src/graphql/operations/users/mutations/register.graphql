@@ -1,4 +1,4 @@
-mutation Register($registerData: RegisterUserInput!) {
+mutation Register($registerData: RegisterInput!) {
   register(data: $registerData) {
     status
     message

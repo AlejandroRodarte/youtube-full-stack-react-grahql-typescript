@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { FormikHelpers } from 'formik'
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import { LoginArgsErrors } from '../types/graphql/args/users/login'
-import { LoginUserInput, useLoginMutation, LoginMutationVariables } from '../generated/graphql'
+import { LoginInput, useLoginMutation, LoginMutationVariables } from '../generated/graphql'
 import mapFieldErrors from '../util/common/functions/map-field-errors'
 import unflatten from '../util/common/functions/unflatten-object'
 import { useRouter } from 'next/router'
@@ -15,16 +15,16 @@ interface LoginProps {}
 
 const Login: React.FC<LoginProps> = () => {
   const loginFormInitialValues: LoginForm = {
-    username: '',
+    credential: '',
     password: ''
   }
 
   const loginFormFieldsConfig: FormFieldsConfig<LoginForm> = {
-    username: {
-      name: 'username',
+    credential: {
+      name: 'credential',
       type: 'text',
-      placeholder: 'e.g. gyrfalke',
-      label: 'Username'
+      placeholder: 'e.g. gyrfalke or gyrfalke@gmail.com',
+      label: 'Username/Email'
     },
     password: {
       name: 'password',
@@ -41,8 +41,8 @@ const Login: React.FC<LoginProps> = () => {
     form: LoginForm,
     { setErrors }: FormikHelpers<LoginForm>
   ) => {
-    const loginUserInput: LoginUserInput = form
-    const loginArgsInput: LoginMutationVariables = { loginData: loginUserInput }
+    const loginInput: LoginInput = form
+    const loginArgsInput: LoginMutationVariables = { loginData: loginInput }
 
     const response = await login(loginArgsInput)
 

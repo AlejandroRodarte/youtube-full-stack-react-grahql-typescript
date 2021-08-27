@@ -1,6 +1,6 @@
 import { ObjectType } from 'type-graphql'
 
-import { LoginUserData, RegisterUserData, MeUserData, LogoutUserData } from './data'
+import { LoginUserData, RegisterUserData, MeUserData, LogoutUserData, ForgotPasswordData } from './data'
 import { FieldError } from '../error/field-error'
 import ApplicationResponse from '../../../../generator/graphql/responses/application-response'
 
@@ -25,5 +25,11 @@ export class MeUserResponse extends ApplicationResponse(
 @ObjectType()
 export class LogoutUserResponse extends ApplicationResponse(
   LogoutUserData,
+  FieldError
+) {}
+
+@ObjectType()
+export class ForgotPasswordResponse extends ApplicationResponse(
+  ForgotPasswordData,
   FieldError
 ) {}

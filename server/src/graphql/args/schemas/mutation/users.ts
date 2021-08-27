@@ -6,7 +6,11 @@ const usernameSchema =
     .required()
     .min(3)
     .max(50)
+    .regex(/^[^@]+$/)
     .label('Username')
+    .messages({
+      'string.pattern.base': '"Username" must not have "@" characters on it.'
+    })
 
 const emailSchema =
   Joi
@@ -22,6 +26,14 @@ const passwordSchema =
     .min(7)
     .max(255)
     .label('Password')
+
+const credentialSchema =
+  Joi
+    .alternatives()
+    .try(
+      usernameSchema,
+      emailSchema
+    )
 
 /**
  * register() mutation on users-resolver.ts
@@ -49,7 +61,7 @@ const LoginDataSchema =
   Joi
     .object()
     .keys({
-      username: usernameSchema,
+      credential: credentialSchema,
       password: passwordSchema
     })
 
@@ -58,7 +70,22 @@ const LoginArgsSchema =
     .object()
     .keys({ data: LoginDataSchema })
 
+/**
+ * forgotPassword() mutation on users-resolver.ts
+ */
+
+const ForgotPasswordDataSchema =
+  Joi
+    .object()
+    .keys({ email: emailSchema })
+
+const ForgotPasswordArgsSchema =
+  Joi
+    .object()
+    .keys({ data: ForgotPasswordDataSchema })
+
 export {
   RegisterArgsSchema,
-  LoginArgsSchema
+  LoginArgsSchema,
+  ForgotPasswordArgsSchema
 }

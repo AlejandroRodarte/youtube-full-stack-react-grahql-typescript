@@ -1,28 +1,32 @@
 import { Resolver, Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql'
 import argon2 from 'argon2'
+import { UniqueConstraintViolationException } from '@mikro-orm/core'
+import { v4 } from 'uuid'
 
-import { RegisterUserInput, LoginUserInput } from '../args/inputs/mutation/users'
+import { RegisterInput, LoginInput, ForgotPasswordInput } from '../args/inputs/mutation/users'
 import UsersClasses from '../objects/responses/users'
 import { ApplicationContext } from '../../types/graphql'
 import { User } from '../../db/orm/entities'
-import { RegisterArgsSchema, LoginArgsSchema } from '../args/schemas/mutation/users'
+import { RegisterArgsSchema, LoginArgsSchema, ForgotPasswordArgsSchema } from '../args/schemas/mutation/users'
 import ValidateArgs from '../../generator/graphql/middleware/validate-args'
-import Auth from '../middleware/auth'
+import { Auth, Anonymous } from '../middleware'
 import * as UsersSymbols from '../constants/responses/symbols/users'
 import usersPayloads from '../constants/responses/payloads/users'
 import { FieldError } from '../objects/responses/error'
-import * as ExpressSessionConstants from '../../redis/constants'
+import * as ExpressSessionConstants from '../../redis/constants/session'
 import * as SharedSymbols from '../constants/responses/symbols/shared'
 import sharedPayloads from '../constants/responses/payloads/shared'
 import constraintPayloads from '../constants/responses/payloads/constraints'
-import { UniqueConstraintViolationException } from '@mikro-orm/core'
+import { sendHtmlMail } from '../../util/functions/mail'
+import * as RedisPrefixSymbols from '../../redis/constants/prefixes/symbols'
+import redisPrefixValues from '../../redis/constants/prefixes/values'
 
 @Resolver()
 export default class UserResolver {
   @Mutation(() => UsersClasses.responses.RegisterUserResponse)
-  @UseMiddleware(ValidateArgs(RegisterArgsSchema))
+  @UseMiddleware(Anonymous, ValidateArgs(RegisterArgsSchema))
   async register (
-    @Arg('data', () => RegisterUserInput) data: RegisterUserInput,
+    @Arg('data', () => RegisterInput) data: RegisterInput,
     @Ctx() { db, req }: ApplicationContext
   ) {
     try {
@@ -83,15 +87,22 @@ export default class UserResolver {
   }
 
   @Mutation(() => UsersClasses.responses.LoginUserResponse)
-  @UseMiddleware(ValidateArgs(LoginArgsSchema))
+  @UseMiddleware(Anonymous, ValidateArgs(LoginArgsSchema))
   async login (
-    @Arg('data', () => LoginUserInput) data: LoginUserInput,
+    @Arg('data', () => LoginInput) data: LoginInput,
     @Ctx() { db, req }: ApplicationContext
   ) {
+    const key = data.credential.includes('@') ? 'email' : 'username'
+
+    const labelMap = {
+      email: 'Email',
+      username: 'Username'
+    }
+
     try {
       const user = await db.findOne(
         User,
-        { username: data.username }
+        { [key]: data.credential }
       )
 
       if (!user) {
@@ -103,7 +114,7 @@ export default class UserResolver {
             sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].code,
             req.body.operationName,
             undefined,
-            [new FieldError('data.username', 'db.notexists', 'Username', 'That username does not exist.')]
+            [new FieldError('data.credential', 'db.notexists', labelMap[key], `That ${key} does not exist.`)]
           )
       }
 
@@ -208,5 +219,72 @@ export default class UserResolver {
         usersPayloads.error[UsersSymbols.MUTATION_LOGOUT_ERROR].code,
         req.body.operationName
       )
+  }
+
+  @Mutation(() => UsersClasses.responses.ForgotPasswordResponse)
+  @UseMiddleware(Anonymous, ValidateArgs(ForgotPasswordArgsSchema))
+  async forgotPassword (
+    @Arg('data', () => ForgotPasswordInput) data: ForgotPasswordInput,
+    @Ctx() { db, req, redis }: ApplicationContext
+  ) {
+    try {
+      const user = await db.findOne(
+        User,
+        { email: data.email }
+      )
+
+      if (!user) {
+        return new UsersClasses
+          .responses
+          .ForgotPasswordResponse(
+            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].httpCode,
+            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].message,
+            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].code,
+            req.body.operationName,
+            undefined,
+            [new FieldError('data.email', 'db.notexists', 'Email', 'There is no registered account with this email.')]
+          )
+      }
+
+      const token = v4()
+
+      await redis.set(
+        `${redisPrefixValues[RedisPrefixSymbols.FORGOT_PASSWORD_PREFIX]}${token}`,
+        user.id,
+        'ex',
+        1000 * 60 * 60 * 24 * parseInt(process.env.FORGOT_PASSWORD_TOKEN_EXPIRATION_DAYS || '3')
+      )
+
+      const wasEmailSent = await sendHtmlMail(
+        user.email,
+        `[${user.username}] Reset your password`,
+        `<a href=${process.env.CORS_ORIGIN}/change-password/${token}>Click here to reset your password</a>`
+      )
+
+      if (wasEmailSent) {
+        return new UsersClasses
+          .responses
+          .ForgotPasswordResponse(
+            usersPayloads.success[UsersSymbols.RESET_PASSWORD_EMAIL_SENT].httpCode,
+            usersPayloads.success[UsersSymbols.RESET_PASSWORD_EMAIL_SENT].message,
+            usersPayloads.success[UsersSymbols.RESET_PASSWORD_EMAIL_SENT].code,
+            req.body.operationName,
+            new UsersClasses
+              .data
+              .ForgotPasswordData(wasEmailSent)
+          )
+      }
+
+      throw new Error('Email was not sent.')
+    } catch (e) {
+      return new UsersClasses
+        .responses
+        .ForgotPasswordResponse(
+          usersPayloads.error[UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].httpCode,
+          usersPayloads.error[UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].message,
+          usersPayloads.error[UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].code,
+          req.body.operationName
+        )
+    }
   }
 }

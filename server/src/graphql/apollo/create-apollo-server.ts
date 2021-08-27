@@ -6,6 +6,7 @@ import { printSchema } from 'graphql'
 import createSchema from '../schema/create-schema'
 import { MikroORMConnection } from '../../db/orm/mikro-orm-connection'
 import { CreateApolloServerTuple, ApplicationContext } from '../../types/graphql'
+import { redisClient } from '../../redis'
 
 const createApolloServer = async (): Promise<CreateApolloServerTuple> => {
   const [
@@ -43,7 +44,11 @@ const createApolloServer = async (): Promise<CreateApolloServerTuple> => {
     )
   }
 
-  const context = { db: orm.em }
+  const context = {
+    db: orm.em,
+    redis: redisClient
+  }
+
   const apolloServer = new ApolloServer({
     schema,
     context: ({

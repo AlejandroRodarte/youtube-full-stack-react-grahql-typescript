@@ -1,4 +1,8 @@
-import { InputType, Field } from 'type-graphql'
+import { InputType, Field, Int } from 'type-graphql'
+
+/**
+ * input for addPost() mutation
+ */
 
 @InputType()
 class AddPostInput {
@@ -6,8 +10,12 @@ class AddPostInput {
   title: string
 }
 
+/**
+ * input for editPost() mutation
+ */
+
 @InputType()
-class EditPostInput {
+class OptionalPostFieldsInput {
   @Field(
     () => String,
     { nullable: true }
@@ -15,7 +23,26 @@ class EditPostInput {
   title?: string
 }
 
+@InputType()
+class EditPostInput {
+  @Field(() => Int)
+  id: number
+
+  @Field(() => OptionalPostFieldsInput)
+  fields: OptionalPostFieldsInput
+}
+
+/**
+ * input for deletePost() mutation
+ */
+@InputType()
+class DeletePostInput {
+  @Field(() => Int)
+  id: number
+}
+
 export {
   AddPostInput,
-  EditPostInput
+  EditPostInput,
+  DeletePostInput
 }

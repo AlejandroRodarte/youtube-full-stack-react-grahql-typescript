@@ -34,3 +34,13 @@ export class LogoutUserData {
     this.wasSessionDestroyed = wasSessionDestroyed
   }
 }
+
+@ObjectType()
+export class ForgotPasswordData {
+  @Field(() => Boolean)
+  wasEmailSent: boolean
+
+  constructor (wasEmailSent: boolean) {
+    this.wasEmailSent = wasEmailSent
+  }
+}

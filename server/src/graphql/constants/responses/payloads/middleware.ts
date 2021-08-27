@@ -16,6 +16,11 @@ const middlewarePayloads = {
       httpCode: 400,
       code: 'MIDDLEWARE_AUTH_ERROR',
       message: 'There was an error running the authentication middleware.'
+    },
+    [MiddlewareSymbols.MUST_BE_ANONYMOUS]: {
+      httpCode: 400,
+      code: 'MUST_BE_ANONYMOUS',
+      message: 'You need to be logged out (or be an anonymous user) to perform this action.'
     }
   }
 }

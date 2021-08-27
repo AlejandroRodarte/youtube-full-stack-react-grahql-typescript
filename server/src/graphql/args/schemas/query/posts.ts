@@ -1,21 +1,28 @@
 import Joi from 'joi'
 
-/**
- * post() query on posts-resolver.ts
- */
-
-const PostIdSchema =
+const postIdSchema =
   Joi
     .number()
     .required()
     .min(1)
     .label('Post ID')
 
+/**
+ * post() query on posts-resolver.ts
+ */
+
+const PostDataSchema =
+  Joi
+    .object()
+    .keys({
+      id: postIdSchema
+    })
+
 const PostArgsSchema =
   Joi
     .object()
     .keys({
-      id: PostIdSchema
+      data: PostDataSchema
     })
 
 export {

@@ -1,20 +1,43 @@
 import { InputType, Field } from 'type-graphql'
 
+/**
+ * input for login() mutation
+ */
 @InputType()
-class LoginUserInput {
+class LoginInput {
   @Field(() => String)
-  username: string
+  credential: string
 
   @Field(() => String)
   password: string
 }
+
+/**
+ * input for register() mutation
+ */
 @InputType()
-class RegisterUserInput extends LoginUserInput {
+class RegisterInput {
+  @Field(() => String)
+  username: string
+
+  @Field(() => String)
+  email: string
+
+  @Field(() => String)
+  password: string
+}
+
+/**
+ * input for forgotPassword() mutation
+ */
+@InputType()
+class ForgotPasswordInput {
   @Field(() => String)
   email: string
 }
 
 export {
-  LoginUserInput,
-  RegisterUserInput
+  LoginInput,
+  RegisterInput,
+  ForgotPasswordInput
 }

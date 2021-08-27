@@ -1,6 +1,6 @@
 type Query {
   posts: GetPostsResponse!
-  post(id: Int!): GetPostResponse!
+  post(data: PostInput!): GetPostResponse!
   me: MeUserResponse!
 }
 
@@ -44,6 +44,10 @@ type GetPostData {
   post: Post!
 }
 
+input PostInput {
+  id: Int!
+}
+
 type MeUserResponse {
   status: Int!
   message: String!
@@ -67,11 +71,12 @@ type User {
 
 type Mutation {
   addPost(data: AddPostInput!): AddPostResponse!
-  editPost(data: EditPostInput!, id: Int!): EditPostResponse!
-  deletePost(id: Int!): DeletePostResponse!
-  register(data: RegisterUserInput!): RegisterUserResponse!
-  login(data: LoginUserInput!): LoginUserResponse!
+  editPost(data: EditPostInput!): EditPostResponse!
+  deletePost(data: DeletePostInput!): DeletePostResponse!
+  register(data: RegisterInput!): RegisterUserResponse!
+  login(data: LoginInput!): LoginUserResponse!
   logout: LogoutUserResponse!
+  forgotPassword(data: ForgotPasswordInput!): ForgotPasswordResponse!
 }
 
 type AddPostResponse {
@@ -105,6 +110,11 @@ type EditPostData {
 }
 
 input EditPostInput {
+  id: Int!
+  fields: OptionalPostFieldsInput!
+}
+
+input OptionalPostFieldsInput {
   title: String
 }
 
@@ -121,6 +131,10 @@ type DeletePostData {
   id: Int!
 }
 
+input DeletePostInput {
+  id: Int!
+}
+
 type RegisterUserResponse {
   status: Int!
   message: String!
@@ -134,10 +148,10 @@ type RegisterUserData {
   newUser: User!
 }
 
-input RegisterUserInput {
+input RegisterInput {
   username: String!
-  password: String!
   email: String!
+  password: String!
 }
 
 type LoginUserResponse {
@@ -153,8 +167,8 @@ type LoginUserData {
   user: User!
 }
 
-input LoginUserInput {
-  username: String!
+input LoginInput {
+  credential: String!
   password: String!
 }
 
@@ -169,4 +183,21 @@ type LogoutUserResponse {
 
 type LogoutUserData {
   wasSessionDestroyed: Boolean!
+}
+
+type ForgotPasswordResponse {
+  status: Int!
+  message: String!
+  code: String!
+  _kind: String
+  data: ForgotPasswordData
+  errors: [FieldError!]
+}
+
+type ForgotPasswordData {
+  wasEmailSent: Boolean!
+}
+
+input ForgotPasswordInput {
+  email: String!
 }

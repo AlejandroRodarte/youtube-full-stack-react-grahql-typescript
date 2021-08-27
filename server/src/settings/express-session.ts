@@ -1,7 +1,7 @@
 import { CookieOptions, SessionOptions } from 'express-session'
 
 import sessionStore from '../redis'
-import * as ExpressSessionConstants from '../redis/constants'
+import * as ExpressSessionConstants from '../redis/constants/session'
 
 const cookieOptions: CookieOptions = {
   maxAge: 100 * 60 * 60 * 24 * 365 * +(process.env.REDIS_COOKIE_MAX_YEARS || '10'),
@@ -10,7 +10,7 @@ const cookieOptions: CookieOptions = {
     process.env.INCLUDE_APOLLO_STUDIO === 'true'
       ? 'none'
       : 'lax', // protection against CSRF
-  secure: process.env.HTTPS_SERVER === 'true'
+  secure: process.env.LOCAL_HTTPS_SERVER === 'true'
 }
 
 const sessionOptions: SessionOptions = {

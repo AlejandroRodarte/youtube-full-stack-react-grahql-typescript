@@ -6,5 +6,6 @@ export {
 
 export {
   RegisterArgsSchema,
-  LoginArgsSchema
+  LoginArgsSchema,
+  ForgotPasswordArgsSchema
 } from './users'

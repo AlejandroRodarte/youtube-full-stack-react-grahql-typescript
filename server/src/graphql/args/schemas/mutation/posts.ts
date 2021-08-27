@@ -35,24 +35,35 @@ const AddPostArgsSchema =
 const EditPostDataSchema =
   Joi
     .object()
-    .keys({ title: titleSchema.optional() })
+    .keys({
+      id: postIdSchema,
+      fields: Joi
+        .object()
+        .keys({
+          title: titleSchema.optional()
+        })
+    })
 
 const EditPostArgsSchema =
   Joi
     .object()
-    .keys({
-      id: postIdSchema,
-      data: EditPostDataSchema
-    })
+    .keys({ data: EditPostDataSchema })
 
 /**
  * deletePost() mutation args on posts-resolver.ts
  */
 
+const DeletePostDataSchema =
+  Joi
+    .object()
+    .keys({
+      id: postIdSchema
+    })
+
 const DeletePostArgsSchema =
   Joi
     .object()
-    .keys({ id: postIdSchema })
+    .keys({ data: DeletePostDataSchema })
 
 export {
   AddPostArgsSchema,
