@@ -27,6 +27,13 @@ export class User {
   })
   username!: string
 
+  @Field()
+  @Property({
+    type: 'text',
+    unique: true
+  })
+  email!: string
+
   // note how we do not use @Field here
   // we do not want to expose the password on our GraphQL definition
   @Property({ type: 'text' })

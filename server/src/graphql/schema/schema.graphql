@@ -62,6 +62,7 @@ type User {
   createdAt: String!
   updatedAt: String!
   username: String!
+  email: String!
 }
 
 type Mutation {
@@ -136,6 +137,7 @@ type RegisterUserData {
 input RegisterUserInput {
   username: String!
   password: String!
+  email: String!
 }
 
 type LoginUserResponse {

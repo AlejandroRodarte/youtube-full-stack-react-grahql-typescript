@@ -1,6 +1,6 @@
 import * as MiddlewareSymbols from '../symbols/middleware'
 
-const codesAndMessages = {
+const middlewarePayloads = {
   error: {
     [MiddlewareSymbols.ARGS_VALIDATION_ERROR]: {
       httpCode: 400,
@@ -11,8 +11,13 @@ const codesAndMessages = {
       httpCode: 401,
       code: 'UNAUTHORIZED',
       message: 'You are unauthorized to perform this action.'
+    },
+    [MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR]: {
+      httpCode: 400,
+      code: 'MIDDLEWARE_AUTH_ERROR',
+      message: 'There was an error running the authentication middleware.'
     }
   }
 }
 
-export default codesAndMessages
+export default middlewarePayloads

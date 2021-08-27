@@ -1,5 +1,19 @@
 import Joi from 'joi'
 
+const titleSchema =
+  Joi
+    .string()
+    .min(5)
+    .max(50)
+    .label('Post title')
+
+const postIdSchema =
+  Joi
+    .number()
+    .required()
+    .min(1)
+    .label('Post ID')
+
 /**
  * addPost() mutation args on posts-resolver.ts
  */
@@ -7,21 +21,12 @@ import Joi from 'joi'
 const AddPostDataSchema =
   Joi
     .object()
-    .keys({
-      title: Joi
-        .string()
-        .required()
-        .min(5)
-        .max(50)
-        .label('Post title')
-    })
+    .keys({ title: titleSchema.required() })
 
 const AddPostArgsSchema =
   Joi
     .object()
-    .keys({
-      data: AddPostDataSchema
-    })
+    .keys({ data: AddPostDataSchema })
 
 /**
  * editPost() mutation args on posts-resolver.ts
@@ -30,27 +35,13 @@ const AddPostArgsSchema =
 const EditPostDataSchema =
   Joi
     .object()
-    .keys({
-      title: Joi
-        .string()
-        .optional()
-        .min(5)
-        .max(50)
-        .label('Post title')
-    })
-
-const EditPostIdSchema =
-  Joi
-    .number()
-    .required()
-    .min(1)
-    .label('Post ID')
+    .keys({ title: titleSchema.optional() })
 
 const EditPostArgsSchema =
   Joi
     .object()
     .keys({
-      id: EditPostIdSchema,
+      id: postIdSchema,
       data: EditPostDataSchema
     })
 
@@ -58,14 +49,10 @@ const EditPostArgsSchema =
  * deletePost() mutation args on posts-resolver.ts
  */
 
-const DeletePostIdSchema = EditPostIdSchema
-
 const DeletePostArgsSchema =
   Joi
     .object()
-    .keys({
-      id: DeletePostIdSchema
-    })
+    .keys({ id: postIdSchema })
 
 export {
   AddPostArgsSchema,

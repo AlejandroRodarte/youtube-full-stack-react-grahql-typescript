@@ -8,6 +8,7 @@ mutation Login($loginData: LoginUserInput!) {
       user {
         id
         username
+        email
       }
     }
     errors {

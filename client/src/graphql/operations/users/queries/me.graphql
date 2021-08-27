@@ -8,6 +8,7 @@ query Me {
       user {
         id
         username
+        email
       }
     }
     errors {

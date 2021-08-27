@@ -1,6 +1,6 @@
 import * as PostsSymbols from '../symbols/posts'
 
-const codesAndMessages = {
+const postPayloads = {
   success: {
     [PostsSymbols.POSTS_FETCHED]: {
       httpCode: 200,
@@ -62,4 +62,4 @@ const codesAndMessages = {
   }
 }
 
-export default codesAndMessages
+export default postPayloads

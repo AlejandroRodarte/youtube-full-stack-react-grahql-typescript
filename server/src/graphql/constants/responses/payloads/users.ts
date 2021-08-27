@@ -1,6 +1,6 @@
 import * as UsersSymbols from '../symbols/users'
 
-const codesAndMessages = {
+const userPayloads = {
   success: {
     [UsersSymbols.USER_REGISTERED]: {
       httpCode: 201,
@@ -34,11 +34,6 @@ const codesAndMessages = {
       code: 'MUTATION_LOGIN_ERROR',
       message: 'An error has occured while logging in the user.'
     },
-    [UsersSymbols.MUTATION_ME_ERROR]: {
-      httpCode: 400,
-      code: 'MUTATION_ME_ERROR',
-      message: 'An error has occured while fetching your user information.'
-    },
     [UsersSymbols.MUTATION_LOGOUT_ERROR]: {
       httpCode: 400,
       code: 'MUTATION_LOGOUT_ERROR',
@@ -49,11 +44,6 @@ const codesAndMessages = {
       code: 'USERNAME_ALREADY_EXISTS',
       message: 'A user with that username already exists in the database.'
     },
-    [UsersSymbols.USER_NOT_FOUND]: {
-      httpCode: 404,
-      code: 'USER_NOT_FOUND',
-      message: 'The specific user has not been found.'
-    },
     [UsersSymbols.INCORRECT_PASSWORD]: {
       httpCode: 400,
       code: 'INCORRECT_PASSWORD',
@@ -62,4 +52,4 @@ const codesAndMessages = {
   }
 }
 
-export default codesAndMessages
+export default userPayloads

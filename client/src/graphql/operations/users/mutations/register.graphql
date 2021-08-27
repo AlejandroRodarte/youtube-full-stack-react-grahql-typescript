@@ -8,6 +8,7 @@ mutation Register($registerData: RegisterUserInput!) {
       newUser {
         id
         username
+        email
       }
     }
     errors {

@@ -6,25 +6,47 @@ import { RegisterUserInput, useRegisterMutation, RegisterMutationVariables } fro
 import mapFieldErrors from '../util/common/functions/map-field-errors'
 import unflatten from '../util/common/functions/unflatten-object'
 import { useRouter } from 'next/router'
-import CredentialsForm from '../components/ui/forms/auth/CredentialsForm'
-import { CredentialsForm as CredentialsFormInterface } from './../types/forms'
 import { withUrqlClient } from 'next-urql'
 import nextUrqlClientConfig from '../graphql/urql/client-config'
+import { RegisterForm, FormFieldsConfig } from '../types/forms'
+import SimpleForm from '../components/ui/forms/SimpleForm'
 
 interface RegisterProps {}
 
 const Register: React.FC<RegisterProps> = () => {
-  const credentialsFormInitialValues: CredentialsFormInterface = {
+  const registerFormInitialValues: RegisterForm = {
     username: '',
+    email: '',
     password: ''
+  }
+
+  const registerFormFieldsConfig: FormFieldsConfig<RegisterForm> = {
+    username: {
+      name: 'username',
+      type: 'text',
+      placeholder: 'e.g. gyrfalke',
+      label: 'Username'
+    },
+    email: {
+      name: 'email',
+      type: 'email',
+      placeholder: 'e.g. gyrfalke@gmail.com',
+      label: 'Email'
+    },
+    password: {
+      name: 'password',
+      type: 'password',
+      placeholder: 'secret',
+      label: 'Password'
+    }
   }
 
   const router = useRouter()
   const [, register] = useRegisterMutation()
 
   const onSubmit = useCallback(async (
-    form: CredentialsFormInterface,
-    { setErrors }: FormikHelpers<CredentialsFormInterface>
+    form: RegisterForm,
+    { setErrors }: FormikHelpers<RegisterForm>
   ) => {
     const registerUserInput: RegisterUserInput = form
     const registerArgsInput: RegisterMutationVariables = { registerData: registerUserInput }
@@ -45,8 +67,9 @@ const Register: React.FC<RegisterProps> = () => {
 
   return (
     <Wrapper>
-      <CredentialsForm
-        initialValues={ credentialsFormInitialValues }
+      <SimpleForm
+        initialValues={ registerFormInitialValues }
+        fieldsConfig={ registerFormFieldsConfig }
         onSubmit={ onSubmit }
         submitButtonText="Register"
       />

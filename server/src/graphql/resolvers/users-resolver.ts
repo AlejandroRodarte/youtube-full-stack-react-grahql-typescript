@@ -5,16 +5,17 @@ import { RegisterUserInput, LoginUserInput } from '../args/inputs/mutation/users
 import UsersClasses from '../objects/responses/users'
 import { ApplicationContext } from '../../types/graphql'
 import { User } from '../../db/orm/entities'
-import { DriverException } from '@mikro-orm/core'
 import { RegisterArgsSchema, LoginArgsSchema } from '../args/schemas/mutation/users'
 import ValidateArgs from '../../generator/graphql/middleware/validate-args'
 import Auth from '../middleware/auth'
 import * as UsersSymbols from '../constants/responses/symbols/users'
 import usersPayloads from '../constants/responses/payloads/users'
-import * as DriverExceptionSymbols from '../../db/orm/constants/driver-exception/symbols'
-import driverExceptionCodes from '../../db/orm/constants/driver-exception/codes'
 import { FieldError } from '../objects/responses/error'
 import * as ExpressSessionConstants from '../../redis/constants'
+import * as SharedSymbols from '../constants/responses/symbols/shared'
+import sharedPayloads from '../constants/responses/payloads/shared'
+import constraintPayloads from '../constants/responses/payloads/constraints'
+import { UniqueConstraintViolationException } from '@mikro-orm/core'
 
 @Resolver()
 export default class UserResolver {
@@ -28,7 +29,7 @@ export default class UserResolver {
       const hashedPassword = await argon2.hash(data.password)
 
       const user = db.create(User, {
-        username: data.username,
+        ...data,
         password: hashedPassword
       })
 
@@ -50,19 +51,23 @@ export default class UserResolver {
 
       return response
     } catch (e) {
-      if (
-        e instanceof DriverException &&
-        e.code === driverExceptionCodes[DriverExceptionSymbols.UNIQUE_CONSTRAINT_VIOLATION_EXCEPTION]
-      ) {
+      if (e instanceof UniqueConstraintViolationException) {
         return new UsersClasses
           .responses
           .RegisterUserResponse(
-            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].httpCode,
-            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].message,
-            usersPayloads.error[UsersSymbols.USERNAME_ALREADY_EXISTS].code,
+            constraintPayloads[e.constraint].httpCode,
+            constraintPayloads[e.constraint].message,
+            constraintPayloads[e.constraint].code,
             req.body.operationName,
             undefined,
-            [new FieldError('data.username', 'db.nonunique', 'Username', 'That username is already taken')]
+            [
+              new FieldError(
+                constraintPayloads[e.constraint].fieldError.path,
+                constraintPayloads[e.constraint].fieldError.type,
+                constraintPayloads[e.constraint].fieldError.label,
+                constraintPayloads[e.constraint].fieldError.message
+              )
+            ]
           )
       }
 
@@ -93,9 +98,9 @@ export default class UserResolver {
         return new UsersClasses
           .responses
           .LoginUserResponse(
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].httpCode,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code,
+            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].httpCode,
+            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].message,
+            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].code,
             req.body.operationName,
             undefined,
             [new FieldError('data.username', 'db.notexists', 'Username', 'That username does not exist.')]
@@ -148,43 +153,21 @@ export default class UserResolver {
   @Query(() => UsersClasses.responses.MeUserResponse)
   @UseMiddleware(Auth)
   async me (
-    @Ctx() { db, req }: ApplicationContext
+    @Ctx() { req }: ApplicationContext
   ) {
-    try {
-      const user = await db.findOne(User, { id: req.session.userId })
+    const user = req.user!
 
-      if (!user) {
-        return new UsersClasses
-          .responses
-          .MeUserResponse(
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].httpCode,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].message,
-            usersPayloads.error[UsersSymbols.USER_NOT_FOUND].code,
-            req.body.operationName
-          )
-      }
-
-      return new UsersClasses
-        .responses
-        .MeUserResponse(
-          usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].httpCode,
-          usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].message,
-          usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].code,
-          req.body.operationName,
-          new UsersClasses
-            .data
-            .MeUserData(user)
-        )
-    } catch (e) {
-      return new UsersClasses
-        .responses
-        .RegisterUserResponse(
-          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].httpCode,
-          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].message,
-          usersPayloads.error[UsersSymbols.MUTATION_ME_ERROR].code,
-          req.body.operationName
-        )
-    }
+    return new UsersClasses
+      .responses
+      .MeUserResponse(
+        usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].httpCode,
+        usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].message,
+        usersPayloads.success[UsersSymbols.OWN_USER_FETCHED].code,
+        req.body.operationName,
+        new UsersClasses
+          .data
+          .MeUserData(user)
+      )
   }
 
   @Mutation(() => UsersClasses.responses.LogoutUserResponse)
