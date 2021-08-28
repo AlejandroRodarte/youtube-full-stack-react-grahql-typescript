@@ -1,12 +1,13 @@
-import { RegisterUserData, LoginUserData, MeUserData, LogoutUserData, ForgotPasswordData } from './data'
-import { RegisterUserResponse, LoginUserResponse, MeUserResponse, LogoutUserResponse, ForgotPasswordResponse } from './responses'
+import { RegisterUserData, LoginUserData, MeUserData, LogoutUserData, ForgotPasswordData, ChangePasswordData } from './data'
+import { RegisterUserResponse, LoginUserResponse, MeUserResponse, LogoutUserResponse, ForgotPasswordResponse, ChangePasswordResponse } from './responses'
 
 const responses = {
   RegisterUserResponse,
   LoginUserResponse,
   MeUserResponse,
   LogoutUserResponse,
-  ForgotPasswordResponse
+  ForgotPasswordResponse,
+  ChangePasswordResponse
 }
 
 const data = {
@@ -14,7 +15,8 @@ const data = {
   LoginUserData,
   MeUserData,
   LogoutUserData,
-  ForgotPasswordData
+  ForgotPasswordData,
+  ChangePasswordData
 }
 
 const classes = {

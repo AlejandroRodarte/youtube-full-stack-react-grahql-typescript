@@ -33,8 +33,36 @@ export type AddPostResponse = {
   errors?: Maybe<Array<FieldError>>;
 };
 
+export type ChangePasswordData = {
+  __typename?: 'ChangePasswordData';
+  updatedUser: User;
+};
+
+export type ChangePasswordFormInput = {
+  newPassword: Scalars['String'];
+};
+
+export type ChangePasswordInput = {
+  token: Scalars['String'];
+  form: ChangePasswordFormInput;
+};
+
+export type ChangePasswordResponse = {
+  __typename?: 'ChangePasswordResponse';
+  status: Scalars['Int'];
+  message: Scalars['String'];
+  code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
+  data?: Maybe<ChangePasswordData>;
+  errors?: Maybe<Array<FieldError>>;
+};
+
 export type DeletePostData = {
   __typename?: 'DeletePostData';
+  id: Scalars['Int'];
+};
+
+export type DeletePostInput = {
   id: Scalars['Int'];
 };
 
@@ -54,7 +82,8 @@ export type EditPostData = {
 };
 
 export type EditPostInput = {
-  title?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+  fields: OptionalPostFieldsInput;
 };
 
 export type EditPostResponse = {
@@ -124,14 +153,14 @@ export type GetPostsResponse = {
   errors?: Maybe<Array<FieldError>>;
 };
 
-export type LoginUserData = {
-  __typename?: 'LoginUserData';
-  user: User;
-};
-
 export type LoginInput = {
   credential: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type LoginUserData = {
+  __typename?: 'LoginUserData';
+  user: User;
 };
 
 export type LoginUserResponse = {
@@ -183,6 +212,7 @@ export type Mutation = {
   login: LoginUserResponse;
   logout: LogoutUserResponse;
   forgotPassword: ForgotPasswordResponse;
+  changePassword: ChangePasswordResponse;
 };
 
 export type MutationAddPostArgs = {
@@ -191,11 +221,10 @@ export type MutationAddPostArgs = {
 
 export type MutationEditPostArgs = {
   data: EditPostInput;
-  id: Scalars['Int'];
 };
 
 export type MutationDeletePostArgs = {
-  id: Scalars['Int'];
+  data: DeletePostInput;
 };
 
 export type MutationRegisterArgs = {
@@ -210,12 +239,24 @@ export type MutationForgotPasswordArgs = {
   data: ForgotPasswordInput;
 };
 
+export type MutationChangePasswordArgs = {
+  data: ChangePasswordInput;
+};
+
+export type OptionalPostFieldsInput = {
+  title?: Maybe<Scalars['String']>;
+};
+
 export type Post = {
   __typename?: 'Post';
   id: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   title: Scalars['String'];
+};
+
+export type PostInput = {
+  id: Scalars['Int'];
 };
 
 export type Query = {
@@ -226,18 +267,18 @@ export type Query = {
 };
 
 export type QueryPostArgs = {
-  id: Scalars['Int'];
-};
-
-export type RegisterUserData = {
-  __typename?: 'RegisterUserData';
-  newUser: User;
+  data: PostInput;
 };
 
 export type RegisterInput = {
   username: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type RegisterUserData = {
+  __typename?: 'RegisterUserData';
+  newUser: User;
 };
 
 export type RegisterUserResponse = {
@@ -262,6 +303,18 @@ export type User = {
 export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'GetPostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'GetPostsData', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+
+export type ChangePasswordMutationVariables = Exact<{
+  changePasswordData: ChangePasswordInput;
+}>;
+
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'ChangePasswordData', updatedUser: { __typename?: 'User', id: number, username: string, email: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+
+export type ForgotPasswordMutationVariables = Exact<{
+  forgotPasswordData: ForgotPasswordInput;
+}>;
+
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: { __typename?: 'ForgotPasswordResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'ForgotPasswordData', wasEmailSent: boolean }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type LoginMutationVariables = Exact<{
   loginData: LoginInput;
@@ -308,6 +361,52 @@ export const PostsDocument = gql`
 
 export function usePostsQuery (options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options })
+};
+export const ChangePasswordDocument = gql`
+    mutation ChangePassword($changePasswordData: ChangePasswordInput!) {
+  changePassword(data: $changePasswordData) {
+    status
+    message
+    code
+    _kind
+    data {
+      updatedUser {
+        id
+        username
+        email
+      }
+    }
+    errors {
+      path
+      message
+    }
+  }
+}
+    `
+
+export function useChangePasswordMutation () {
+  return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument)
+};
+export const ForgotPasswordDocument = gql`
+    mutation ForgotPassword($forgotPasswordData: ForgotPasswordInput!) {
+  forgotPassword(data: $forgotPasswordData) {
+    status
+    message
+    code
+    _kind
+    data {
+      wasEmailSent
+    }
+    errors {
+      path
+      message
+    }
+  }
+}
+    `
+
+export function useForgotPasswordMutation () {
+  return Urql.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument)
 };
 export const LoginDocument = gql`
     mutation Login($loginData: LoginInput!) {

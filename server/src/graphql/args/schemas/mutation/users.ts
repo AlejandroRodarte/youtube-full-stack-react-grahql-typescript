@@ -35,6 +35,16 @@ const credentialSchema =
       emailSchema
     )
 
+const tokenSchema =
+  Joi
+    .string()
+    .required()
+    .regex(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i)
+    .label('Token')
+    .messages({
+      'string.pattern.base': '"Token" must be a valid uuid v4 ID.'
+    })
+
 /**
  * register() mutation on users-resolver.ts
  */
@@ -84,8 +94,30 @@ const ForgotPasswordArgsSchema =
     .object()
     .keys({ data: ForgotPasswordDataSchema })
 
+/**
+ * changePassword() mutation on users-resolver.ts
+ */
+
+const ChangePasswordDataSchema =
+  Joi
+    .object()
+    .keys({
+      token: tokenSchema,
+      form: Joi
+        .object()
+        .keys({
+          newPassword: passwordSchema
+        })
+    })
+
+const ChangePasswordArgsSchema =
+  Joi
+    .object()
+    .keys({ data: ChangePasswordDataSchema })
+
 export {
   RegisterArgsSchema,
   LoginArgsSchema,
-  ForgotPasswordArgsSchema
+  ForgotPasswordArgsSchema,
+  ChangePasswordArgsSchema
 }

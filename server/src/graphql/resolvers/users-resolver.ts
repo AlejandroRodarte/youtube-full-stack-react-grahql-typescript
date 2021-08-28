@@ -1,13 +1,13 @@
 import { Resolver, Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql'
 import argon2 from 'argon2'
-import { UniqueConstraintViolationException } from '@mikro-orm/core'
+import { UniqueConstraintViolationException, wrap } from '@mikro-orm/core'
 import { v4 } from 'uuid'
 
-import { RegisterInput, LoginInput, ForgotPasswordInput } from '../args/inputs/mutation/users'
+import { RegisterInput, LoginInput, ForgotPasswordInput, ChangePasswordInput } from '../args/inputs/mutation/users'
 import UsersClasses from '../objects/responses/users'
 import { ApplicationContext } from '../../types/graphql'
 import { User } from '../../db/orm/entities'
-import { RegisterArgsSchema, LoginArgsSchema, ForgotPasswordArgsSchema } from '../args/schemas/mutation/users'
+import { RegisterArgsSchema, LoginArgsSchema, ForgotPasswordArgsSchema, ChangePasswordArgsSchema } from '../args/schemas/mutation/users'
 import ValidateArgs from '../../generator/graphql/middleware/validate-args'
 import { Auth, Anonymous } from '../middleware'
 import * as UsersSymbols from '../constants/responses/symbols/users'
@@ -114,7 +114,13 @@ export default class UserResolver {
             sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].code,
             req.body.operationName,
             undefined,
-            [new FieldError('data.credential', 'db.notexists', labelMap[key], `That ${key} does not exist.`)]
+            [
+              new FieldError(
+                'data.credential',
+                'db.notexists',
+                labelMap[key],
+                `That ${key} does not exist.`)
+            ]
           )
       }
 
@@ -132,7 +138,13 @@ export default class UserResolver {
             usersPayloads.error[UsersSymbols.INCORRECT_PASSWORD].code,
             req.body.operationName,
             undefined,
-            [new FieldError('data.password', 'db.wrongpassword', 'Password', 'The password is wrong.')]
+            [
+              new FieldError(
+                'data.password',
+                'db.wrongpassword',
+                'Password',
+                'The password is wrong.')
+            ]
           )
       }
 
@@ -237,12 +249,13 @@ export default class UserResolver {
         return new UsersClasses
           .responses
           .ForgotPasswordResponse(
-            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].httpCode,
-            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].message,
-            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].code,
+            usersPayloads.success[UsersSymbols.RESET_PASSWORD_EMAIL_SENT].httpCode,
+            usersPayloads.success[UsersSymbols.RESET_PASSWORD_EMAIL_SENT].message,
+            usersPayloads.success[UsersSymbols.RESET_PASSWORD_EMAIL_SENT].code,
             req.body.operationName,
-            undefined,
-            [new FieldError('data.email', 'db.notexists', 'Email', 'There is no registered account with this email.')]
+            new UsersClasses
+              .data
+              .ForgotPasswordData(true)
           )
       }
 
@@ -283,6 +296,90 @@ export default class UserResolver {
           usersPayloads.error[UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].httpCode,
           usersPayloads.error[UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].message,
           usersPayloads.error[UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].code,
+          req.body.operationName
+        )
+    }
+  }
+
+  @Mutation(() => UsersClasses.responses.ChangePasswordResponse)
+  @UseMiddleware(Anonymous, ValidateArgs(ChangePasswordArgsSchema))
+  async changePassword (
+    @Arg('data', () => ChangePasswordInput) data: ChangePasswordInput,
+    @Ctx() { db, req, redis }: ApplicationContext
+  ) {
+    const key = `${redisPrefixValues[RedisPrefixSymbols.FORGOT_PASSWORD_PREFIX]}${data.token}`
+
+    try {
+      const userId = await redis.get(key)
+
+      if (!userId) {
+        return new UsersClasses
+          .responses
+          .ChangePasswordResponse(
+            usersPayloads.error[UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND].httpCode,
+            usersPayloads.error[UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND].message,
+            usersPayloads.error[UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND].code,
+            req.body.operationName,
+            undefined,
+            [
+              new FieldError(
+                'data.token',
+                'db.notfound',
+                'Token',
+                'The recovery password token was not found in the database.'
+              )
+            ]
+          )
+      }
+
+      const user = await db.findOne(User, { id: +userId })
+
+      if (!user) {
+        return new UsersClasses
+          .responses
+          .ChangePasswordResponse(
+            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].httpCode,
+            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].message,
+            sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].code,
+            req.body.operationName,
+            undefined,
+            [
+              new FieldError(
+                'etc.id',
+                'db.notexists',
+                'ID',
+                'There is no registered account with this user ID.'
+              )
+            ]
+          )
+      }
+
+      const hashedNewPassword = await argon2.hash(data.form.newPassword)
+
+      const updatedUser = wrap(user).assign({ password: hashedNewPassword })
+      await db.persistAndFlush(updatedUser)
+
+      await redis.del(key)
+      req.session.userId = updatedUser.id
+
+      return new UsersClasses
+        .responses
+        .ChangePasswordResponse(
+          usersPayloads.success[UsersSymbols.USER_PASSWORD_UPDATED].httpCode,
+          usersPayloads.success[UsersSymbols.USER_PASSWORD_UPDATED].message,
+          usersPayloads.success[UsersSymbols.USER_PASSWORD_UPDATED].code,
+          req.body.operationName,
+          new UsersClasses
+            .data
+            .ChangePasswordData(updatedUser)
+        )
+    } catch (e) {
+      return new UsersClasses
+        .responses
+        .ChangePasswordResponse(
+          usersPayloads.error[UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR].httpCode,
+          usersPayloads.error[UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR].message,
+          usersPayloads.error[UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR].code,
           req.body.operationName
         )
     }

@@ -44,3 +44,13 @@ export class ForgotPasswordData {
     this.wasEmailSent = wasEmailSent
   }
 }
+
+@ObjectType()
+export class ChangePasswordData {
+  @Field(() => User)
+  updatedUser: User
+
+  constructor (updatedUser: User) {
+    this.updatedUser = updatedUser
+  }
+}

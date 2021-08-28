@@ -1,12 +1,12 @@
 import { UpdaterDelegateFunction } from '../../../../../../../../../types/graphql/urql/cache/updates'
-import { LoginMutation, MeQuery } from '../../../../../../../../../generated/graphql'
+import { MeQuery, ChangePasswordMutation } from '../../../../../../../../../generated/graphql'
 import constants from '../../../../../../../../constants'
 
-const meQueryUpdaterDelegate: UpdaterDelegateFunction<LoginMutation, MeQuery> = (
+const meQueryUpdaterDelegate: UpdaterDelegateFunction<ChangePasswordMutation, MeQuery> = (
   result,
   query
 ) => {
-  if (result.login.errors) return query
+  if (result.changePassword.errors) return query
 
   if (!query || !query.me || !query.me.data) {
     return {
@@ -21,7 +21,7 @@ const meQueryUpdaterDelegate: UpdaterDelegateFunction<LoginMutation, MeQuery> = 
           __typename: 'MeUserData',
           user: {
             __typename: 'User',
-            ...result.login.data.user
+            ...result.changePassword.data.updatedUser
           }
         },
         errors: null
@@ -43,7 +43,7 @@ const meQueryUpdaterDelegate: UpdaterDelegateFunction<LoginMutation, MeQuery> = 
         __typename: 'MeUserData',
         user: {
           __typename: 'User',
-          ...result.login.data.user
+          ...result.changePassword.data.updatedUser
         }
       },
       errors: null

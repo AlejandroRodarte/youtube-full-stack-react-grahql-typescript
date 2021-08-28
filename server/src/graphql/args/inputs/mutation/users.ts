@@ -36,8 +36,27 @@ class ForgotPasswordInput {
   email: string
 }
 
+/**
+ * input for changePassword() mutation
+ */
+@InputType()
+class ChangePasswordFormInput {
+  @Field(() => String)
+  newPassword: string
+}
+
+@InputType()
+class ChangePasswordInput {
+  @Field(() => String)
+  token: string
+
+  @Field(() => ChangePasswordFormInput)
+  form: ChangePasswordFormInput
+}
+
 export {
   LoginInput,
   RegisterInput,
-  ForgotPasswordInput
+  ForgotPasswordInput,
+  ChangePasswordInput
 }

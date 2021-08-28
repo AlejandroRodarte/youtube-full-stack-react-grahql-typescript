@@ -1,1 +1,1 @@
-export const FROM = '"LiReddit Inc. <nodemailerodartest@gmail.com>"'
+export const FROM = '"LiReddit Inc." <nodemailerodartest@gmail.com>'

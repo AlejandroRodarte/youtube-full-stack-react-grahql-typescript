@@ -10,6 +10,8 @@ import { withUrqlClient } from 'next-urql'
 import nextUrqlClientConfig from '../graphql/urql/client-config'
 import { LoginForm, FormFieldsConfig } from '../types/forms'
 import SimpleForm from '../components/ui/forms/SimpleForm'
+import NextLink from 'next/link'
+import { Flex, Link } from '@chakra-ui/react'
 
 interface LoginProps {}
 
@@ -66,8 +68,13 @@ const Login: React.FC<LoginProps> = () => {
         onSubmit={ onSubmit }
         submitButtonText="Login"
       />
+      <Flex>
+        <NextLink href="/forgot-password">
+          <Link ml="auto">Forgot your password?</Link>
+        </NextLink>
+      </Flex>
     </Wrapper>
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig)(Login)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(Login)

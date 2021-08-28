@@ -26,6 +26,11 @@ const userPayloads = {
       httpCode: 200,
       code: 'RESET_PASSWORD_EMAIL_SENT',
       message: 'The reset password email has been sent.'
+    },
+    [UsersSymbols.USER_PASSWORD_UPDATED]: {
+      httpCode: 201,
+      code: 'USER_PASSWORD_UPDATED',
+      message: 'The user\'s password has been updated.'
     }
   },
   error: {
@@ -49,6 +54,11 @@ const userPayloads = {
       code: 'MUTATION_FORGOT_PASSWORD_ERROR',
       message: 'An error has occured while sending the recovery password email.'
     },
+    [UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR]: {
+      httpCode: 400,
+      code: 'MUTATION_CHANGE_PASSWORD_ERROR',
+      message: 'An error has occured while changing the user password.'
+    },
     [UsersSymbols.USERNAME_ALREADY_EXISTS]: {
       httpCode: 400,
       code: 'USERNAME_ALREADY_EXISTS',
@@ -58,6 +68,11 @@ const userPayloads = {
       httpCode: 400,
       code: 'INCORRECT_PASSWORD',
       message: 'The password for that account is incorrect.'
+    },
+    [UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND]: {
+      httpCode: 404,
+      code: 'FORGOT_PASSWORD_TOKEN_NOT_FOUND',
+      message: 'The recovery password token was not found in the redis database.'
     }
   }
 }
