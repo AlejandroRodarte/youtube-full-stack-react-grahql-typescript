@@ -7,9 +7,10 @@ import mapFieldErrors from '../util/common/functions/map-field-errors'
 import unflatten from '../util/common/functions/unflatten-object'
 import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
-import nextUrqlClientConfig from '../graphql/urql/client-config'
+import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 import { RegisterForm, FormFieldsConfig } from '../types/forms'
 import SimpleForm from '../components/ui/forms/SimpleForm'
+import withAnonymous from '../hoc/withAnonymous'
 
 interface RegisterProps {}
 
@@ -77,4 +78,4 @@ const Register: React.FC<RegisterProps> = () => {
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(Register)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: true })(withAnonymous(Register))

@@ -10,9 +10,10 @@ import { ChangePasswordArgsErrors } from '../../types/graphql/args/users/change-
 import { useChangePasswordMutation, ChangePasswordInput, ChangePasswordMutationVariables } from '../../generated/graphql'
 import { useRouter } from 'next/router'
 import { Box, Flex } from '@chakra-ui/react'
-import nextUrqlClientConfig from '../../graphql/urql/client-config'
+import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
 import { withUrqlClient } from 'next-urql'
 import NextLink from 'next/link'
+import withAnonymous from '../../hoc/withAnonymous'
 
 interface ChangePasswordProps {
   token: string
@@ -56,7 +57,6 @@ const ChangePassword: NextPage<ChangePasswordProps> = ({ token }: ChangePassword
       setErrors(unflattenedErrors.data.form)
     }
 
-    console.log(response)
     if (response.data?.changePassword.data) {
       router.push('/')
     }
@@ -95,4 +95,4 @@ ChangePassword.getInitialProps = ({ query }: NextPageContext) => {
   }
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(ChangePassword)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: true })(withAnonymous(ChangePassword))

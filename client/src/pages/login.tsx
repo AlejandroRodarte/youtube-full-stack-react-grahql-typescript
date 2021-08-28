@@ -7,11 +7,12 @@ import mapFieldErrors from '../util/common/functions/map-field-errors'
 import unflatten from '../util/common/functions/unflatten-object'
 import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
-import nextUrqlClientConfig from '../graphql/urql/client-config'
+import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 import { LoginForm, FormFieldsConfig } from '../types/forms'
 import SimpleForm from '../components/ui/forms/SimpleForm'
 import NextLink from 'next/link'
 import { Flex, Link } from '@chakra-ui/react'
+import withAnonymous from '../hoc/withAnonymous'
 
 interface LoginProps {}
 
@@ -77,4 +78,4 @@ const Login: React.FC<LoginProps> = () => {
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(Login)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: true })(withAnonymous(Login))

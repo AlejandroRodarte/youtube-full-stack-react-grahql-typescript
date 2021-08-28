@@ -1,10 +1,13 @@
 import React from 'react'
-import { withUrqlClient } from 'next-urql'
 import MainNavBar from '../components/ui/navbar/MainNavBar'
-import nextUrqlClientConfig from '../graphql/urql/client-config'
 import { usePostsQuery } from '../generated/graphql'
+import { NextPage } from 'next'
+import { withUrqlClient } from 'next-urql'
+import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 
-const Index = () => {
+interface IndexProps {}
+
+const Index: NextPage<IndexProps> = () => {
   const [{ data }] = usePostsQuery()
 
   return (

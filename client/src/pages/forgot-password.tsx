@@ -9,7 +9,8 @@ import { ForgotPasswordArgsErrors } from '../types/graphql/args/users/forgot-pas
 import unflatten from '../util/common/functions/unflatten-object'
 import { Box } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
-import clientConfig from '../graphql/urql/client-config'
+import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
+import withAnonymous from '../hoc/withAnonymous'
 
 interface ForgotPasswordProps {}
 
@@ -74,4 +75,4 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
   )
 }
 
-export default withUrqlClient(clientConfig, { ssr: false })(ForgotPassword)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: true })(withAnonymous(ForgotPassword))

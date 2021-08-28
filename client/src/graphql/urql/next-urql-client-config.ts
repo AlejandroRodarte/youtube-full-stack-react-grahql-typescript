@@ -4,7 +4,7 @@ import { dedupExchange, fetchExchange } from 'urql'
 import { cacheExchange } from '@urql/exchange-graphcache'
 import { NextPageContext } from 'next'
 
-const clientConfig: NextUrqlClientConfig = (ssrExchange: SSRExchange, ctx: NextPageContext) => ({
+const nextUrqlClientConfig: NextUrqlClientConfig = (ssrExchange: SSRExchange, ctx: NextPageContext) => ({
   url: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT_URL,
   fetchOptions: {
     credentials: 'include',
@@ -15,4 +15,4 @@ const clientConfig: NextUrqlClientConfig = (ssrExchange: SSRExchange, ctx: NextP
   exchanges: [dedupExchange, cacheExchange(cacheExchangeConfig), ssrExchange, fetchExchange]
 })
 
-export default clientConfig
+export default nextUrqlClientConfig
