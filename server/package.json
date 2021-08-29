@@ -8,10 +8,7 @@
     "start": "tsc && npm run env-cmd:prod -- node dist/index.js",
     "env-cmd:prod": "env-cmd -f ./config/.env.production",
     "env-cmd:dev": "env-cmd -f ./config/.env.development",
-    "start:dev": "env-cmd -f ./config/.env.development ts-node-dev --transpile-only src/index.ts",
-    "migration:dev:create:initial": "npm run env-cmd:dev -- mikro-orm migration:create --initial",
-    "migration:dev:create": "npm run env-cmd:dev -- mikro-orm migration:create",
-    "migration:dev:up": "npm run env-cmd:dev -- mikro-orm migration:up"
+    "start:dev": "env-cmd -f ./config/.env.development ts-node-dev --transpile-only src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -36,10 +33,6 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^4.5.7",
-    "@mikro-orm/core": "^4.5.7",
-    "@mikro-orm/migrations": "^4.5.7",
-    "@mikro-orm/postgresql": "^4.5.7",
     "@types/ioredis": "^4.27.1",
     "@types/uuid": "^8.3.1",
     "apollo-server-express": "^3.1.2",
@@ -54,13 +47,7 @@
     "nodemailer": "^6.6.3",
     "pg": "^8.7.1",
     "type-graphql": "^1.1.1",
+    "typeorm": "^0.2.37",
     "uuid": "^8.3.2"
-  },
-  "mikro-orm": {
-    "useTsNode": true,
-    "configPaths": [
-      "./src/db/orm/mikro-orm.config.ts",
-      "./dist/db/orm/mikro-orm.config.js"
-    ]
   }
 }

@@ -1,5 +1,4 @@
 import { Resolver, Query, Ctx, Arg, Mutation, UseMiddleware } from 'type-graphql'
-import { wrap } from '@mikro-orm/core'
 
 import { AddPostInput, EditPostInput, DeletePostInput } from '../args/inputs/mutation/posts'
 import { PostInput } from '../args/inputs/query/posts'
@@ -12,18 +11,16 @@ import { PostArgsSchema } from '../args/schemas/query/posts'
 import * as PostsSymbols from '../constants/responses/symbols/posts'
 import postsPayloads from '../constants/responses/payloads/posts'
 import { FieldError } from '../objects/responses/error'
+import { UpdatePostRawEntity } from '../../types/db'
 
 @Resolver()
 export default class PostsResolver {
   @Query(() => PostsClasses.responses.GetPostsResponse)
   async posts (
-    @Ctx() { db, req }: ApplicationContext
+    @Ctx() { req }: ApplicationContext
   ) {
     try {
-      const posts = await db.find(
-        Post,
-        {}
-      )
+      const posts = await Post.find()
 
       const response =
         new PostsClasses
@@ -55,13 +52,10 @@ export default class PostsResolver {
   @UseMiddleware(ValidateArgs(PostArgsSchema))
   async post (
     @Arg('data', () => PostInput) data: PostInput,
-    @Ctx() { db, req }: ApplicationContext
+    @Ctx() { req }: ApplicationContext
   ) {
     try {
-      const post = await db.findOne(
-        Post,
-        { id: data.id }
-      )
+      const post = await Post.findOne(data.id)
 
       if (!post) {
         return new PostsClasses
@@ -113,15 +107,12 @@ export default class PostsResolver {
   @UseMiddleware(ValidateArgs(AddPostArgsSchema))
   async addPost (
     @Arg('data', () => AddPostInput) data: AddPostInput,
-    @Ctx() { db, req }: ApplicationContext
+    @Ctx() { req }: ApplicationContext
   ) {
-    const post = db.create(
-      Post,
-      data
-    )
+    const post = Post.create(data)
 
     try {
-      await db.persistAndFlush(post)
+      await post.save()
 
       const response =
         new PostsClasses
@@ -156,12 +147,19 @@ export default class PostsResolver {
     @Ctx() { db, req }: ApplicationContext
   ) {
     try {
-      const post = await db.findOne(
-        Post,
-        { id: data.id }
-      )
+      const { raw: [rawPost], affected } =
+        await db
+          .createQueryBuilder()
+          .update(Post)
+          .set(data.fields)
+          .where(
+            'id = :id',
+            { id: data.id }
+          )
+          .returning('*')
+          .execute()
 
-      if (!post) {
+      if (affected === 0) {
         return new PostsClasses
           .responses
           .EditPostResponse(
@@ -181,8 +179,7 @@ export default class PostsResolver {
           )
       }
 
-      const updatedPost = wrap(post).assign({ ...data.fields })
-      await db.persistAndFlush(updatedPost)
+      const updatedPost = Post.create(rawPost as UpdatePostRawEntity)
 
       const response =
         new PostsClasses
@@ -214,15 +211,12 @@ export default class PostsResolver {
   @UseMiddleware(ValidateArgs(DeletePostArgsSchema))
   async deletePost (
     @Arg('data', () => DeletePostInput) data: DeletePostInput,
-    @Ctx() { db, req }: ApplicationContext
+    @Ctx() { req }: ApplicationContext
   ) {
     try {
-      const post = await db.findOne(
-        Post,
-        { id: data.id }
-      )
+      const { affected } = await Post.delete(data.id)
 
-      if (!post) {
+      if (affected === 0) {
         return new PostsClasses
           .responses
           .DeletePostResponse(
@@ -241,11 +235,6 @@ export default class PostsResolver {
             ]
           )
       }
-
-      await db.nativeDelete(
-        Post,
-        { id: data.id }
-      )
 
       const response =
         new PostsClasses

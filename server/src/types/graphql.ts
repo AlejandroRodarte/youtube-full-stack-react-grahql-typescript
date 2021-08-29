@@ -1,9 +1,8 @@
-import { IDatabaseDriver, Connection, EntityManager } from '@mikro-orm/core'
-import { SqlEntityManager, PostgreSqlDriver } from '@mikro-orm/postgresql'
 import { ApolloServer, ExpressContext } from 'apollo-server-express'
 import { Request, Response } from 'express'
 import { GraphQLSchema } from 'graphql'
 import { Redis } from 'ioredis'
+import TypeORM from 'typeorm'
 
 export type CreateSchemaTuple = [
   GraphQLSchema | undefined,
@@ -18,8 +17,6 @@ export type CreateApolloServerTuple = [
 export type ApplicationContext = {
   req: Request,
   res: Response,
-  db:
-    SqlEntityManager<PostgreSqlDriver> &
-    EntityManager<IDatabaseDriver<Connection>>
+  db: TypeORM.Connection
   redis: Redis
 }

@@ -4,15 +4,15 @@ import { ApolloServer, ExpressContext } from 'apollo-server-express'
 import { printSchema } from 'graphql'
 
 import createSchema from '../schema/create-schema'
-import { MikroORMConnection } from '../../db/orm/mikro-orm-connection'
 import { CreateApolloServerTuple, ApplicationContext } from '../../types/graphql'
 import { redisClient } from '../../redis'
+import { TypeORMConnection } from '../../db/orm/typeorm/connection'
 
 const createApolloServer = async (): Promise<CreateApolloServerTuple> => {
   const [
     orm,
     ormError
-  ] = await MikroORMConnection.createConnection()
+  ] = await TypeORMConnection.createConnection()
 
   if (typeof orm === 'undefined') {
     return [
@@ -45,8 +45,8 @@ const createApolloServer = async (): Promise<CreateApolloServerTuple> => {
   }
 
   const context = {
-    db: orm.em,
-    redis: redisClient
+    redis: redisClient,
+    db: orm
   }
 
   const apolloServer = new ApolloServer({

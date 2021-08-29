@@ -1,6 +1,5 @@
 import { Resolver, Arg, Ctx, Mutation, Query, UseMiddleware } from 'type-graphql'
 import argon2 from 'argon2'
-import { UniqueConstraintViolationException, wrap } from '@mikro-orm/core'
 import { v4 } from 'uuid'
 
 import { RegisterInput, LoginInput, ForgotPasswordInput, ChangePasswordInput } from '../args/inputs/mutation/users'
@@ -20,6 +19,8 @@ import constraintPayloads from '../constants/responses/payloads/constraints'
 import { sendHtmlMail } from '../../util/functions/mail'
 import * as RedisPrefixSymbols from '../../redis/constants/prefixes/symbols'
 import redisPrefixValues from '../../redis/constants/prefixes/values'
+import { UpdateUserRawEntity } from '../../types/db'
+import { QueryFailedError } from 'typeorm'
 
 @Resolver()
 export default class UserResolver {
@@ -27,17 +28,17 @@ export default class UserResolver {
   @UseMiddleware(Anonymous, ValidateArgs(RegisterArgsSchema))
   async register (
     @Arg('data', () => RegisterInput) data: RegisterInput,
-    @Ctx() { db, req }: ApplicationContext
+    @Ctx() { req }: ApplicationContext
   ) {
     try {
       const hashedPassword = await argon2.hash(data.password)
 
-      const user = db.create(User, {
+      const user = User.create({
         ...data,
         password: hashedPassword
       })
 
-      await db.persistAndFlush(user)
+      await user.save()
       req.session.userId = user.id
 
       const response =
@@ -55,7 +56,7 @@ export default class UserResolver {
 
       return response
     } catch (e) {
-      if (e instanceof UniqueConstraintViolationException) {
+      if (e instanceof QueryFailedError && e.constraint) {
         return new UsersClasses
           .responses
           .RegisterUserResponse(
@@ -90,7 +91,7 @@ export default class UserResolver {
   @UseMiddleware(Anonymous, ValidateArgs(LoginArgsSchema))
   async login (
     @Arg('data', () => LoginInput) data: LoginInput,
-    @Ctx() { db, req }: ApplicationContext
+    @Ctx() { req }: ApplicationContext
   ) {
     const key = data.credential.includes('@') ? 'email' : 'username'
 
@@ -100,10 +101,7 @@ export default class UserResolver {
     }
 
     try {
-      const user = await db.findOne(
-        User,
-        { [key]: data.credential }
-      )
+      const user = await User.findOne({ where: { [key]: data.credential } })
 
       if (!user) {
         return new UsersClasses
@@ -237,13 +235,10 @@ export default class UserResolver {
   @UseMiddleware(Anonymous, ValidateArgs(ForgotPasswordArgsSchema))
   async forgotPassword (
     @Arg('data', () => ForgotPasswordInput) data: ForgotPasswordInput,
-    @Ctx() { db, req, redis }: ApplicationContext
+    @Ctx() { req, redis }: ApplicationContext
   ) {
     try {
-      const user = await db.findOne(
-        User,
-        { email: data.email }
-      )
+      const user = await User.findOne({ where: { email: data.email } })
 
       if (!user) {
         return new UsersClasses
@@ -332,9 +327,23 @@ export default class UserResolver {
           )
       }
 
-      const user = await db.findOne(User, { id: +userId })
+      const id = +userId
 
-      if (!user) {
+      const hashedNewPassword = await argon2.hash(data.form.newPassword)
+
+      const { raw: [rawUser], affected } =
+        await db
+          .createQueryBuilder()
+          .update(User)
+          .set({ password: hashedNewPassword })
+          .where(
+            'id = :id',
+            { id }
+          )
+          .returning('*')
+          .execute()
+
+      if (affected === 0) {
         return new UsersClasses
           .responses
           .ChangePasswordResponse(
@@ -354,13 +363,10 @@ export default class UserResolver {
           )
       }
 
-      const hashedNewPassword = await argon2.hash(data.form.newPassword)
-
-      const updatedUser = wrap(user).assign({ password: hashedNewPassword })
-      await db.persistAndFlush(updatedUser)
+      const updatedUser = User.create(rawUser as UpdateUserRawEntity)
 
       await redis.del(key)
-      req.session.userId = updatedUser.id
+      req.session.userId = id
 
       return new UsersClasses
         .responses

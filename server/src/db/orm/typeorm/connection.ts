@@ -1,9 +1,9 @@
-import { MikroORM } from '@mikro-orm/core'
+import { createConnection as createTypeORMConnection } from 'typeorm'
 
-import config from './mikro-orm.config'
-import { CreateConnectionTuple } from '../../types/db'
+import config from './config'
+import { CreateConnectionTuple } from '../../../types/db'
 
-export namespace MikroORMConnection {
+export namespace TypeORMConnection {
   const tuple: CreateConnectionTuple = [
     undefined,
     undefined
@@ -12,12 +12,7 @@ export namespace MikroORMConnection {
   export async function createConnection () {
     if (typeof tuple[0] === 'undefined') {
       try {
-        const orm = await MikroORM.init(config)
-
-        await orm
-          .getMigrator()
-          .up()
-
+        const orm = await createTypeORMConnection(config)
         tuple[0] = orm
       } catch (e) {
         tuple[1] = e

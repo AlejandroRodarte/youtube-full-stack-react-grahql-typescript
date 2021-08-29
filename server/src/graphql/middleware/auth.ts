@@ -4,12 +4,12 @@ import { ApplicationContext } from '../../types/graphql'
 import ApplicationResponse from '../../generator/graphql/responses/application-response'
 import * as MiddlewareSymbols from '../../graphql/constants/responses/symbols/middleware'
 import middlewarePayloads from '../../graphql/constants/responses/payloads/middleware'
-import { User } from '../../db/orm/entities/user'
 import * as SharedSymbols from '../../graphql/constants/responses/symbols/shared'
 import sharedPayloads from '../../graphql/constants/responses/payloads/shared'
+import { User } from '../../db/orm/entities/User'
 
 const Auth: MiddlewareFn<ApplicationContext> = async (
-  { context: { db, req } },
+  { context: { req } },
   next
 ) => {
   const ApplicationResponseClass = class extends ApplicationResponse(
@@ -19,7 +19,7 @@ const Auth: MiddlewareFn<ApplicationContext> = async (
 
   if (req.session.userId) {
     try {
-      const user = await db.findOne(User, { id: req.session.userId })
+      const user = await User.findOne(req.session.userId)
 
       if (user) {
         req.user = user

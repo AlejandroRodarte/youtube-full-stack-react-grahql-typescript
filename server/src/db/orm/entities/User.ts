@@ -1,41 +1,34 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core'
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, Unique } from 'typeorm'
 import { Field, ObjectType } from 'type-graphql'
 
 @ObjectType()
 @Entity()
-export class User {
+@Unique('user_username_unique', ['username'])
+@Unique('user_email_unique', ['email'])
+export class User extends BaseEntity {
   @Field()
-  @PrimaryKey()
+  @PrimaryGeneratedColumn()
   id!: number
 
   @Field(() => String)
-  @Property({ type: 'date' })
-  createdAt = new Date()
+  @CreateDateColumn()
+  createdAt: Date
 
   @Field(() => String)
-  @Property({
-    type: 'date',
-    onUpdate: () => new Date()
-  })
-  updatedAt = new Date()
+  @UpdateDateColumn()
+  updatedAt: Date
 
   // set this field unique on the database
   @Field()
-  @Property({
-    type: 'text',
-    unique: true
-  })
+  @Column()
   username!: string
 
   @Field()
-  @Property({
-    type: 'text',
-    unique: true
-  })
+  @Column()
   email!: string
 
   // note how we do not use @Field here
   // we do not want to expose the password on our GraphQL definition
-  @Property({ type: 'text' })
+  @Column()
   password!: string
 }
