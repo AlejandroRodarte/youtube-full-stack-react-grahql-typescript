@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && npm run env-cmd:prod -- node dist/index.js",
+    "start": "node dist/index.js",
     "env-cmd:prod": "env-cmd -f ./config/.env.production",
     "env-cmd:dev": "env-cmd -f ./config/.env.development",
-    "start:dev": "env-cmd -f ./config/.env.development ts-node-dev --transpile-only src/index.ts"
+    "start:dev": "env-cmd -f ./config/.env.development ts-node-dev --transpile-only src/index.ts",
+    "start:prod": "tsc && npm run env-cmd:prod -- node dist/index.js",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "",
