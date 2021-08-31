@@ -10,7 +10,9 @@
     "env-cmd:dev": "env-cmd -f ./config/.env.development",
     "start:dev": "env-cmd -f ./config/.env.development ts-node-dev --transpile-only src/index.ts",
     "start:prod": "tsc && npm run env-cmd:prod -- node dist/index.js",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "typeorm:cli": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -f src/db/orm/typeorm/config.ts",
+    "migration:generate": "npm run env-cmd:dev -- npm run typeorm:cli migration:generate -- -n"
   },
   "keywords": [],
   "author": "",

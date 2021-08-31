@@ -14,6 +14,7 @@ export namespace TypeORMConnection {
     if (typeof tuple[0] === 'undefined') {
       try {
         const orm = await createTypeORMConnection(config)
+        if (process.env.NODE_ENV === 'production') await orm.runMigrations()
         tuple[0] = orm
       } catch (e) {
         tuple[1] = e
