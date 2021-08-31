@@ -18,6 +18,9 @@ const config: PostgresConnectionOptions = {
   ],
   cli: {
     migrationsDir: 'src/db/orm/migrations'
+  },
+  ssl: {
+    rejectUnauthorized: false
   }
 }
 
