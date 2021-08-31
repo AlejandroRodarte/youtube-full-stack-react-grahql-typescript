@@ -19,9 +19,11 @@ const config: PostgresConnectionOptions = {
   cli: {
     migrationsDir: 'src/db/orm/migrations'
   },
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: process.env.NODE_ENV === 'production'
+    ? {
+        rejectUnauthorized: process.env.NODE_ENV !== 'production'
+      }
+    : undefined
 }
 
 export = config
