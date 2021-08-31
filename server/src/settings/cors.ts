@@ -7,10 +7,7 @@ if (process.env.INCLUDE_APOLLO_STUDIO === 'true') origins.push('https://studio.a
 const corsOptions: CorsOptions = {
   origin: origins,
   credentials: true,
-  exposedHeaders:
-    process.env.INCLUDE_APOLLO_STUDIO === 'true'
-      ? ['Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials']
-      : undefined
+  exposedHeaders: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials']
 }
 
 export default corsOptions
