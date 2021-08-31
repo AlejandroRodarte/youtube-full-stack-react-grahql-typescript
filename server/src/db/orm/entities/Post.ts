@@ -1,15 +1,42 @@
 
 import { Field, ObjectType } from 'type-graphql'
-import { Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, Column, BaseEntity } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, Column, BaseEntity, ManyToOne } from 'typeorm'
+
+import User from './User'
 
 // @ObjectType to make this available to our GraphQL schema
 @ObjectType()
 @Entity()
-export class Post extends BaseEntity {
+export default class Post extends BaseEntity {
   // @Field to expose this field to the GraphQL schema
   @Field()
   @PrimaryGeneratedColumn()
   id!: number
+
+  @Field()
+  @Column()
+  title!: string
+
+  @Field()
+  @Column()
+  text!: string
+
+  @Field()
+  @Column({
+    type: 'int',
+    default: 0
+  })
+  points!: number
+
+  @Field()
+  @Column()
+  originalPosterId: number
+
+  @ManyToOne(
+    () => User,
+    user => user.posts
+  )
+  originalPoster: User
 
   @Field(() => String)
   @CreateDateColumn()
@@ -18,8 +45,4 @@ export class Post extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date
-
-  @Field()
-  @Column()
-  title!: string
 }

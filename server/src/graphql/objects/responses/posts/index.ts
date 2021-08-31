@@ -1,25 +1,9 @@
-import { AddPostData, EditPostData, GetPostData, GetPostsData, DeletePostData } from './data'
-import { AddPostResponse, EditPostResponse, GetPostsResponse, GetPostResponse, DeletePostResponse } from './responses'
+import mutation from './mutation'
+import query from './query'
 
-const responses = {
-  GetPostsResponse,
-  GetPostResponse,
-  AddPostResponse,
-  EditPostResponse,
-  DeletePostResponse
+const posts = {
+  mutation,
+  query
 }
 
-const data = {
-  GetPostsData,
-  GetPostData,
-  AddPostData,
-  EditPostData,
-  DeletePostData
-}
-
-const classes = {
-  responses,
-  data
-}
-
-export default classes
+export default posts

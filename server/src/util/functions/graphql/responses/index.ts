@@ -1,5 +1,7 @@
 import generateFieldErrors from './generate-field-errors'
 
-export {
+const responses = {
   generateFieldErrors
 }
+
+export default responses

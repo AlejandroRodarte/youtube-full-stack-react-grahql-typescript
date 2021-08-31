@@ -53,11 +53,6 @@ const postPayloads = {
       httpCode: 400,
       code: 'MUTATION_DELETE_POST_ERROR',
       message: 'An error has occured while deleting the post.'
-    },
-    [PostsSymbols.POST_NOT_FOUND]: {
-      httpCode: 404,
-      code: 'POST_NOT_FOUND',
-      message: 'The specified post does not exist in the database.'
     }
   }
 }

@@ -1,12 +1,14 @@
-import { User } from '../../db/orm/entities/user'
+import { User } from '../../db/orm/entities/User'
+import { InputAction } from '../args'
 
 import 'express'
 
 declare module 'express' {
   export interface Request {
-    user: User | undefined,
+    user?: User
     body: {
-      operationName: string | undefined
-    }
+      operationName?: string
+    },
+    input?: InputAction
   }
 }

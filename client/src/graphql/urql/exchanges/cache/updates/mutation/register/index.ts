@@ -1,20 +1,23 @@
-import { RegisterOperationResponse } from '../../../../../../../types/graphql/operations/users'
-import { MeDocument, MeQuery, MutationLoginArgs, RegisterMutation } from '../../../../../../../generated/graphql'
 import { UpdateResolver } from '@urql/exchange-graphcache'
-import isResponseOfKind from '../../../../../../../util/graphql/operations/functions/is-response-of-kind'
-import * as OperationUtilities from './operations'
 
-const register: UpdateResolver<RegisterOperationResponse, MutationLoginArgs> = (
+import { MeQuery, MeDocument, MutationRegisterArgs, RegisterMutation } from '../../../../../../../generated/graphql'
+
+import operations from './operations'
+import isResponseOfKind from '../../../../../../../util/graphql/operations/functions/is-response-of-kind'
+
+import { GraphQLUsersOperations } from '../../../../../../../types/graphql/operations/users'
+
+const register: UpdateResolver<GraphQLUsersOperations.RegisterOperationResponse, MutationRegisterArgs> = (
   result,
   args,
   cache,
   info
 ) => {
-  if (isResponseOfKind<RegisterMutation, RegisterOperationResponse>(result, 'register', 'Register')) {
+  if (isResponseOfKind<RegisterMutation, GraphQLUsersOperations.RegisterOperationResponse>(result, 'register', 'Register')) {
     return cache
       .updateQuery<MeQuery>(
         { query: MeDocument },
-        (data) => OperationUtilities.RegisterMutationOperation.meQueryUpdaterDelegate(result, data)
+        (data) => operations.register.meQueryUpdaterDelegate(result, data)
       )
   }
 }

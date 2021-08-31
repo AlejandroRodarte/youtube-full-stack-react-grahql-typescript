@@ -1,7 +1,8 @@
 import { NextPage, NextPageContext } from 'next'
 import React, { useEffect } from 'react'
-import { useMeQuery } from '../generated/graphql'
 import { useRouter } from 'next/router'
+
+import { useMeQuery } from '../generated/graphql'
 
 const withAnonymous = <P extends object>(Component: NextPage<P>) => {
   const Anonymous: NextPage<P> = (props: P) => {

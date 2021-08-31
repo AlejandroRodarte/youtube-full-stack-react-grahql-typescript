@@ -1,3 +1,7 @@
 import meQueryUpdaterDelegate from './me-query-updater-delegate'
 
-export { meQueryUpdaterDelegate }
+const register = {
+  meQueryUpdaterDelegate
+}
+
+export default register

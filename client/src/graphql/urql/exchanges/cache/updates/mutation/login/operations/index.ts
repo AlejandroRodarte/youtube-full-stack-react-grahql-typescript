@@ -1,3 +1,7 @@
-import * as LoginMutationOperation from './login'
+import login from './login'
 
-export { LoginMutationOperation }
+const operations = {
+  login
+}
+
+export default operations

@@ -1,39 +1,54 @@
 import React, { useCallback } from 'react'
 import { FormikHelpers } from 'formik'
-import Wrapper from '../components/ui/wrappers/Wrapper'
-import { LoginArgsErrors } from '../types/graphql/args/users/login'
-import { LoginInput, useLoginMutation, LoginMutationVariables } from '../generated/graphql'
-import mapFieldErrors from '../util/common/functions/map-field-errors'
-import unflatten from '../util/common/functions/unflatten-object'
-import { useRouter } from 'next/router'
-import { withUrqlClient } from 'next-urql'
-import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
-import { LoginForm, FormFieldsConfig } from '../types/forms'
-import SimpleForm from '../components/ui/forms/SimpleForm'
 import NextLink from 'next/link'
 import { Flex, Link } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import { withUrqlClient } from 'next-urql'
+
+import { LoginInput, useLoginMutation, LoginMutationVariables } from '../generated/graphql'
+
 import withAnonymous from '../hoc/withAnonymous'
+
+import Wrapper from '../components/ui/wrappers/Wrapper'
+import SimpleForm from '../components/ui/forms/SimpleForm'
+
+import commonFunctions from '../util/common/functions'
+
+import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
+
+import { FormTypes } from '../types/forms'
+import { GraphQLUsersArgs } from '../types/graphql/args/users'
 
 interface LoginProps {}
 
 const Login: React.FC<LoginProps> = () => {
-  const loginFormInitialValues: LoginForm = {
+  const loginFormInitialValues: FormTypes.LoginForm = {
     credential: '',
     password: ''
   }
 
-  const loginFormFieldsConfig: FormFieldsConfig<LoginForm> = {
+  const loginFormFieldsConfig: FormTypes.FormFieldsConfig<FormTypes.LoginForm> = {
     credential: {
-      name: 'credential',
-      type: 'text',
-      placeholder: 'e.g. gyrfalke or gyrfalke@gmail.com',
-      label: 'Username/Email'
+      type: 'input',
+      payload: {
+        label: 'Username/Email',
+        htmlAttributes: {
+          name: 'credential',
+          type: 'text',
+          placeholder: 'e.g. gyrfalke or gyrfalke@gmail.com'
+        }
+      }
     },
     password: {
-      name: 'password',
-      type: 'password',
-      placeholder: 'secret',
-      label: 'Password'
+      type: 'input',
+      payload: {
+        label: 'Password',
+        htmlAttributes: {
+          name: 'password',
+          type: 'password',
+          placeholder: 'secret'
+        }
+      }
     }
   }
 
@@ -41,8 +56,8 @@ const Login: React.FC<LoginProps> = () => {
   const [, login] = useLoginMutation()
 
   const onSubmit = useCallback(async (
-    form: LoginForm,
-    { setErrors }: FormikHelpers<LoginForm>
+    form: FormTypes.LoginForm,
+    { setErrors }: FormikHelpers<FormTypes.LoginForm>
   ) => {
     const loginInput: LoginInput = form
     const loginArgsInput: LoginMutationVariables = { loginData: loginInput }
@@ -50,8 +65,8 @@ const Login: React.FC<LoginProps> = () => {
     const response = await login(loginArgsInput)
 
     if (response.data?.login.errors) {
-      const mappedFieldErrors = mapFieldErrors(response.data.login.errors)
-      const unflattenedErrors = unflatten<LoginArgsErrors>(mappedFieldErrors)
+      const mappedFieldErrors = commonFunctions.mapFieldErrors(response.data.login.errors)
+      const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.LoginArgsErrors>(mappedFieldErrors)
       setErrors(unflattenedErrors.data)
       return
     }

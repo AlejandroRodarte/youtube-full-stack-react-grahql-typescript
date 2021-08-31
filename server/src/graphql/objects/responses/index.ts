@@ -1,7 +1,11 @@
-import postsClasses from './posts'
-import usersClasses from './users'
+import error from './error'
+import posts from './posts'
+import users from './users'
 
-export {
-  postsClasses,
-  usersClasses
+const responses = {
+  error,
+  posts,
+  users
 }
+
+export default responses

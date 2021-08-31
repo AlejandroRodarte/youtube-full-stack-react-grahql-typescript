@@ -1,7 +1,8 @@
 import { NextPage, NextPageContext } from 'next'
 import React, { useEffect } from 'react'
-import { useMeQuery } from '../generated/graphql'
 import { useRouter } from 'next/router'
+
+import { useMeQuery } from '../generated/graphql'
 
 const withAuth = <P extends object>(Component: NextPage<P>) => {
   const Auth: NextPage<P> = (props: P) => {
@@ -9,14 +10,14 @@ const withAuth = <P extends object>(Component: NextPage<P>) => {
     const [{ data }] = useMeQuery()
 
     useEffect(() => {
-      if (data.me.status === 401) router.replace('/login')
+      if (data.me.status === 401) router.replace('/')
     }, [data.me.status, router])
 
-    if (Component.getInitialProps) {
-      Auth.getInitialProps = (ctx: NextPageContext) => Component.getInitialProps(ctx)
-    }
-
     return <Component { ...props } />
+  }
+
+  if (Component.getInitialProps) {
+    Auth.getInitialProps = (ctx: NextPageContext) => Component.getInitialProps(ctx)
   }
 
   return Auth

@@ -1,7 +1,9 @@
 import { Server } from 'https'
 import { Express } from 'express'
 
-export type CreateAppTuple = [
-  Server | Express | undefined,
-  Error | undefined
-]
+export namespace AppTuples {
+  export type CreateAppTuple = [
+    Server | Express | undefined,
+    Error | undefined
+  ]
+}

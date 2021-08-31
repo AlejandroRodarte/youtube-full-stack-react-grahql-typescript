@@ -1,7 +1,9 @@
-import corsOptions from './cors'
-import sessionOptions from './express-session'
+import cors from './cors'
+import session from './express-session'
 
-export {
-  corsOptions,
-  sessionOptions
+const settings = {
+  cors,
+  session
 }
+
+export default settings

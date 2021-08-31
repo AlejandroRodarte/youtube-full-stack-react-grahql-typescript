@@ -1,27 +1,30 @@
 type Query {
-  posts: GetPostsResponse!
-  post(data: PostInput!): GetPostResponse!
-  me: MeUserResponse!
+  posts: PostsResponse!
+  post(data: PostInput!): PostResponse!
+  me: MeResponse!
 }
 
-type GetPostsResponse {
+type PostsResponse {
   status: Int!
   message: String!
   code: String!
   _kind: String
-  data: GetPostsData
+  data: PostsData
   errors: [FieldError!]
 }
 
-type GetPostsData {
+type PostsData {
   posts: [Post!]!
 }
 
 type Post {
   id: Float!
+  title: String!
+  text: String!
+  points: Float!
+  originalPosterId: Float!
   createdAt: String!
   updatedAt: String!
-  title: String!
 }
 
 type FieldError {
@@ -31,16 +34,16 @@ type FieldError {
   message: String!
 }
 
-type GetPostResponse {
+type PostResponse {
   status: Int!
   message: String!
   code: String!
   _kind: String
-  data: GetPostData
+  data: PostData
   errors: [FieldError!]
 }
 
-type GetPostData {
+type PostData {
   post: Post!
 }
 
@@ -48,36 +51,36 @@ input PostInput {
   id: Int!
 }
 
-type MeUserResponse {
+type MeResponse {
   status: Int!
   message: String!
   code: String!
   _kind: String
-  data: MeUserData
+  data: MeData
   errors: [FieldError!]
 }
 
-type MeUserData {
+type MeData {
   user: User!
 }
 
 type User {
   id: Float!
-  createdAt: String!
-  updatedAt: String!
   username: String!
   email: String!
+  createdAt: String!
+  updatedAt: String!
 }
 
 type Mutation {
   addPost(data: AddPostInput!): AddPostResponse!
   editPost(data: EditPostInput!): EditPostResponse!
   deletePost(data: DeletePostInput!): DeletePostResponse!
-  register(data: RegisterInput!): RegisterUserResponse!
-  login(data: LoginInput!): LoginUserResponse!
-  logout: LogoutUserResponse!
+  register(data: RegisterInput!): RegisterResponse!
+  login(data: LoginInput!): LoginResponse!
+  logout: LogoutResponse!
+  changePassword(data: ChangePasswordInput!): RegisterResponse!
   forgotPassword(data: ForgotPasswordInput!): ForgotPasswordResponse!
-  changePassword(data: ChangePasswordInput!): ChangePasswordResponse!
 }
 
 type AddPostResponse {
@@ -95,6 +98,7 @@ type AddPostData {
 
 input AddPostInput {
   title: String!
+  text: String!
 }
 
 type EditPostResponse {
@@ -117,6 +121,7 @@ input EditPostInput {
 
 input OptionalPostFieldsInput {
   title: String
+  text: String
 }
 
 type DeletePostResponse {
@@ -136,16 +141,16 @@ input DeletePostInput {
   id: Int!
 }
 
-type RegisterUserResponse {
+type RegisterResponse {
   status: Int!
   message: String!
   code: String!
   _kind: String
-  data: RegisterUserData
+  data: RegisterData
   errors: [FieldError!]
 }
 
-type RegisterUserData {
+type RegisterData {
   newUser: User!
 }
 
@@ -155,16 +160,16 @@ input RegisterInput {
   password: String!
 }
 
-type LoginUserResponse {
+type LoginResponse {
   status: Int!
   message: String!
   code: String!
   _kind: String
-  data: LoginUserData
+  data: LoginData
   errors: [FieldError!]
 }
 
-type LoginUserData {
+type LoginData {
   user: User!
 }
 
@@ -173,17 +178,26 @@ input LoginInput {
   password: String!
 }
 
-type LogoutUserResponse {
+type LogoutResponse {
   status: Int!
   message: String!
   code: String!
   _kind: String
-  data: LogoutUserData
+  data: LogoutData
   errors: [FieldError!]
 }
 
-type LogoutUserData {
+type LogoutData {
   wasSessionDestroyed: Boolean!
+}
+
+input ChangePasswordInput {
+  token: String!
+  form: ChangePasswordFormInput!
+}
+
+input ChangePasswordFormInput {
+  newPassword: String!
 }
 
 type ForgotPasswordResponse {
@@ -201,26 +215,4 @@ type ForgotPasswordData {
 
 input ForgotPasswordInput {
   email: String!
-}
-
-type ChangePasswordResponse {
-  status: Int!
-  message: String!
-  code: String!
-  _kind: String
-  data: ChangePasswordData
-  errors: [FieldError!]
-}
-
-type ChangePasswordData {
-  updatedUser: User!
-}
-
-input ChangePasswordInput {
-  token: String!
-  form: ChangePasswordFormInput!
-}
-
-input ChangePasswordFormInput {
-  newPassword: String!
 }

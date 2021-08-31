@@ -1,44 +1,64 @@
 import React, { useCallback } from 'react'
 import { FormikHelpers } from 'formik'
-import Wrapper from '../components/ui/wrappers/Wrapper'
-import { RegisterArgsErrors } from '../types/graphql/args/users/register'
-import { RegisterInput, useRegisterMutation, RegisterMutationVariables } from '../generated/graphql'
-import mapFieldErrors from '../util/common/functions/map-field-errors'
-import unflatten from '../util/common/functions/unflatten-object'
 import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
-import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
-import { RegisterForm, FormFieldsConfig } from '../types/forms'
-import SimpleForm from '../components/ui/forms/SimpleForm'
+
+import { RegisterInput, useRegisterMutation, RegisterMutationVariables } from '../generated/graphql'
+
 import withAnonymous from '../hoc/withAnonymous'
+
+import SimpleForm from '../components/ui/forms/SimpleForm'
+import Wrapper from '../components/ui/wrappers/Wrapper'
+
+import commonFunctions from '../util/common/functions'
+
+import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
+
+import { FormTypes } from '../types/forms'
+import { GraphQLUsersArgs } from '../types/graphql/args/users'
 
 interface RegisterProps {}
 
 const Register: React.FC<RegisterProps> = () => {
-  const registerFormInitialValues: RegisterForm = {
+  const registerFormInitialValues: FormTypes.RegisterForm = {
     username: '',
     email: '',
     password: ''
   }
 
-  const registerFormFieldsConfig: FormFieldsConfig<RegisterForm> = {
+  const registerFormFieldsConfig: FormTypes.FormFieldsConfig<FormTypes.RegisterForm> = {
     username: {
-      name: 'username',
-      type: 'text',
-      placeholder: 'e.g. gyrfalke',
-      label: 'Username'
+      type: 'input',
+      payload: {
+        label: 'Username',
+        htmlAttributes: {
+          name: 'username',
+          type: 'text',
+          placeholder: 'e.g. gyrfalke'
+        }
+      }
     },
     email: {
-      name: 'email',
-      type: 'email',
-      placeholder: 'e.g. gyrfalke@gmail.com',
-      label: 'Email'
+      type: 'input',
+      payload: {
+        label: 'Email',
+        htmlAttributes: {
+          name: 'email',
+          type: 'text',
+          placeholder: 'e.g. gyrfalke@gmail.com'
+        }
+      }
     },
     password: {
-      name: 'password',
-      type: 'password',
-      placeholder: 'secret',
-      label: 'Password'
+      type: 'input',
+      payload: {
+        label: 'Password',
+        htmlAttributes: {
+          name: 'password',
+          type: 'password',
+          placeholder: 'secret'
+        }
+      }
     }
   }
 
@@ -46,8 +66,8 @@ const Register: React.FC<RegisterProps> = () => {
   const [, register] = useRegisterMutation()
 
   const onSubmit = useCallback(async (
-    form: RegisterForm,
-    { setErrors }: FormikHelpers<RegisterForm>
+    form: FormTypes.RegisterForm,
+    { setErrors }: FormikHelpers<FormTypes.RegisterForm>
   ) => {
     const registerInput: RegisterInput = form
     const registerArgsInput: RegisterMutationVariables = { registerData: registerInput }
@@ -55,8 +75,8 @@ const Register: React.FC<RegisterProps> = () => {
     const response = await register(registerArgsInput)
 
     if (response.data?.register.errors) {
-      const mappedFieldErrors = mapFieldErrors(response.data.register.errors)
-      const unflattenedErrors = unflatten<RegisterArgsErrors>(mappedFieldErrors)
+      const mappedFieldErrors = commonFunctions.mapFieldErrors(response.data.register.errors)
+      const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.RegisterArgsErrors>(mappedFieldErrors)
       setErrors(unflattenedErrors.data)
       return
     }

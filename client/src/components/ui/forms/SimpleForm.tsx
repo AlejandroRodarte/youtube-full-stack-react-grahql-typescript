@@ -2,11 +2,12 @@ import React from 'react'
 import { Formik, Form, FormikHelpers } from 'formik'
 import InputField from './inputs/InputField'
 import { Button } from '@chakra-ui/react'
-import { FormFieldsConfig } from '../../../types/forms'
+
+import { FormTypes } from '../../../types/forms'
 
 interface SimpleFormProps<T> {
-  initialValues: T,
-  fieldsConfig: FormFieldsConfig<T>,
+  initialValues: T
+  fieldsConfig: FormTypes.FormFieldsConfig<T>
   onSubmit: (values: T, formikHelpers: FormikHelpers<T>) => Promise<void>
   submitButtonText: string
 }
@@ -32,10 +33,7 @@ const SimpleForm = <T, >({
                 return (
                   <InputField
                     key={ field }
-                    name={ fieldsConfig[typedField].name }
-                    placeholder={ fieldsConfig[typedField].placeholder }
-                    label={ fieldsConfig[typedField].label }
-                    type={ fieldsConfig[typedField].type }
+                    fieldProps={ fieldsConfig[typedField] }
                   />
                 )
               })

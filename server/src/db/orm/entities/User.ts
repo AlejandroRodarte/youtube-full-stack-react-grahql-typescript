@@ -1,22 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, Unique } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, Unique, OneToMany } from 'typeorm'
 import { Field, ObjectType } from 'type-graphql'
+
+import Post from './Post'
 
 @ObjectType()
 @Entity()
 @Unique('user_username_unique', ['username'])
 @Unique('user_email_unique', ['email'])
-export class User extends BaseEntity {
+export default class User extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number
-
-  @Field(() => String)
-  @CreateDateColumn()
-  createdAt: Date
-
-  @Field(() => String)
-  @UpdateDateColumn()
-  updatedAt: Date
 
   // set this field unique on the database
   @Field()
@@ -31,4 +25,18 @@ export class User extends BaseEntity {
   // we do not want to expose the password on our GraphQL definition
   @Column()
   password!: string
+
+  @OneToMany(
+    () => Post,
+    post => post.originalPoster
+  )
+  posts: Post[]
+
+  @Field(() => String)
+  @CreateDateColumn()
+  createdAt: Date
+
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date
 }

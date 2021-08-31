@@ -1,3 +1,7 @@
 import meQueryUpdaterDelegate from './me-query-updater-delegate'
 
-export { meQueryUpdaterDelegate }
+const changePassword = {
+  meQueryUpdaterDelegate
+}
+
+export default changePassword

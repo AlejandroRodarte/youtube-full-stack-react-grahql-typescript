@@ -1,9 +1,15 @@
 import middlewarePayloads from './middleware'
 import postsPayloads from './posts'
 import usersPayloads from './users'
+import sharedPayloads from './shared'
+import constraintPayloads from './constraint'
 
-export {
+const payloads = {
   middlewarePayloads,
   postsPayloads,
-  usersPayloads
+  usersPayloads,
+  sharedPayloads,
+  constraintPayloads
 }
+
+export default payloads

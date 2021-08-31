@@ -1,7 +1,11 @@
 import Auth from './auth'
 import Anonymous from './anonymous'
+import CanMutatePost from './can-mutate-post'
 
-export {
+const middleware = {
   Auth,
-  Anonymous
+  Anonymous,
+  CanMutatePost
 }
+
+export default middleware

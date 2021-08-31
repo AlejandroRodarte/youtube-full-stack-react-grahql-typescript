@@ -1,30 +1,40 @@
 import React, { useCallback, useState } from 'react'
-import Wrapper from '../components/ui/wrappers/Wrapper'
-import SimpleForm from '../components/ui/forms/SimpleForm'
-import { ForgotPasswordForm, FormFieldsConfig } from '../types/forms'
-import { ForgotPasswordInput, ForgotPasswordMutationVariables, useForgotPasswordMutation } from '../generated/graphql'
-import { FormikHelpers } from 'formik'
-import mapFieldErrors from '../util/common/functions/map-field-errors'
-import { ForgotPasswordArgsErrors } from '../types/graphql/args/users/forgot-password'
-import unflatten from '../util/common/functions/unflatten-object'
 import { Box } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
-import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
+import { FormikHelpers } from 'formik'
+
+import { ForgotPasswordInput, ForgotPasswordMutationVariables, useForgotPasswordMutation } from '../generated/graphql'
+
+import Wrapper from '../components/ui/wrappers/Wrapper'
+import SimpleForm from '../components/ui/forms/SimpleForm'
+
 import withAnonymous from '../hoc/withAnonymous'
+
+import commonFunctions from '../util/common/functions'
+
+import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
+
+import { GraphQLUsersArgs } from '../types/graphql/args/users'
+import { FormTypes } from '../types/forms'
 
 interface ForgotPasswordProps {}
 
 const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
-  const forgotPasswordInitialValues: ForgotPasswordForm = {
+  const forgotPasswordInitialValues: FormTypes.ForgotPasswordForm = {
     email: ''
   }
 
-  const forgotPasswordFormFieldsConfig: FormFieldsConfig<ForgotPasswordForm> = {
+  const forgotPasswordFormFieldsConfig: FormTypes.FormFieldsConfig<FormTypes.ForgotPasswordForm> = {
     email: {
-      name: 'email',
-      type: 'email',
-      placeholder: 'e.g. gyrfalke@gmail.com',
-      label: 'Email'
+      type: 'input',
+      payload: {
+        label: 'Email',
+        htmlAttributes: {
+          name: 'email',
+          type: 'text',
+          placeholder: 'e.g. gyrfalke@gmail.com'
+        }
+      }
     }
   }
 
@@ -33,8 +43,8 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
   const [, forgotPassword] = useForgotPasswordMutation()
 
   const onSubmit = useCallback(async (
-    form: ForgotPasswordForm,
-    { setErrors }: FormikHelpers<ForgotPasswordForm>
+    form: FormTypes.ForgotPasswordForm,
+    { setErrors }: FormikHelpers<FormTypes.ForgotPasswordForm>
   ) => {
     const forgotPasswordInput: ForgotPasswordInput = form
     const forgotPasswordArgsInput: ForgotPasswordMutationVariables = { forgotPasswordData: forgotPasswordInput }
@@ -42,8 +52,8 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
     const response = await forgotPassword(forgotPasswordArgsInput)
 
     if (response.data?.forgotPassword.errors) {
-      const mappedFieldErrors = mapFieldErrors(response.data.forgotPassword.errors)
-      const unflattenedErrors = unflatten<ForgotPasswordArgsErrors>(mappedFieldErrors)
+      const mappedFieldErrors = commonFunctions.mapFieldErrors(response.data.forgotPassword.errors)
+      const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.ForgotPasswordArgsErrors>(mappedFieldErrors)
       setErrors(unflattenedErrors.data)
       return
     }

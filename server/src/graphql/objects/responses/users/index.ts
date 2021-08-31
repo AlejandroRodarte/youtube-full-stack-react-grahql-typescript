@@ -1,27 +1,9 @@
-import { RegisterUserData, LoginUserData, MeUserData, LogoutUserData, ForgotPasswordData, ChangePasswordData } from './data'
-import { RegisterUserResponse, LoginUserResponse, MeUserResponse, LogoutUserResponse, ForgotPasswordResponse, ChangePasswordResponse } from './responses'
+import mutation from './mutation'
+import query from './query'
 
-const responses = {
-  RegisterUserResponse,
-  LoginUserResponse,
-  MeUserResponse,
-  LogoutUserResponse,
-  ForgotPasswordResponse,
-  ChangePasswordResponse
+const users = {
+  mutation,
+  query
 }
 
-const data = {
-  RegisterUserData,
-  LoginUserData,
-  MeUserData,
-  LogoutUserData,
-  ForgotPasswordData,
-  ChangePasswordData
-}
-
-const classes = {
-  responses,
-  data
-}
-
-export default classes
+export default users

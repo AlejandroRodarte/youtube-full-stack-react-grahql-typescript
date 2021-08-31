@@ -1,6 +1,7 @@
 import { Box, Flex, Link, Button } from '@chakra-ui/react'
 import React, { useCallback } from 'react'
 import NextLink from 'next/link'
+
 import { useMeQuery, useLogoutMutation } from '../../../generated/graphql'
 
 interface MainNavBarProps {}
@@ -59,6 +60,9 @@ const MainNavBar: React.FC<MainNavBarProps> = () => {
     <Flex
       bg="tomato"
       p={ 4 }
+      position="sticky"
+      top={ 0 }
+      zIndex={ 1 }
     >
       <Box ml="auto">
         { linksJsx }

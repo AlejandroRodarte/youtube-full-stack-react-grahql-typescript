@@ -1,3 +1,7 @@
-import * as ChangePasswordMutationOperation from './change-password'
+import changePassword from './change-password'
 
-export { ChangePasswordMutationOperation }
+const operations = {
+  changePassword
+}
+
+export default operations

@@ -1,3 +1,7 @@
 import sendHtmlMail from './send-html-mail'
 
-export { sendHtmlMail }
+const mail = {
+  sendHtmlMail
+}
+
+export default mail

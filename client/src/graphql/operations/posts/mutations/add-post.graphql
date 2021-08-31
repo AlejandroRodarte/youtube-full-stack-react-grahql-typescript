@@ -1,0 +1,23 @@
+mutation AddPost($addPostData: AddPostInput!) {
+  addPost(data: $addPostData) {
+    status
+    message
+    code
+    _kind
+    data {
+      newPost {
+        id
+        title
+        text
+        points
+        originalPosterId
+        createdAt
+        updatedAt
+      }
+    }
+    errors {
+      path
+      message
+    }
+  }
+}

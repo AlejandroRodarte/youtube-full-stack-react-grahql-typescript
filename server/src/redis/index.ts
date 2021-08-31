@@ -1,16 +1,11 @@
-import Redis from 'ioredis'
-import session from 'express-session'
-import connectRedis from 'connect-redis'
+import constants from './constants'
+import redisClient from './redis-client'
+import sessionStore from './session-store'
 
-const RedisStore = connectRedis(session)
-const redisClient = new Redis()
-
-const sessionStore = new RedisStore({
-  client: redisClient,
-  disableTouch: true // keep the session forever
-})
-
-export {
-  sessionStore as default,
-  redisClient
+const redis = {
+  constants,
+  redisClient,
+  sessionStore
 }
+
+export default redis

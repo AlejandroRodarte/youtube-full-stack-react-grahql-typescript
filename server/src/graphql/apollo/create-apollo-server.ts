@@ -4,11 +4,11 @@ import { ApolloServer, ExpressContext } from 'apollo-server-express'
 import { printSchema } from 'graphql'
 
 import createSchema from '../schema/create-schema'
-import { CreateApolloServerTuple, ApplicationContext } from '../../types/graphql'
-import { redisClient } from '../../redis'
+import { GraphQLContext, GraphQLTuples } from '../../types/graphql'
+import redisClient from '../../redis/redis-client'
 import { TypeORMConnection } from '../../db/orm/typeorm/connection'
 
-const createApolloServer = async (): Promise<CreateApolloServerTuple> => {
+const createApolloServer = async (): Promise<GraphQLTuples.CreateApolloServerTuple> => {
   const [
     orm,
     ormError
@@ -54,7 +54,7 @@ const createApolloServer = async (): Promise<CreateApolloServerTuple> => {
     context: ({
       req,
       res
-    }: ExpressContext): ApplicationContext => ({
+    }: ExpressContext): GraphQLContext.ApplicationContext => ({
       req,
       res,
       ...context

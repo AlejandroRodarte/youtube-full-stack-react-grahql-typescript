@@ -1,11 +1,12 @@
 import { MiddlewareFn } from 'type-graphql'
 
-import { ApplicationContext } from '../../types/graphql'
+import { GraphQLContext } from '../../types/graphql'
 import ApplicationResponse from '../../generator/graphql/responses/application-response'
+
 import * as MiddlewareSymbols from '../../graphql/constants/responses/symbols/middleware'
 import middlewarePayloads from '../../graphql/constants/responses/payloads/middleware'
 
-const Auth: MiddlewareFn<ApplicationContext> = async (
+const Auth: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
   { context: { req } },
   next
 ) => {

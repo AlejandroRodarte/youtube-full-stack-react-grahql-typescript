@@ -1,14 +1,13 @@
 import { MiddlewareFn } from 'type-graphql'
 
-import { ApplicationContext } from '../../types/graphql'
+import User from '../../db/orm/entities/User'
 import ApplicationResponse from '../../generator/graphql/responses/application-response'
-import * as MiddlewareSymbols from '../../graphql/constants/responses/symbols/middleware'
-import middlewarePayloads from '../../graphql/constants/responses/payloads/middleware'
-import * as SharedSymbols from '../../graphql/constants/responses/symbols/shared'
-import sharedPayloads from '../../graphql/constants/responses/payloads/shared'
-import { User } from '../../db/orm/entities/User'
 
-const Auth: MiddlewareFn<ApplicationContext> = async (
+import responses from '../../graphql/constants/responses'
+
+import { GraphQLContext } from '../../types/graphql'
+
+const Auth: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
   { context: { req } },
   next
 ) => {
@@ -27,25 +26,25 @@ const Auth: MiddlewareFn<ApplicationContext> = async (
       }
 
       return new ApplicationResponseClass(
-        sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].httpCode,
-        sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].message,
-        sharedPayloads.error[SharedSymbols.USER_NOT_FOUND].code,
+        responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].httpCode,
+        responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].message,
+        responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].code,
         req.body.operationName
       )
     } catch (e) {
       return new ApplicationResponseClass(
-        middlewarePayloads.error[MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].httpCode,
-        middlewarePayloads.error[MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].message,
-        middlewarePayloads.error[MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].code,
+        responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].httpCode,
+        responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].message,
+        responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].code,
         req.body.operationName
       )
     }
   }
 
   return new ApplicationResponseClass(
-    middlewarePayloads.error[MiddlewareSymbols.UNAUTHORIZED].httpCode,
-    middlewarePayloads.error[MiddlewareSymbols.UNAUTHORIZED].message,
-    middlewarePayloads.error[MiddlewareSymbols.UNAUTHORIZED].code,
+    responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.UNAUTHORIZED].httpCode,
+    responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.UNAUTHORIZED].message,
+    responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.UNAUTHORIZED].code,
     req.body.operationName
   )
 }

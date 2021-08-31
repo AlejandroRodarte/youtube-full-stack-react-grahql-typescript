@@ -7,6 +7,7 @@ const meQueryUpdaterDelegate: (query: MeQuery) => MeQuery = (query) => {
     __typename: 'Query',
     me: {
       ...query.me,
+      __typename: 'MeResponse',
       status: constants.queries.users.error.me.httpCode,
       message: constants.queries.users.error.me.message,
       code: constants.queries.users.error.me.code,

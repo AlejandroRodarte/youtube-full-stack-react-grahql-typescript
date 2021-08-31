@@ -1,10 +1,11 @@
 import { createConnection as createTypeORMConnection } from 'typeorm'
 
 import config from './config'
-import { CreateConnectionTuple } from '../../../types/db'
+
+import { DBTuples } from '../../../types/db'
 
 export namespace TypeORMConnection {
-  const tuple: CreateConnectionTuple = [
+  const tuple: DBTuples.CreateConnectionTuple = [
     undefined,
     undefined
   ]

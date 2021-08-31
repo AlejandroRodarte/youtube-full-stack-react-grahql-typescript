@@ -1,5 +1,7 @@
-import { FieldError } from './field-error'
+import FieldError from './field-error'
 
-export {
+const error = {
   FieldError
 }
+
+export default error

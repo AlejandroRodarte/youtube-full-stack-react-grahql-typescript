@@ -1,8 +1,10 @@
-import { UpdaterDelegateFunction } from '../../../../../../../../../types/graphql/urql/cache/updates'
 import { LoginMutation, MeQuery } from '../../../../../../../../../generated/graphql'
+
 import constants from '../../../../../../../../constants'
 
-const meQueryUpdaterDelegate: UpdaterDelegateFunction<LoginMutation, MeQuery> = (
+import { GraphQLUrqlCache } from '../../../../../../../../../types/graphql/urql/cache'
+
+const meQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<LoginMutation, MeQuery> = (
   result,
   query
 ) => {
@@ -12,13 +14,13 @@ const meQueryUpdaterDelegate: UpdaterDelegateFunction<LoginMutation, MeQuery> = 
     return {
       __typename: 'Query',
       me: {
-        __typename: 'MeUserResponse',
+        __typename: 'MeResponse',
         status: constants.queries.users.success.me.httpCode,
         message: constants.queries.users.success.me.message,
         code: constants.queries.users.success.me.code,
         _kind: 'Me',
         data: {
-          __typename: 'MeUserData',
+          __typename: 'MeData',
           user: {
             __typename: 'User',
             ...result.login.data.user
@@ -34,13 +36,13 @@ const meQueryUpdaterDelegate: UpdaterDelegateFunction<LoginMutation, MeQuery> = 
     __typename: 'Query',
     me: {
       ...query.me,
-      __typename: 'MeUserResponse',
+      __typename: 'MeResponse',
       status: constants.queries.users.success.me.httpCode,
       message: constants.queries.users.success.me.message,
       code: constants.queries.users.success.me.code,
       data: {
         ...query.me.data,
-        __typename: 'MeUserData',
+        __typename: 'MeData',
         user: {
           __typename: 'User',
           ...result.login.data.user

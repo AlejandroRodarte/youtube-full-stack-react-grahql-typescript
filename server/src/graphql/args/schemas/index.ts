@@ -1,7 +1,9 @@
-import * as mutation from './mutation'
-import * as query from './query'
+import mutation from './mutation'
+import query from './query'
 
-export {
+const schemas = {
   mutation,
   query
 }
+
+export default schemas

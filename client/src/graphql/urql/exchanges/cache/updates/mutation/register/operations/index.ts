@@ -1,3 +1,7 @@
-import * as RegisterMutationOperation from './register'
+import register from './register'
 
-export { RegisterMutationOperation }
+const operations = {
+  register
+}
+
+export default operations

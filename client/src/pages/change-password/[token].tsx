@@ -1,35 +1,45 @@
 import React, { useCallback, useState } from 'react'
 import { NextPage, NextPageContext } from 'next'
-import Wrapper from '../../components/ui/wrappers/Wrapper'
-import SimpleForm from '../../components/ui/forms/SimpleForm'
-import { ChangePasswordForm, FormFieldsConfig } from '../../types/forms'
-import { FormikHelpers } from 'formik'
-import mapFieldErrors from '../../util/common/functions/map-field-errors'
-import unflatten from '../../util/common/functions/unflatten-object'
-import { ChangePasswordArgsErrors } from '../../types/graphql/args/users/change-password'
-import { useChangePasswordMutation, ChangePasswordInput, ChangePasswordMutationVariables } from '../../generated/graphql'
 import { useRouter } from 'next/router'
 import { Box, Flex } from '@chakra-ui/react'
-import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
 import { withUrqlClient } from 'next-urql'
 import NextLink from 'next/link'
+import { FormikHelpers } from 'formik'
+
+import { useChangePasswordMutation, ChangePasswordInput, ChangePasswordMutationVariables } from '../../generated/graphql'
+
+import Wrapper from '../../components/ui/wrappers/Wrapper'
+import SimpleForm from '../../components/ui/forms/SimpleForm'
+
 import withAnonymous from '../../hoc/withAnonymous'
+
+import commonFunctions from '../../util/common/functions'
+
+import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
+
+import { FormTypes } from '../../types/forms'
+import { GraphQLUsersArgs } from '../../types/graphql/args/users'
 
 interface ChangePasswordProps {
   token: string
 }
 
 const ChangePassword: NextPage<ChangePasswordProps> = ({ token }: ChangePasswordProps) => {
-  const changePasswordInitialValues: ChangePasswordForm = {
+  const changePasswordInitialValues: FormTypes.ChangePasswordForm = {
     newPassword: ''
   }
 
-  const changePasswordFormFieldsConfig: FormFieldsConfig<ChangePasswordForm> = {
+  const changePasswordFormFieldsConfig: FormTypes.FormFieldsConfig<FormTypes.ChangePasswordForm> = {
     newPassword: {
-      name: 'newPassword',
-      type: 'password',
-      placeholder: 'e.g. your-new-password',
-      label: 'New Password'
+      type: 'input',
+      payload: {
+        label: 'New Password',
+        htmlAttributes: {
+          name: 'newPassword',
+          type: 'password',
+          placeholder: 'e.g. your-new-password'
+        }
+      }
     }
   }
 
@@ -39,8 +49,8 @@ const ChangePassword: NextPage<ChangePasswordProps> = ({ token }: ChangePassword
   const [, changePassword] = useChangePasswordMutation()
 
   const onSubmit = useCallback(async (
-    form: ChangePasswordForm,
-    { setErrors }: FormikHelpers<ChangePasswordForm>
+    form: FormTypes.ChangePasswordForm,
+    { setErrors }: FormikHelpers<FormTypes.ChangePasswordForm>
   ) => {
     const changePasswordInput: ChangePasswordInput = { token, form }
     const changePasswordArgsInput: ChangePasswordMutationVariables = { changePasswordData: changePasswordInput }
@@ -48,8 +58,8 @@ const ChangePassword: NextPage<ChangePasswordProps> = ({ token }: ChangePassword
     const response = await changePassword(changePasswordArgsInput)
 
     if (response.data?.changePassword.errors) {
-      const mappedFieldErrors = mapFieldErrors(response.data.changePassword.errors)
-      const unflattenedErrors = unflatten<ChangePasswordArgsErrors>(mappedFieldErrors)
+      const mappedFieldErrors = commonFunctions.mapFieldErrors(response.data.changePassword.errors)
+      const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.ChangePasswordArgsErrors>(mappedFieldErrors)
 
       if ('token' in unflattenedErrors.data) {
         setTokenError(() => unflattenedErrors.data.token)

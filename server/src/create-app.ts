@@ -2,12 +2,14 @@ import express from 'express'
 import session from 'express-session'
 import cors from 'cors'
 
-import { CreateAppTuple } from './types/app'
-import createApolloServer from './graphql/apollo/create-apollo-server'
-import { corsOptions, sessionOptions } from './settings'
-import mountLocalHttpsServer from './util/functions/server/mount-local-https-server'
+import settings from './settings'
 
-const createApp = async (): Promise<CreateAppTuple> => {
+import createApolloServer from './graphql/apollo/create-apollo-server'
+import mountHttpsServer from './util/functions/server/mount-https-server'
+
+import { AppTuples } from './types/app'
+
+const createApp = async (): Promise<AppTuples.CreateAppTuple> => {
   const [
     apolloServer,
     apolloServerError
@@ -22,15 +24,15 @@ const createApp = async (): Promise<CreateAppTuple> => {
 
   const app = express()
 
-  app.use(cors(corsOptions))
-  app.use(session(sessionOptions))
+  app.use(cors(settings.cors))
+  app.use(session(settings.session))
 
   apolloServer.applyMiddleware({
     app,
     cors: false
   })
 
-  if (process.env.LOCAL_HTTPS_SERVER === 'true') return mountLocalHttpsServer(app)
+  if (process.env.HTTPS_SERVER === 'true') return mountHttpsServer(app)
 
   return [
     app,

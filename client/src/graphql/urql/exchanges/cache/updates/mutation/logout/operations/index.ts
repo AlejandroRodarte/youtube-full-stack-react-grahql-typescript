@@ -1,3 +1,7 @@
-import * as LogoutMutationOperation from './logout'
+import logout from './logout'
 
-export { LogoutMutationOperation }
+const operations = {
+  logout
+}
+
+export default operations
