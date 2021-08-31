@@ -21,7 +21,7 @@ const config: PostgresConnectionOptions = {
   },
   ssl: process.env.NODE_ENV === 'production'
     ? {
-        rejectUnauthorized: process.env.NODE_ENV !== 'production'
+        rejectUnauthorized: false
       }
     : undefined
 }
