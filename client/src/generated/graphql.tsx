@@ -182,8 +182,8 @@ export type Mutation = {
   register: RegisterResponse;
   login: LoginResponse;
   logout: LogoutResponse;
-  forgotPassword: ForgotPasswordResponse;
   changePassword: ChangePasswordResponse;
+  forgotPassword: ForgotPasswordResponse;
 };
 
 export type MutationAddPostArgs = {
@@ -206,12 +206,12 @@ export type MutationLoginArgs = {
   data: LoginInput;
 };
 
-export type MutationForgotPasswordArgs = {
-  data: ForgotPasswordInput;
-};
-
 export type MutationChangePasswordArgs = {
   data: ChangePasswordInput;
+};
+
+export type MutationForgotPasswordArgs = {
+  data: ForgotPasswordInput;
 };
 
 export type OptionalPostFieldsInput = {
