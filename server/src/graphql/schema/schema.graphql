@@ -79,7 +79,7 @@ type Mutation {
   register(data: RegisterInput!): RegisterResponse!
   login(data: LoginInput!): LoginResponse!
   logout: LogoutResponse!
-  changePassword(data: ChangePasswordInput!): RegisterResponse!
+  changePassword(data: ChangePasswordInput!): ChangePasswordResponse!
   forgotPassword(data: ForgotPasswordInput!): ForgotPasswordResponse!
 }
 
@@ -189,6 +189,19 @@ type LogoutResponse {
 
 type LogoutData {
   wasSessionDestroyed: Boolean!
+}
+
+type ChangePasswordResponse {
+  status: Int!
+  message: String!
+  code: String!
+  _kind: String
+  data: ChangePasswordData
+  errors: [FieldError!]
+}
+
+type ChangePasswordData {
+  updatedUser: User!
 }
 
 input ChangePasswordInput {
