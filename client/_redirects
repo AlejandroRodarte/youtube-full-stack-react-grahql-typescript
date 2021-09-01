@@ -1,5 +1,1 @@
-[[redirects]]
-  from = "/api"
-  to = "https://rodarte-lireddit-app.herokuapp.com/graphql"
-  status = 200
-  force = true
+/api/*  https://rodarte-lireddit-app.herokuapp.com/graphql/:splat  200
