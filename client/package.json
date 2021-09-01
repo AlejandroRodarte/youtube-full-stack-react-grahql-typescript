@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:netlify": "next build && cp _redirects .next/_redirects",
     "start": "next start",
     "graphql-codegen:init": "graphql-codegen init",
     "gen": "graphql-codegen --config codegen.yml"
