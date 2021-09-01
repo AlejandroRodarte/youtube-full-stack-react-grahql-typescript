@@ -24,7 +24,7 @@ const createApp = async (): Promise<AppTuples.CreateAppTuple> => {
 
   const app = express()
 
-  app.set('trust proxy', 1)
+  if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1)
   app.use(cors(settings.cors))
   app.use(session(settings.session))
 

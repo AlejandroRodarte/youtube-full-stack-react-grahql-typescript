@@ -15,11 +15,6 @@ import { DBRawEntities } from '../../../../types/db'
 
 @Resolver()
 export default class ChangePasswordResolver {
-  @Mutation(() => usersResponses.mutation.responses.RegisterResponse)
-  @UseMiddleware(
-    middlewares.Anonymous,
-    generatedMiddlewares.ValidateArgs(mutationSchemas.RegisterArgsSchema)
-  )
   @Mutation(() => usersResponses.mutation.responses.ChangePasswordResponse)
   @UseMiddleware(
     middlewares.Anonymous,
