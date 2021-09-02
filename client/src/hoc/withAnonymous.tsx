@@ -1,23 +1,20 @@
-import { NextPage, NextPageContext } from 'next'
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import { useMeQuery } from '../generated/graphql'
 
-const withAnonymous = <P extends object>(Component: NextPage<P>) => {
-  const Anonymous: NextPage<P> = (props: P) => {
+const withAnonymous = <P extends object>(Component: React.FC<P>) => {
+  const Anonymous: React.FC<P> = (props: P) => {
     const router = useRouter()
-    const [{ data }] = useMeQuery()
+    const [{ data, fetching }] = useMeQuery()
+
+    const status = data ? data.me.status : -1
 
     useEffect(() => {
-      if (data.me.status === 200) router.replace('/')
-    }, [data.me.status, router])
+      if (!fetching && status === 200) router.replace('/')
+    }, [fetching, router, status])
 
-    return <Component { ...props } />
-  }
-
-  if (Component.getInitialProps) {
-    Anonymous.getInitialProps = (ctx: NextPageContext) => Component.getInitialProps(ctx)
+    return ((!fetching && status === 401) && <Component { ...props } />)
   }
 
   return Anonymous

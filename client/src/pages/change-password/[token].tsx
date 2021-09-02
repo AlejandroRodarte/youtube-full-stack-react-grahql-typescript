@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { NextPage, NextPageContext } from 'next'
+import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { Box, Flex } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
@@ -11,9 +11,8 @@ import { useChangePasswordMutation, ChangePasswordInput, ChangePasswordMutationV
 import Wrapper from '../../components/ui/wrappers/Wrapper'
 import SimpleForm from '../../components/ui/forms/SimpleForm'
 
-import withAnonymous from '../../hoc/withAnonymous'
-
 import commonFunctions from '../../util/common/functions'
+import server from '../../graphql/urql/server'
 
 import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
 
@@ -24,7 +23,7 @@ interface ChangePasswordProps {
   token: string
 }
 
-const ChangePassword: NextPage<ChangePasswordProps> = ({ token }: ChangePasswordProps) => {
+const ChangePassword: React.FC<ChangePasswordProps> = ({ token }: ChangePasswordProps) => {
   const changePasswordInitialValues: FormTypes.ChangePasswordForm = {
     newPassword: ''
   }
@@ -99,10 +98,25 @@ const ChangePassword: NextPage<ChangePasswordProps> = ({ token }: ChangePassword
   )
 }
 
-ChangePassword.getInitialProps = ({ query }: NextPageContext) => {
+export const getServerSideProps: GetServerSideProps<ChangePasswordProps> = async (ctx) => {
+  const client = server.getUrqlClientForServerSideProps(ctx)
+  const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 401)
+
+  const response = {
+    props: {
+      token: typeof ctx.query.token === 'string' ? ctx.query.token : undefined
+    }
+  }
+
+  if (typeof isStatusCodeCorrect === 'undefined') return response
+  if (isStatusCodeCorrect) return response
+
   return {
-    token: typeof query.token === 'string' ? query.token : undefined
+    redirect: {
+      destination: '/',
+      permanent: false
+    }
   }
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: true })(withAnonymous(ChangePassword))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(ChangePassword)

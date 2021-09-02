@@ -2,15 +2,15 @@ import React, { useCallback } from 'react'
 import { FormikHelpers } from 'formik'
 import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
+import { GetServerSideProps } from 'next'
 
 import { RegisterInput, useRegisterMutation, RegisterMutationVariables } from '../generated/graphql'
-
-import withAnonymous from '../hoc/withAnonymous'
 
 import SimpleForm from '../components/ui/forms/SimpleForm'
 import Wrapper from '../components/ui/wrappers/Wrapper'
 
 import commonFunctions from '../util/common/functions'
+import server from '../graphql/urql/server'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 
@@ -98,4 +98,19 @@ const Register: React.FC<RegisterProps> = () => {
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: true })(withAnonymous(Register))
+export const getServerSideProps: GetServerSideProps<RegisterProps> = async (ctx) => {
+  const client = server.getUrqlClientForServerSideProps(ctx)
+  const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 401)
+
+  if (typeof isStatusCodeCorrect === 'undefined') return { props: {} }
+  if (isStatusCodeCorrect) return { props: {} }
+
+  return {
+    redirect: {
+      destination: '/',
+      permanent: false
+    }
+  }
+}
+
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(Register)
