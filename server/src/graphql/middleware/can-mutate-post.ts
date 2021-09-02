@@ -51,6 +51,7 @@ const CanMutatePost: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
 
     return next()
   } catch (e) {
+    if (process.env.LOG_ERRORS === 'true') console.error(e)
     return new ApplicationResponseClass(
       responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_CAN_MUTATE_POST_ERROR].httpCode,
       responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_CAN_MUTATE_POST_ERROR].message,

@@ -17,6 +17,7 @@ export namespace TypeORMConnection {
         if (process.env.NODE_ENV === 'production') await orm.runMigrations()
         tuple[0] = orm
       } catch (e) {
+        if (process.env.LOG_ERRORS === 'true') console.error(e)
         tuple[1] = e
       }
     }

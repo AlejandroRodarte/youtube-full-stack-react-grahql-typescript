@@ -32,6 +32,7 @@ const Auth: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
         req.body.operationName
       )
     } catch (e) {
+      if (process.env.LOG_ERRORS === 'true') console.error(e)
       return new ApplicationResponseClass(
         responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].httpCode,
         responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].message,

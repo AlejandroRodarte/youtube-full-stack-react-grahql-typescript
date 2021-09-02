@@ -75,6 +75,7 @@ export default class ForgotPasswordResolver {
 
       throw new Error('Email was not sent.')
     } catch (e) {
+      if (process.env.LOG_ERRORS === 'true') console.error(e)
       return new usersResponses
         .mutation
         .responses
