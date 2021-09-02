@@ -58,6 +58,7 @@ export default class PostResolver {
 
       return response
     } catch (e) {
+      if (process.env.LOG_ERRORS === 'true') console.error(e)
       return new postsResponses
         .query
         .responses

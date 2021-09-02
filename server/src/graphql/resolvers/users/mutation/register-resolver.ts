@@ -51,6 +51,7 @@ export default class RegisterResolver {
 
       return response
     } catch (e) {
+      if (process.env.LOG_ERRORS === 'true') console.error(e)
       if (e instanceof QueryFailedError && e.constraint) {
         return new usersResponses
           .mutation

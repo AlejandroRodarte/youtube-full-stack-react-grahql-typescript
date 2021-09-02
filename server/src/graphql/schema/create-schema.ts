@@ -15,6 +15,7 @@ const createSchema = async (): Promise<GraphQLTuples.CreateSchemaTuple> => {
       undefined
     ]
   } catch (e) {
+    if (process.env.LOG_ERRORS === 'true') console.error(e)
     return [
       undefined,
       e

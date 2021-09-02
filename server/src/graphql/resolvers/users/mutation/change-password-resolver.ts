@@ -106,6 +106,7 @@ export default class ChangePasswordResolver {
             .ChangePasswordData(updatedUser)
         )
     } catch (e) {
+      if (process.env.LOG_ERRORS === 'true') console.error(e)
       return new usersResponses
         .mutation
         .responses

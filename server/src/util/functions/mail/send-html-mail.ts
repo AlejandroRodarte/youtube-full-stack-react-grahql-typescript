@@ -14,6 +14,7 @@ export default async function sendHtmlMail (
     })
     return true
   } catch (e) {
+    if (process.env.LOG_ERRORS === 'true') console.error(e)
     return false
   }
 }

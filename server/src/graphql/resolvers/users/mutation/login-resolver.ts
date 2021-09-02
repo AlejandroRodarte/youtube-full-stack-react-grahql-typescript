@@ -93,6 +93,7 @@ export default class LoginResolver {
             .LoginData(user)
         )
     } catch (e) {
+      if (process.env.LOG_ERRORS === 'true') console.error(e)
       return new usersResponses
         .mutation
         .responses
