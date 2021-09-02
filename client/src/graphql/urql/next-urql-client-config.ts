@@ -1,8 +1,9 @@
 import { SSRExchange, NextUrqlClientConfig } from 'next-urql'
-import cacheExchangeConfig from './exchanges/cache'
 import { dedupExchange, fetchExchange } from 'urql'
 import { cacheExchange } from '@urql/exchange-graphcache'
 import { NextPageContext } from 'next'
+
+import cacheExchangeConfig from './exchanges/cache'
 
 const nextUrqlClientConfig: NextUrqlClientConfig = (ssrExchange: SSRExchange, ctx: NextPageContext) => ({
   url: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT_URL,

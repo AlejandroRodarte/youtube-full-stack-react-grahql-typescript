@@ -4,15 +4,15 @@ import NextLink from 'next/link'
 import { Flex, Link } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
+import { GetServerSideProps } from 'next'
 
 import { LoginInput, useLoginMutation, LoginMutationVariables } from '../generated/graphql'
-
-import withAnonymous from '../hoc/withAnonymous'
 
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import SimpleForm from '../components/ui/forms/SimpleForm'
 
 import commonFunctions from '../util/common/functions'
+import server from '../graphql/urql/server'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 
@@ -53,6 +53,8 @@ const Login: React.FC<LoginProps> = () => {
   }
 
   const router = useRouter()
+  const { redirectTo = '/' } = router.query
+
   const [, login] = useLoginMutation()
 
   const onSubmit = useCallback(async (
@@ -72,9 +74,9 @@ const Login: React.FC<LoginProps> = () => {
     }
 
     if (response.data?.login.data) {
-      router.push('/')
+      router.push(redirectTo as string)
     }
-  }, [login, router])
+  }, [login, redirectTo, router])
 
   return (
     <Wrapper>
@@ -93,4 +95,19 @@ const Login: React.FC<LoginProps> = () => {
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: true })(withAnonymous(Login))
+export const getServerSideProps: GetServerSideProps<LoginProps> = async (ctx) => {
+  const client = server.getUrqlClientForServerSideProps(ctx)
+  const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 401)
+
+  if (typeof isStatusCodeCorrect === 'undefined') return { props: {} }
+  if (isStatusCodeCorrect) return { props: {} }
+
+  return {
+    redirect: {
+      destination: '/',
+      permanent: false
+    }
+  }
+}
+
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(Login)

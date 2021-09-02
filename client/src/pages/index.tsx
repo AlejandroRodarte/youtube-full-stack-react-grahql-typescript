@@ -17,7 +17,7 @@ const Index: NextPage<IndexProps> = () => {
     <>
       <MainLayout variant="small">
         <div>hello mamita</div>
-        { !data ? null : data.posts.data.posts.map((post) => <div key={ post.id }>{ post.title }</div>) }
+        { data && data.posts.data.posts.map((post) => <div key={ post.id }>{ post.title }</div>) }
       </MainLayout>
     </>
   )
