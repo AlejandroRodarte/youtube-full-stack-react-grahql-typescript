@@ -6,7 +6,8 @@ export default async function sendHtmlMail (
   html: string
 ) {
   try {
-    await mail.transporter.sendMail({
+    const transporter = await mail.transporter()
+    await transporter.sendMail({
       from: mail.MailConstants.FROM,
       to,
       subject,
