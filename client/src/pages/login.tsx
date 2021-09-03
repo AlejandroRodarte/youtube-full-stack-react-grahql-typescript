@@ -2,26 +2,25 @@ import React, { useCallback } from 'react'
 import { FormikHelpers } from 'formik'
 import NextLink from 'next/link'
 import { Flex, Link } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
-import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 
 import { LoginInput, useLoginMutation, LoginMutationVariables } from '../generated/graphql'
 
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import SimpleForm from '../components/ui/forms/SimpleForm'
+import withAnonymous, { AnonymousProps } from '../hoc/withAnonymous'
 
 import commonFunctions from '../util/common/functions'
-import server from '../graphql/urql/server'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 
 import { FormTypes } from '../types/forms'
 import { GraphQLUsersArgs } from '../types/graphql/args/users'
 
-interface LoginProps {}
+interface LoginProps extends AnonymousProps {}
 
-const Login: React.FC<LoginProps> = () => {
+const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
   const loginFormInitialValues: FormTypes.LoginForm = {
     credential: '',
     password: ''
@@ -73,10 +72,8 @@ const Login: React.FC<LoginProps> = () => {
       return
     }
 
-    if (response.data?.login.data) {
-      router.push(redirectTo as string)
-    }
-  }, [login, redirectTo, router])
+    if (!wasLoadedOnServer && response.data?.login.data) router.push(redirectTo as string)
+  }, [login, redirectTo, router, wasLoadedOnServer])
 
   return (
     <Wrapper>
@@ -91,23 +88,11 @@ const Login: React.FC<LoginProps> = () => {
           <Link ml="auto">Forgot your password?</Link>
         </NextLink>
       </Flex>
+      <NextLink href={{ pathname: '/register', query: router.query }}>
+        <Link ml="auto">Don&apos;t have an account? Register!</Link>
+      </NextLink>
     </Wrapper>
   )
 }
 
-export const getServerSideProps: GetServerSideProps<LoginProps> = async (ctx) => {
-  const [client, ssrExchange] = server.getUrqlClientForServerSideProps(ctx)
-  const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 401)
-
-  if (typeof isStatusCodeCorrect === 'undefined') return { props: {} }
-  if (isStatusCodeCorrect) return { props: { urqlState: ssrExchange.extractData() } }
-
-  return {
-    redirect: {
-      destination: '/',
-      permanent: false
-    }
-  }
-}
-
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(Login)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(Login))

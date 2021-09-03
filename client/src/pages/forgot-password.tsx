@@ -2,22 +2,21 @@ import React, { useCallback, useState } from 'react'
 import { Box } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
 import { FormikHelpers } from 'formik'
-import { GetServerSideProps } from 'next'
 
 import { ForgotPasswordInput, ForgotPasswordMutationVariables, useForgotPasswordMutation } from '../generated/graphql'
 
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import SimpleForm from '../components/ui/forms/SimpleForm'
+import withAnonymous, { AnonymousProps } from '../hoc/withAnonymous'
 
 import commonFunctions from '../util/common/functions'
-import server from '../graphql/urql/server'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 
 import { GraphQLUsersArgs } from '../types/graphql/args/users'
 import { FormTypes } from '../types/forms'
 
-interface ForgotPasswordProps {}
+interface ForgotPasswordProps extends AnonymousProps {}
 
 const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
   const forgotPasswordInitialValues: FormTypes.ForgotPasswordForm = {
@@ -85,19 +84,4 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<ForgotPasswordProps> = async (ctx) => {
-  const [client, ssrExchange] = server.getUrqlClientForServerSideProps(ctx)
-  const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 401)
-
-  if (typeof isStatusCodeCorrect === 'undefined') return { props: {} }
-  if (isStatusCodeCorrect) return { props: { urqlState: ssrExchange.extractData() } }
-
-  return {
-    redirect: {
-      destination: '/',
-      permanent: false
-    }
-  }
-}
-
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(ForgotPassword)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(ForgotPassword))

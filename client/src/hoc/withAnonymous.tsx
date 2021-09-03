@@ -1,20 +1,34 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { useMeQuery } from '../generated/graphql'
 
-const withAnonymous = <P extends object>(Component: React.FC<P>) => {
+export interface AnonymousProps {
+  wasLoadedOnServer: boolean
+}
+
+const withAnonymous = <P extends AnonymousProps>(Component: React.FC<P>) => {
   const Anonymous: React.FC<P> = (props: P) => {
     const router = useRouter()
-    const [{ data, fetching }] = useMeQuery()
+    const { redirectTo = '/' } = router.query
 
+    const [wasLoadedOnServer, setWasLoadedOnServer] = useState(false)
+    const [{ data, fetching }] = useMeQuery()
     const status = data ? data.me.status : -1
 
-    useEffect(() => {
-      if (!fetching && status === 200) router.replace('/')
-    }, [fetching, router, status])
+    if (!wasLoadedOnServer && status === -1) setWasLoadedOnServer(() => true)
 
-    return ((!fetching && status === 401) && <Component { ...props } />)
+    useEffect(() => {
+      if (wasLoadedOnServer && !fetching && status === 200) router.replace(redirectTo as string)
+    }, [fetching, redirectTo, router, status, wasLoadedOnServer])
+
+    return (
+      (!fetching && status === 401) &&
+      <Component
+        { ...props as P }
+        wasLoadedOnServer={ wasLoadedOnServer }
+      />
+    )
   }
 
   return Anonymous

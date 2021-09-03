@@ -1,25 +1,24 @@
 import React, { useCallback } from 'react'
 import { FormikHelpers } from 'formik'
-import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
-import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 
 import { RegisterInput, useRegisterMutation, RegisterMutationVariables } from '../generated/graphql'
 
 import SimpleForm from '../components/ui/forms/SimpleForm'
 import Wrapper from '../components/ui/wrappers/Wrapper'
+import withAnonymous, { AnonymousProps } from '../hoc/withAnonymous'
 
 import commonFunctions from '../util/common/functions'
-import server from '../graphql/urql/server'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 
 import { FormTypes } from '../types/forms'
 import { GraphQLUsersArgs } from '../types/graphql/args/users'
 
-interface RegisterProps {}
+interface RegisterProps extends AnonymousProps {}
 
-const Register: React.FC<RegisterProps> = () => {
+const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps) => {
   const registerFormInitialValues: FormTypes.RegisterForm = {
     username: '',
     email: '',
@@ -63,6 +62,8 @@ const Register: React.FC<RegisterProps> = () => {
   }
 
   const router = useRouter()
+  const { redirectTo = '/' } = router.query
+
   const [, register] = useRegisterMutation()
 
   const onSubmit = useCallback(async (
@@ -81,10 +82,8 @@ const Register: React.FC<RegisterProps> = () => {
       return
     }
 
-    if (response.data?.register.data) {
-      router.push('/')
-    }
-  }, [register, router])
+    if (!wasLoadedOnServer && response.data?.register.data) router.push(redirectTo as string)
+  }, [redirectTo, register, router, wasLoadedOnServer])
 
   return (
     <Wrapper>
@@ -98,19 +97,4 @@ const Register: React.FC<RegisterProps> = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<RegisterProps> = async (ctx) => {
-  const [client, ssrExchange] = server.getUrqlClientForServerSideProps(ctx)
-  const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 401)
-
-  if (typeof isStatusCodeCorrect === 'undefined') return { props: {} }
-  if (isStatusCodeCorrect) return { props: { urqlState: ssrExchange.extractData() } }
-
-  return {
-    redirect: {
-      destination: '/',
-      permanent: false
-    }
-  }
-}
-
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(Register)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(Register))

@@ -2,17 +2,16 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { FormikHelpers } from 'formik'
 import { withUrqlClient } from 'next-urql'
-import { GetServerSideProps } from 'next'
 
 import { AddPostInput, AddPostMutationVariables, useAddPostMutation } from '../../generated/graphql'
 
 import SimpleForm from '../../components/ui/forms/SimpleForm'
 import MainLayout from '../../layouts/MainLayout'
+import withAuth from '../../hoc/withAuth'
 
 import commonFunctions from '../../util/common/functions'
-import server from '../../graphql/urql/server'
 
-// import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
+import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
 
 import { GraphQLPostsArgs } from '../../types/graphql/args/posts'
 import { FormTypes } from '../../types/forms'
@@ -85,27 +84,4 @@ const CreatePost: React.FC<CreatePostProps> = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<CreatePostProps> = async (ctx) => {
-  const [client, ssrExchange] = server.getUrqlClientForServerSideProps(ctx)
-  const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 200)
-
-  if (typeof isStatusCodeCorrect === 'undefined') return { props: {} }
-  if (isStatusCodeCorrect) return { props: { urqlState: ssrExchange.extractData() } }
-
-  return {
-    redirect: {
-      destination: `/login?redirectTo=${encodeURIComponent('/posts/create')}`,
-      permanent: false
-    }
-  }
-}
-
-export default withUrqlClient((ssr, ctx) => ({
-  url: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT_URL,
-  fetchOptions: {
-    credentials: 'include',
-    headers: {
-      cookie: ctx && ctx.req ? ctx.req.headers.cookie : null
-    }
-  }
-}), { ssr: false })(CreatePost)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAuth(CreatePost))

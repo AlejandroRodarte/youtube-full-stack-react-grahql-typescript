@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react'
-import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { Box, Flex } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
@@ -10,16 +9,16 @@ import { useChangePasswordMutation, ChangePasswordInput, ChangePasswordMutationV
 
 import Wrapper from '../../components/ui/wrappers/Wrapper'
 import SimpleForm from '../../components/ui/forms/SimpleForm'
+import withAnonymous, { AnonymousProps } from '../../hoc/withAnonymous'
 
 import commonFunctions from '../../util/common/functions'
-import server from '../../graphql/urql/server'
 
 import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
 
 import { FormTypes } from '../../types/forms'
 import { GraphQLUsersArgs } from '../../types/graphql/args/users'
 
-interface ChangePasswordProps {
+interface ChangePasswordProps extends AnonymousProps {
   token: string
 }
 
@@ -98,26 +97,4 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ token }: ChangePassword
   )
 }
 
-export const getServerSideProps: GetServerSideProps<ChangePasswordProps> = async (ctx) => {
-  const [client, ssrExchange] = server.getUrqlClientForServerSideProps(ctx)
-  const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 401)
-
-  const response = {
-    props: {
-      token: typeof ctx.query.token === 'string' ? ctx.query.token : undefined,
-      urqlState: ssrExchange.extractData()
-    }
-  }
-
-  if (typeof isStatusCodeCorrect === 'undefined') return response
-  if (isStatusCodeCorrect) return response
-
-  return {
-    redirect: {
-      destination: '/',
-      permanent: false
-    }
-  }
-}
-
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(ChangePassword)
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(ChangePassword))
