@@ -99,12 +99,13 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ token }: ChangePassword
 }
 
 export const getServerSideProps: GetServerSideProps<ChangePasswordProps> = async (ctx) => {
-  const client = server.getUrqlClientForServerSideProps(ctx)
+  const [client, ssrExchange] = server.getUrqlClientForServerSideProps(ctx)
   const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 401)
 
   const response = {
     props: {
-      token: typeof ctx.query.token === 'string' ? ctx.query.token : undefined
+      token: typeof ctx.query.token === 'string' ? ctx.query.token : undefined,
+      urqlState: ssrExchange.extractData()
     }
   }
 

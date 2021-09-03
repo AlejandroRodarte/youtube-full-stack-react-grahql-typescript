@@ -86,11 +86,11 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
 }
 
 export const getServerSideProps: GetServerSideProps<ForgotPasswordProps> = async (ctx) => {
-  const client = server.getUrqlClientForServerSideProps(ctx)
+  const [client, ssrExchange] = server.getUrqlClientForServerSideProps(ctx)
   const [isStatusCodeCorrect] = await server.common.auth.checkMyStatusCode(client, 401)
 
   if (typeof isStatusCodeCorrect === 'undefined') return { props: {} }
-  if (isStatusCodeCorrect) return { props: {} }
+  if (isStatusCodeCorrect) return { props: { urqlState: ssrExchange.extractData() } }
 
   return {
     redirect: {
