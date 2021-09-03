@@ -1,12 +1,10 @@
 import { ssrExchange, dedupExchange, fetchExchange, Client } from 'urql'
-import { initUrqlClient } from 'next-urql'
+import { initUrqlClient, SSRExchange } from 'next-urql'
 import { GetServerSidePropsContext } from 'next'
 import { ParsedUrlQuery } from 'querystring'
-import { cacheExchange } from '@urql/exchange-graphcache'
+import cacheExchange from '../exchanges/cache'
 
-import cacheExchangeConfig from '../exchanges/cache'
-
-const getUrqlClientForServerSideProps = (ctx: GetServerSidePropsContext<ParsedUrlQuery>): Client => {
+const getUrqlClientForServerSideProps = (ctx: GetServerSidePropsContext<ParsedUrlQuery>): [Client, SSRExchange] => {
   const ssrCache = ssrExchange({ isClient: false })
 
   const client = initUrqlClient({
@@ -17,10 +15,10 @@ const getUrqlClientForServerSideProps = (ctx: GetServerSidePropsContext<ParsedUr
         cookie: ctx && ctx.req ? ctx.req.headers.cookie : null
       }
     },
-    exchanges: [dedupExchange, cacheExchange(cacheExchangeConfig), ssrCache, fetchExchange]
+    exchanges: [dedupExchange, cacheExchange, ssrCache, fetchExchange]
   }, false)
 
-  return client
+  return [client, ssrCache]
 }
 
 export default getUrqlClientForServerSideProps
