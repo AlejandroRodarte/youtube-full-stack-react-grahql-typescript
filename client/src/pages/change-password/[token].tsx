@@ -22,7 +22,7 @@ interface ChangePasswordProps extends AnonymousProps {
   token: string
 }
 
-const ChangePassword: React.FC<ChangePasswordProps> = ({ token }: ChangePasswordProps) => {
+const ChangePassword: React.FC<ChangePasswordProps> = () => {
   const changePasswordInitialValues: FormTypes.ChangePasswordForm = {
     newPassword: ''
   }
@@ -44,6 +44,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ token }: ChangePassword
   const [tokenError, setTokenError] = useState('')
 
   const router = useRouter()
+  const token = router.query.token as string
+
   const [, changePassword] = useChangePasswordMutation()
 
   const onSubmit = useCallback(async (
