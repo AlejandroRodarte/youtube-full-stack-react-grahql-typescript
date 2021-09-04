@@ -1,12 +1,14 @@
 import Joi from 'joi'
 
+import regex from '../../../../../constants/regex'
+
 const usernameSchema =
   Joi
     .string()
     .required()
     .min(3)
     .max(50)
-    .regex(/^[^@]+$/)
+    .regex(regex.noAtSigns)
     .label('Username')
     .messages({
       'string.pattern.base': '"Username" must not have "@" characters on it.'
@@ -51,7 +53,7 @@ const tokenSchema =
   Joi
     .string()
     .required()
-    .regex(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i)
+    .regex(regex.uuid)
     .label('Token')
     .messages({
       'string.pattern.base': '"Token" must be a valid uuid v4 ID.'

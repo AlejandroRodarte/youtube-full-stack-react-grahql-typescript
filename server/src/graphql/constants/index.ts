@@ -1,7 +1,9 @@
 import responses from './responses'
+import args from './args'
 
 const constants = {
-  responses
+  responses,
+  args
 }
 
 export default constants

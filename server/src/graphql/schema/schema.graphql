@@ -1,5 +1,5 @@
 type Query {
-  posts: PostsResponse!
+  posts(data: PostsInput!): PostsResponse!
   post(data: PostInput!): PostResponse!
   me: MeResponse!
 }
@@ -32,6 +32,12 @@ type FieldError {
   type: String!
   label: String!
   message: String!
+}
+
+input PostsInput {
+  limit: Int!
+  sort: String!
+  cursor: String
 }
 
 type PostResponse {

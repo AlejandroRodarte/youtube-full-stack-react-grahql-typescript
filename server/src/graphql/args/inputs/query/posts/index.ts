@@ -1,7 +1,9 @@
 import PostInput from './post-input'
+import PostsInput from './posts-input'
 
 const posts = {
-  PostInput
+  PostInput,
+  PostsInput
 }
 
 export default posts

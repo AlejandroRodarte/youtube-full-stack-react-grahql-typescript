@@ -254,6 +254,12 @@ export type PostsData = {
   posts: Array<Post>;
 };
 
+export type PostsInput = {
+  limit: Scalars['Int'];
+  sort: Scalars['String'];
+  cursor?: Maybe<Scalars['String']>;
+};
+
 export type PostsResponse = {
   __typename?: 'PostsResponse';
   status: Scalars['Int'];
@@ -269,6 +275,10 @@ export type Query = {
   posts: PostsResponse;
   post: PostResponse;
   me: MeResponse;
+};
+
+export type QueryPostsArgs = {
+  data: PostsInput;
 };
 
 export type QueryPostArgs = {
@@ -311,9 +321,11 @@ export type AddPostMutationVariables = Exact<{
 
 export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename?: 'Post', id: number, title: string, text: string, points: number, originalPosterId: number, createdAt: string, updatedAt: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{
+  postsData: PostsInput;
+}>;
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'PostsData', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'PostsData', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, text: string, points: number, originalPosterId: number }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type ChangePasswordMutationVariables = Exact<{
   changePasswordData: ChangePasswordInput;
@@ -381,8 +393,8 @@ export function useAddPostMutation () {
   return Urql.useMutation<AddPostMutation, AddPostMutationVariables>(AddPostDocument)
 };
 export const PostsDocument = gql`
-    query Posts {
-  posts {
+    query Posts($postsData: PostsInput!) {
+  posts(data: $postsData) {
     status
     message
     code
@@ -393,6 +405,9 @@ export const PostsDocument = gql`
         createdAt
         updatedAt
         title
+        text
+        points
+        originalPosterId
       }
     }
     errors {

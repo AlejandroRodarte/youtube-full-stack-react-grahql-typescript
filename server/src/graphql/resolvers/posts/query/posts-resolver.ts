@@ -1,18 +1,64 @@
-import { Resolver, Query, Ctx } from 'type-graphql'
+import { Resolver, Query, Ctx, UseMiddleware, Arg } from 'type-graphql'
 
 import Post from '../../../../db/orm/entities/Post'
+import PostsInput from '../../../args/inputs/query/posts/posts-input'
 import postsResponses from '../../../objects/responses/posts'
+import querySchemas from '../../../args/schemas/query/posts'
 import responses from '../../../constants/responses'
+import generatedMiddlewares from '../../../../generator/graphql/middleware'
+import constants from '../../constants/posts'
+import argsConstants from '../../../constants/args/posts'
 import { GraphQLContext } from '../../../../types/graphql'
 
 @Resolver()
 export default class PostsResolver {
   @Query(() => postsResponses.query.responses.PostsResponse)
+  @UseMiddleware(generatedMiddlewares.ValidateArgs(querySchemas.PostsArgsSchema))
   async posts (
-    @Ctx() { req }: GraphQLContext.ApplicationContext
+    @Ctx() { req, db }: GraphQLContext.ApplicationContext,
+    @Arg('data', () => PostsInput) data: PostsInput
   ) {
+    const mapper = constants.sortMapper[data.sort]
+
     try {
-      const posts = await Post.find()
+      const query = db
+        .getRepository(Post)
+        .createQueryBuilder('p')
+        .orderBy(`p.${mapper.field}`, 'DESC')
+        .take(data.limit)
+
+      if (data.cursor) {
+        switch (data.sort) {
+          case argsConstants.SortTypes.NEW: {
+            const parsedCursor =
+              constants
+                .sortMapper[data.sort]
+                .cursorParser(data.cursor)
+
+            query.where(
+              `p.${mapper.field} < :cursor`,
+              { cursor: parsedCursor }
+            )
+          }
+            break
+          case argsConstants.SortTypes.POPULAR: {
+            const parsedCursor =
+            constants
+              .sortMapper[data.sort]
+              .cursorParser(data.cursor)
+
+            query.where(
+            `p.${mapper.field} < :cursor`,
+            { cursor: parsedCursor }
+            )
+          }
+            break
+          default:
+            break
+        }
+      }
+
+      const posts = await query.getMany()
 
       const response =
         new postsResponses

@@ -11,7 +11,14 @@ import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 interface IndexProps {}
 
 const Index: NextPage<IndexProps> = () => {
-  const [{ data }] = usePostsQuery()
+  const [{ data }] = usePostsQuery({
+    variables: {
+      postsData: {
+        limit: 10,
+        sort: 'new'
+      }
+    }
+  })
 
   return (
     <>

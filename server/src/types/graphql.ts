@@ -5,6 +5,7 @@ import { Redis } from 'ioredis'
 import TypeORM from 'typeorm'
 
 import PostInput from '../graphql/args/inputs/query/posts/post-input'
+import PostsInput from '../graphql/args/inputs/query/posts/posts-input'
 import AddPostInput from '../graphql/args/inputs/mutation/posts/add-post-input'
 import EditPostInput from '../graphql/args/inputs/mutation/posts/edit-post-input'
 import DeletePostInput from '../graphql/args/inputs/mutation/posts/delete-post-input'
@@ -12,6 +13,8 @@ import RegisterInput from '../graphql/args/inputs/mutation/users/register-input'
 import LoginInput from '../graphql/args/inputs/mutation/users/login-input'
 import ChangePasswordInput from '../graphql/args/inputs/mutation/users/change-password-input'
 import ForgotPasswordInput from '../graphql/args/inputs/mutation/users/forgot-password-input'
+
+import constants from '../graphql/constants'
 
 export namespace GraphQLTuples {
   export type CreateSchemaTuple = [
@@ -60,6 +63,11 @@ export namespace GraphQLInputs {
     payload: PostInput
   }
 
+  interface PostsInputAction {
+    type: 'PostsInput'
+    payload: PostsInput
+  }
+
   interface AddPostInputAction {
     type: 'AddPostInput'
     payload: AddPostInput
@@ -97,6 +105,7 @@ export namespace GraphQLInputs {
 
   export type InputType =
     'PostInput' |
+    'PostsInput' |
     'AddPostInput' |
     'EditPostInput' |
     'DeletePostInput' |
@@ -107,6 +116,7 @@ export namespace GraphQLInputs {
 
   export type InputPayload =
     PostInput |
+    PostsInput |
     AddPostInput |
     EditPostInput |
     DeletePostInput |
@@ -117,6 +127,7 @@ export namespace GraphQLInputs {
 
   export type InputAction =
     PostInputAction |
+    PostsInputAction |
     AddPostInputAction |
     EditPostInputAction |
     DeletePostInputAction |
@@ -125,4 +136,17 @@ export namespace GraphQLInputs {
     ChangePasswordInputAction |
     ForgotPasswordInputAction
 
+}
+
+export namespace GraphQLResolverConstants {
+  export type PostsSortMapper = {
+    [constants.args.posts.SortTypes.NEW]: {
+      field: string,
+      cursorParser: (cursor: string) => Date
+    },
+    [constants.args.posts.SortTypes.POPULAR]: {
+      field: string,
+      cursorParser: (cursor: string) => number
+    }
+  }
 }
