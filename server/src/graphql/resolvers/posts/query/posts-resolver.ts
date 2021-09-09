@@ -21,15 +21,16 @@ export default class PostsResolver {
     const mapper = constants.sortMapper[data.sort]
 
     try {
+      // throw new Error('errpr')
       const query = db
         .getRepository(Post)
         .createQueryBuilder('p')
         .orderBy(`p.${mapper.field}`, 'DESC')
         .take(data.limit)
 
-      if (data.cursor) {
-        switch (data.sort) {
-          case argsConstants.SortTypes.NEW: {
+      switch (data.sort) {
+        case argsConstants.SortTypes.NEW:
+          if (data.cursor) {
             const parsedCursor =
               constants
                 .sortMapper[data.sort]
@@ -40,22 +41,24 @@ export default class PostsResolver {
               { cursor: parsedCursor }
             )
           }
-            break
-          case argsConstants.SortTypes.POPULAR: {
-            const parsedCursor =
-            constants
-              .sortMapper[data.sort]
-              .cursorParser(data.cursor)
+          break
+        case argsConstants.SortTypes.POPULAR:
+          query.addOrderBy('p.createdAt', 'DESC')
+
+          if (data.cursor) {
+            const [createdAt, points] =
+              constants
+                .sortMapper[data.sort]
+                .cursorParser(data.cursor)
 
             query.where(
-            `p.${mapper.field} < :cursor`,
-            { cursor: parsedCursor }
+              `p.${mapper.field} <= :points AND p.createdAt < :createdAt OR p.${mapper.field} < :points`,
+              { points, createdAt }
             )
           }
-            break
-          default:
-            break
-        }
+          break
+        default:
+          break
       }
 
       const posts = await query.getMany()

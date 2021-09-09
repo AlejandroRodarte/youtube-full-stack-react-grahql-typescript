@@ -14,7 +14,7 @@ type PostsResponse {
 }
 
 type PostsData {
-  posts: [Post!]!
+  posts: [Post!]
 }
 
 type Post {
@@ -25,6 +25,7 @@ type Post {
   originalPosterId: Float!
   createdAt: String!
   updatedAt: String!
+  textSnippet: String!
 }
 
 type FieldError {

@@ -10,9 +10,8 @@ query Posts($postsData: PostsInput!) {
         createdAt
         updatedAt
         title
-        text
+        textSnippet
         points
-        originalPosterId
       }
     }
     errors {

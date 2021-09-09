@@ -146,7 +146,7 @@ export namespace GraphQLResolverConstants {
     },
     [constants.args.posts.SortTypes.POPULAR]: {
       field: string,
-      cursorParser: (cursor: string) => number
+      cursorParser: (cursor: string) => [Date, number]
     }
   }
 }

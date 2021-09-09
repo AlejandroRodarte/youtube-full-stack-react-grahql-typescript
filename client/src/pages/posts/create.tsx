@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { FormikHelpers } from 'formik'
 import { withUrqlClient } from 'next-urql'
+import NextLink from 'next/link'
+import { Link } from '@chakra-ui/react'
 
-import { AddPostInput, AddPostMutationVariables, useAddPostMutation } from '../../generated/graphql'
+import { AddPostInput, AddPostMutationVariables, useAddPostMutation, useLogoutMutation } from '../../generated/graphql'
 
 import SimpleForm from '../../components/ui/forms/SimpleForm'
 import MainLayout from '../../layouts/MainLayout'
-import withAuth from '../../hoc/withAuth'
+import withAuth, { AuthProps } from '../../hoc/withAuth'
 
 import commonFunctions from '../../util/common/functions'
 
@@ -16,9 +18,9 @@ import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
 import { GraphQLPostsArgs } from '../../types/graphql/args/posts'
 import { FormTypes } from '../../types/forms'
 
-interface CreatePostProps {}
+interface CreatePostProps extends AuthProps {}
 
-const CreatePost: React.FC<CreatePostProps> = () => {
+const CreatePost: React.FC<CreatePostProps> = ({ me }: CreatePostProps) => {
   const createPostFormInitialValues: FormTypes.CreatePostForm = {
     title: '',
     text: ''
@@ -50,6 +52,7 @@ const CreatePost: React.FC<CreatePostProps> = () => {
 
   const router = useRouter()
   const [, addPost] = useAddPostMutation()
+  const [{ fetching: logoutFetching }, logout] = useLogoutMutation()
 
   const onSubmit = async (
     form: FormTypes.CreatePostForm,
@@ -60,26 +63,45 @@ const CreatePost: React.FC<CreatePostProps> = () => {
 
     const response = await addPost(addPostArgsInput)
 
-    if (response.data?.addPost.errors) {
-      const mappedFieldErrors = commonFunctions.mapFieldErrors(response.data.addPost.errors)
-      const unflattenedErrors = commonFunctions.unflatten<GraphQLPostsArgs.AddPostArgsErrors>(mappedFieldErrors)
-      setErrors(unflattenedErrors.data)
-      return
-    }
+    if (response.data) {
+      const { data, errors } = response.data.addPost
 
-    if (response.data?.addPost.data) {
-      router.push('/')
+      if (errors) {
+        const mappedFieldErrors = commonFunctions.mapFieldErrors(errors)
+        const unflattenedErrors = commonFunctions.unflatten<GraphQLPostsArgs.AddPostArgsErrors>(mappedFieldErrors)
+        setErrors(unflattenedErrors.data)
+      }
+
+      if (data) {
+        router.push('/')
+      }
     }
   }
 
+  const onLogout = useCallback(() => {
+    logout()
+  }, [logout])
+
   return (
-    <MainLayout variant="small">
+    <MainLayout
+      variant="small"
+      me={ me }
+      logout={
+        {
+          handler: onLogout,
+          loading: logoutFetching
+        }
+      }
+    >
       <SimpleForm
         initialValues={ createPostFormInitialValues }
         fieldsConfig={ createPostFormFieldsConfig }
         onSubmit={ onSubmit }
         submitButtonText="Create post"
       />
+      <NextLink href="/">
+        <Link>Go to home</Link>
+      </NextLink>
     </MainLayout>
   )
 }

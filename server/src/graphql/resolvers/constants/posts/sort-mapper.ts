@@ -9,7 +9,14 @@ const sortMapper: GraphQLResolverConstants.PostsSortMapper = {
   },
   [SortTypes.POPULAR]: {
     field: 'points',
-    cursorParser: (cursor: string) => +cursor
+    cursorParser: (cursor: string) => {
+      const [createdAtParam, pointsParam] = cursor.split(',')
+
+      const [, createdAt] = createdAtParam.split('=')
+      const [, points] = pointsParam.split('=')
+
+      return [new Date(+createdAt), +points]
+    }
   }
 }
 

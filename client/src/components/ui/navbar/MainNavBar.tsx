@@ -2,53 +2,68 @@ import { Box, Flex, Link, Button } from '@chakra-ui/react'
 import React, { useCallback } from 'react'
 import NextLink from 'next/link'
 
-import { useMeQuery, useLogoutMutation } from '../../../generated/graphql'
+import { UITypes } from '../../../types/components/ui'
+import { MeQuery } from '../../../generated/graphql'
 
-interface MainNavBarProps {}
+interface MainNavBarProps {
+  routes: UITypes.NavBarRoutes
+  logout: {
+    handler: () => void
+    loading: boolean
+  },
+  me: MeQuery['me']
+}
 
-const MainNavBar: React.FC<MainNavBarProps> = () => {
-  const [{ data, fetching: meFetching }] = useMeQuery()
-  const [{ fetching: logoutFetching }, logout] = useLogoutMutation()
-
+const MainNavBar: React.FC<MainNavBarProps> = ({ routes, logout, me }: MainNavBarProps) => {
   const onLogoutButtonClick = useCallback(() => {
-    logout()
+    logout.handler()
   }, [logout])
 
   let linksJsx = (
     <>
-      <NextLink href="/login">
-        <Link
-          mr={ 2 }
-          color="white"
-        >
-          Login
-        </Link>
-      </NextLink>
-      <NextLink href="/register">
-        <Link
-          mr={ 2 }
-          color="white"
-        >
-          Register
-        </Link>
-      </NextLink>
+      {
+        routes.anonymous.map((route) => (
+          <NextLink
+            key={ route.href }
+            href={ route.href }
+          >
+            <Link
+              mr={ 2 }
+              color="white"
+            >
+              { route.name }
+            </Link>
+          </NextLink>
+        ))
+      }
     </>
   )
 
-  if (meFetching) {
-    linksJsx = null
-  }
-
-  if (data?.me?.data?.user) {
+  if (me.data) {
     linksJsx = (
       <Flex>
         <Box mr={ 2 }>
-          { data.me.data.user.username }
+          { me.data.user.username }
         </Box>
+        {
+          routes.auth.map((route) => (
+            <NextLink
+              key={ route.href }
+              href={ route.href }
+            >
+              <Link
+                mr={ 2 }
+                color="white"
+              >
+                { route.name }
+              </Link>
+            </NextLink>
+          ))
+        }
         <Button
           variant="link"
           onClick={ onLogoutButtonClick }
-          isLoading={ logoutFetching }
+          isLoading={ logout.loading }
         >
           logout
         </Button>

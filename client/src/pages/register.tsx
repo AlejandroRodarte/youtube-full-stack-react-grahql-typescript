@@ -75,14 +75,19 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
 
     const response = await register(registerArgsInput)
 
-    if (response.data?.register.errors) {
-      const mappedFieldErrors = commonFunctions.mapFieldErrors(response.data.register.errors)
-      const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.RegisterArgsErrors>(mappedFieldErrors)
-      setErrors(unflattenedErrors.data)
-      return
-    }
+    if (response.data) {
+      const { data, errors } = response.data.register
 
-    if (!wasLoadedOnServer && response.data?.register.data) router.push(redirectTo as string)
+      if (data && !wasLoadedOnServer) {
+        router.push(redirectTo as string)
+      }
+
+      if (errors) {
+        const mappedFieldErrors = commonFunctions.mapFieldErrors(errors)
+        const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.RegisterArgsErrors>(mappedFieldErrors)
+        setErrors(unflattenedErrors.data)
+      }
+    }
   }, [redirectTo, register, router, wasLoadedOnServer])
 
   return (

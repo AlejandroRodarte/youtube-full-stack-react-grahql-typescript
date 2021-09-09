@@ -1,11 +1,13 @@
-import isServer from "./is-server";
-import mapFieldErrors from "./map-field-errors";
-import unflatten from "./unflatten";
+import isServer from './is-server'
+import mapFieldErrors from './map-field-errors'
+import unflatten from './unflatten'
+import isObjectEmpty from './is-object-empty'
 
 const functions = {
   isServer,
   mapFieldErrors,
-  unflatten
+  unflatten,
+  isObjectEmpty
 }
 
 export default functions

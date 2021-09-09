@@ -65,14 +65,19 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
 
     const response = await login(loginArgsInput)
 
-    if (response.data?.login.errors) {
-      const mappedFieldErrors = commonFunctions.mapFieldErrors(response.data.login.errors)
-      const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.LoginArgsErrors>(mappedFieldErrors)
-      setErrors(unflattenedErrors.data)
-      return
-    }
+    if (response.data) {
+      const { data, errors } = response.data.login
 
-    if (!wasLoadedOnServer && response.data?.login.data) router.push(redirectTo as string)
+      if (data && !wasLoadedOnServer) {
+        router.push(redirectTo as string)
+      }
+
+      if (errors) {
+        const mappedFieldErrors = commonFunctions.mapFieldErrors(errors)
+        const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.LoginArgsErrors>(mappedFieldErrors)
+        setErrors(unflattenedErrors.data)
+      }
+    }
   }, [login, redirectTo, router, wasLoadedOnServer])
 
   return (

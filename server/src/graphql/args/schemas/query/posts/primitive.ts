@@ -51,9 +51,9 @@ const cursorSchema =
         {
           is: SortTypes.POPULAR,
           then: baseCursorSchema
-            .regex(regex.positiveOrNegativeIntegers)
+            .regex(regex.cursors.posts.popular)
             .messages({
-              'string.pattern.base': '"Posts cursor" must be a positive or negative integer.'
+              'string.pattern.base': '"Posts cursor" must follow this format: createdAt=<createdAt>,points=<points>.'
             })
         }
       ]

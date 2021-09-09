@@ -2,6 +2,7 @@ import React from 'react'
 import { ChakraProvider, ColorModeProvider } from '@chakra-ui/react'
 import { AppProps } from 'next/app'
 
+import { AppContextWrapper } from '../context/app-context'
 import theme from '../theme'
 
 function MyApp ({ Component, pageProps }: AppProps) {
@@ -12,7 +13,9 @@ function MyApp ({ Component, pageProps }: AppProps) {
           useSystemColorMode: true
         }}
       >
-        <Component {...pageProps} />
+        <AppContextWrapper>
+          <Component {...pageProps} />
+        </AppContextWrapper>
       </ColorModeProvider>
     </ChakraProvider>
   )
