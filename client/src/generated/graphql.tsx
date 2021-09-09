@@ -360,6 +360,10 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'MeData', user: { __typename?: 'User', id: number, username: string, email: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
+export type MyStatusQueryVariables = Exact<{ [key: string]: never; }>;
+
+export type MyStatusQuery = { __typename?: 'Query', me: { __typename?: 'MeResponse', status: number } };
+
 export const AddPostDocument = gql`
     mutation AddPost($addPostData: AddPostInput!) {
   addPost(data: $addPostData) {
@@ -557,4 +561,15 @@ export const MeDocument = gql`
 
 export function useMeQuery (options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options })
+};
+export const MyStatusDocument = gql`
+    query MyStatus {
+  me {
+    status
+  }
+}
+    `
+
+export function useMyStatusQuery (options: Omit<Urql.UseQueryArgs<MyStatusQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MyStatusQuery>({ query: MyStatusDocument, ...options })
 };
