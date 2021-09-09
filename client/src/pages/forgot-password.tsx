@@ -50,15 +50,18 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
 
     const response = await forgotPassword(forgotPasswordArgsInput)
 
-    if (response.data?.forgotPassword.errors) {
-      const mappedFieldErrors = commonFunctions.mapFieldErrors(response.data.forgotPassword.errors)
-      const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.ForgotPasswordArgsErrors>(mappedFieldErrors)
-      setErrors(unflattenedErrors.data)
-      return
-    }
+    if (response.data) {
+      const { data, errors } = response.data.forgotPassword
 
-    if (response.data?.forgotPassword.data) {
-      setOperationComplete(() => true)
+      if (data) {
+        setOperationComplete(() => true)
+      }
+
+      if (errors) {
+        const mappedFieldErrors = commonFunctions.mapFieldErrors(errors)
+        const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.ForgotPasswordArgsErrors>(mappedFieldErrors)
+        setErrors(unflattenedErrors.data)
+      }
     }
   }, [forgotPassword])
 

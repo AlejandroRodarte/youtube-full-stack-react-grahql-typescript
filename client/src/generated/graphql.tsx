@@ -228,6 +228,7 @@ export type Post = {
   originalPosterId: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  textSnippet: Scalars['String'];
 };
 
 export type PostData = {
@@ -251,7 +252,13 @@ export type PostResponse = {
 
 export type PostsData = {
   __typename?: 'PostsData';
-  posts: Array<Post>;
+  posts?: Maybe<Array<Post>>;
+};
+
+export type PostsInput = {
+  limit: Scalars['Int'];
+  sort: Scalars['String'];
+  cursor?: Maybe<Scalars['String']>;
 };
 
 export type PostsResponse = {
@@ -269,6 +276,10 @@ export type Query = {
   posts: PostsResponse;
   post: PostResponse;
   me: MeResponse;
+};
+
+export type QueryPostsArgs = {
+  data: PostsInput;
 };
 
 export type QueryPostArgs = {
@@ -309,11 +320,13 @@ export type AddPostMutationVariables = Exact<{
   addPostData: AddPostInput;
 }>;
 
-export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename?: 'Post', id: number, title: string, text: string, points: number, originalPosterId: number, createdAt: string, updatedAt: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{
+  postsData: PostsInput;
+}>;
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'PostsData', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'PostsData', posts?: Maybe<Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number }>> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type ChangePasswordMutationVariables = Exact<{
   changePasswordData: ChangePasswordInput;
@@ -347,10 +360,6 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'MeData', user: { __typename?: 'User', id: number, username: string, email: string } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
-export type MyStatusQueryVariables = Exact<{ [key: string]: never; }>;
-
-export type MyStatusQuery = { __typename?: 'Query', me: { __typename?: 'MeResponse', status: number } };
-
 export const AddPostDocument = gql`
     mutation AddPost($addPostData: AddPostInput!) {
   addPost(data: $addPostData) {
@@ -361,12 +370,11 @@ export const AddPostDocument = gql`
     data {
       newPost {
         id
-        title
-        text
-        points
-        originalPosterId
         createdAt
         updatedAt
+        title
+        textSnippet
+        points
       }
     }
     errors {
@@ -381,8 +389,8 @@ export function useAddPostMutation () {
   return Urql.useMutation<AddPostMutation, AddPostMutationVariables>(AddPostDocument)
 };
 export const PostsDocument = gql`
-    query Posts {
-  posts {
+    query Posts($postsData: PostsInput!) {
+  posts(data: $postsData) {
     status
     message
     code
@@ -393,6 +401,8 @@ export const PostsDocument = gql`
         createdAt
         updatedAt
         title
+        textSnippet
+        points
       }
     }
     errors {
@@ -547,15 +557,4 @@ export const MeDocument = gql`
 
 export function useMeQuery (options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options })
-};
-export const MyStatusDocument = gql`
-    query MyStatus {
-  me {
-    status
-  }
-}
-    `
-
-export function useMyStatusQuery (options: Omit<Urql.UseQueryArgs<MyStatusQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<MyStatusQuery>({ query: MyStatusDocument, ...options })
 };

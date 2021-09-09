@@ -4,10 +4,13 @@ import Post from '../../../../../../db/orm/entities/Post'
 
 @ObjectType()
 export default class PostsData {
-  @Field(() => [Post])
-  posts: Post[]
+  @Field(
+    () => [Post],
+    { nullable: true }
+  )
+  posts?: Post[]
 
-  constructor (posts: Post[]) {
+  constructor (posts?: Post[]) {
     this.posts = posts
   }
 }

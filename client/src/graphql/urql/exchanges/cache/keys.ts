@@ -4,7 +4,8 @@ const keys: KeyingConfig = {
   MeResponse: () => null,
   MeData: () => null,
   PostsResponse: () => null,
-  PostsData: () => null
+  PostsData: () => null,
+  FieldError: () => null
 }
 
 export default keys

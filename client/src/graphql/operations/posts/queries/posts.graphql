@@ -1,5 +1,5 @@
-query Posts {
-  posts {
+query Posts($postsData: PostsInput!) {
+  posts(data: $postsData) {
     status
     message
     code
@@ -10,6 +10,8 @@ query Posts {
         createdAt
         updatedAt
         title
+        textSnippet
+        points
       }
     }
     errors {

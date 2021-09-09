@@ -1,17 +1,16 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
-import { useMeQuery } from '../generated/graphql'
+import withUserData, { UserDataProps } from './withUserData'
 
-const withAuth = <P extends object>(Component: React.FC<P>, redirectTo = '/login') => {
+export interface AuthProps extends UserDataProps {}
+
+const withAuth = <P extends AuthProps>(Component: React.FC<P>, redirectTo = '/login') => {
   const Auth: React.FC<P> = (props: P) => {
     const router = useRouter()
-    const [{ data, fetching }] = useMeQuery()
-
-    const status = data ? data.me.status : -1
 
     useEffect(() => {
-      if (!fetching && status === 401) {
+      if (props.me.status === 401) {
         router.replace({
           pathname: redirectTo,
           query: {
@@ -19,12 +18,12 @@ const withAuth = <P extends object>(Component: React.FC<P>, redirectTo = '/login
           }
         })
       }
-    }, [status, router, fetching])
+    }, [props.me.status, router])
 
-    return ((!fetching && status === 200) && <Component { ...props } />)
+    return ((props.me.status === 200) && <Component { ...props as P } />)
   }
 
-  return Auth
+  return withUserData(Auth)
 }
 
 export default withAuth

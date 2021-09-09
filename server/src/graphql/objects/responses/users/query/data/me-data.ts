@@ -1,6 +1,13 @@
-import { ObjectType } from 'type-graphql'
+import { ObjectType, Field } from 'type-graphql'
 
-import LoginData from '../../mutation/data/login-data'
+import User from '../../../../../../db/orm/entities/User'
 
 @ObjectType()
-export default class MeData extends LoginData {}
+export default class MeData {
+  @Field(() => User)
+  user: User
+
+  constructor (user: User) {
+    this.user = user
+  }
+}

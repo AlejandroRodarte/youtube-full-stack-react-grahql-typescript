@@ -57,18 +57,22 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
 
     const response = await changePassword(changePasswordArgsInput)
 
-    if (response.data?.changePassword.errors) {
-      const mappedFieldErrors = commonFunctions.mapFieldErrors(response.data.changePassword.errors)
-      const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.ChangePasswordArgsErrors>(mappedFieldErrors)
+    if (response.data) {
+      const { data, errors } = response.data.changePassword
 
-      if ('token' in unflattenedErrors.data) {
-        setTokenError(() => unflattenedErrors.data.token)
+      if (data) {
+        router.push('/')
       }
-      setErrors(unflattenedErrors.data.form)
-    }
 
-    if (response.data?.changePassword.data) {
-      router.push('/')
+      if (errors) {
+        const mappedFieldErrors = commonFunctions.mapFieldErrors(errors)
+        const unflattenedErrors = commonFunctions.unflatten<GraphQLUsersArgs.ChangePasswordArgsErrors>(mappedFieldErrors)
+
+        if ('token' in unflattenedErrors.data) {
+          setTokenError(() => unflattenedErrors.data.token)
+        }
+        setErrors(unflattenedErrors.data.form)
+      }
     }
   }, [changePassword, router, token])
 
