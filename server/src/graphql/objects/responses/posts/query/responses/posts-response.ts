@@ -7,6 +7,5 @@ import FieldError from '../../../error/field-error'
 @ObjectType()
 export default class PostsResponse extends ApplicationResponse(
   PostsData,
-  FieldError,
-  { nullable: false }
+  FieldError
 ) {}
