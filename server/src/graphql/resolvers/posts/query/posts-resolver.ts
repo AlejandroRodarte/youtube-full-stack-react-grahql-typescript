@@ -21,7 +21,6 @@ export default class PostsResolver {
     const mapper = constants.sortMapper[data.sort]
 
     try {
-      // throw new Error('errpr')
       const query = db
         .getRepository(Post)
         .createQueryBuilder('p')

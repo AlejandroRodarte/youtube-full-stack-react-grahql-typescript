@@ -6,7 +6,7 @@ import { GraphQLUrqlCache } from '../../../../../../../../../types/graphql/urql/
 
 const postsPaginatorDelegate: GraphQLUrqlCache.PostsPaginatorDelegateFunction<PostsQuery, QueryPostsArgs> =
   (
-    parent: PostsQuery,
+    result: PostsQuery,
     args: QueryPostsArgs,
     cache: Cache,
     info: ResolveInfo
@@ -40,15 +40,20 @@ const postsPaginatorDelegate: GraphQLUrqlCache.PostsPaginatorDelegateFunction<Po
       const data = cache.resolve(key, 'data') as string
       const posts = cache.resolve(data, 'posts')
 
+      // get the operation name for this query cache
+      const _kind = cache.resolve(key, '_kind') as string
+
       // if there is posts in this specific query cache, push to array
       // if there are no posts, invalidate this query cache so we can try to make the request again
-      if (posts) results.push(...(posts as string[]))
-      else cache.invalidate(entityKey, fieldInfo.fieldKey)
+      if (_kind === 'Posts') {
+        if (posts) results.push(...(posts as string[]))
+        else cache.invalidate(entityKey, fieldInfo.fieldKey)
+      }
     })
 
     // if parent is an empty object...(only occurs when loading the page for the first time)
     // return a barebones version of the 'PostsResponse' object
-    if (!parent.posts) {
+    if (!result.posts.__typename) {
       return {
         __typename: 'PostsResponse',
         data: {
@@ -61,9 +66,9 @@ const postsPaginatorDelegate: GraphQLUrqlCache.PostsPaginatorDelegateFunction<Po
     // if parent is present...(occurs on all subsequent requests)
     // return the same parent structure, but with all the bundled posts from past queries
     return {
-      ...parent.posts,
+      ...result.posts,
       data: {
-        ...parent.posts.data,
+        ...result.posts.data,
         posts: results
       }
     }
