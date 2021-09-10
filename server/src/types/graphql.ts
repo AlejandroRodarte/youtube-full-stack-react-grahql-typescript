@@ -4,17 +4,17 @@ import { GraphQLSchema } from 'graphql'
 import { Redis } from 'ioredis'
 import TypeORM from 'typeorm'
 
-import PostInput from '../graphql/args/inputs/query/posts/post-input'
-import PostsInput from '../graphql/args/inputs/query/posts/posts-input'
-import AddPostInput from '../graphql/args/inputs/mutation/posts/add-post-input'
-import EditPostInput from '../graphql/args/inputs/mutation/posts/edit-post-input'
-import DeletePostInput from '../graphql/args/inputs/mutation/posts/delete-post-input'
-import RegisterInput from '../graphql/args/inputs/mutation/users/register-input'
-import LoginInput from '../graphql/args/inputs/mutation/users/login-input'
-import ChangePasswordInput from '../graphql/args/inputs/mutation/users/change-password-input'
-import ForgotPasswordInput from '../graphql/args/inputs/mutation/users/forgot-password-input'
+import PostInput from '../graphql/args/resolvers/root/modules/posts/query/inputs/post-input'
+import PostsInput from '../graphql/args/resolvers/root/modules/posts/query/inputs/posts-input'
+import AddPostInput from '../graphql/args/resolvers/root/modules/posts/mutation/inputs/add-post-input'
+import EditPostInput from '../graphql/args/resolvers/root/modules/posts/mutation/inputs/edit-post-input'
+import DeletePostInput from '../graphql/args/resolvers/root/modules/posts/mutation/inputs/delete-post-input'
+import RegisterInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/register-input'
+import LoginInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/login-input'
+import ChangePasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/change-password-input'
+import ForgotPasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/forgot-password-input'
 
-import constants from '../graphql/constants'
+import argsConstants from '../constants/graphql/args'
 
 export namespace GraphQLTuples {
   export type CreateSchemaTuple = [
@@ -136,15 +136,16 @@ export namespace GraphQLInputs {
     ChangePasswordInputAction |
     ForgotPasswordInputAction
 
+  export type ExpressInputFields = 'input' | 'posts/canMutatePost'
 }
 
 export namespace GraphQLResolverConstants {
   export type PostsSortMapper = {
-    [constants.args.posts.SortTypes.NEW]: {
+    [argsConstants.posts.SortTypes.NEW]: {
       field: string,
       cursorParser: (cursor: string) => Date
     },
-    [constants.args.posts.SortTypes.POPULAR]: {
+    [argsConstants.posts.SortTypes.POPULAR]: {
       field: string,
       cursorParser: (cursor: string) => [Date, number]
     }

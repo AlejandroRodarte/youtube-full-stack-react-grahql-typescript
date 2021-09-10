@@ -1,9 +1,7 @@
-import middleware from './middleware'
-import responses from './responses'
+import objects from './objects'
 
 const graphql = {
-  middleware,
-  responses
+  objects
 }
 
 export default graphql

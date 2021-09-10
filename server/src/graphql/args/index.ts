@@ -1,9 +1,7 @@
-import inputs from './inputs'
-import schemas from './schemas'
+import resolvers from './resolvers'
 
 const args = {
-  inputs,
-  schemas
+  resolvers
 }
 
 export default args

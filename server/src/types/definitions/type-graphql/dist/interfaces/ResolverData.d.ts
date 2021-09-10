@@ -1,9 +1,9 @@
 import 'type-graphql/dist/interfaces'
 
-import { InputPayload } from '../../../../args'
+import { GraphQLInputs } from '../../../../graphql'
 
 declare module 'type-graphql/dist/interfaces' {
   export interface ArgsDictionary {
-    data: InputPayload
+    data: GraphQLInputs.InputPayload
   }
 }

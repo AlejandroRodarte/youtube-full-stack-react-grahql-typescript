@@ -1,9 +1,9 @@
-import graphql from './graphql'
+import middleware from './middleware'
 import mail from './mail'
 import server from './server'
 
 const functions = {
-  graphql,
+  middleware,
   mail,
   server
 }
