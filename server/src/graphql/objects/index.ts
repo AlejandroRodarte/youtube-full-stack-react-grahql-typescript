@@ -1,7 +1,9 @@
-import responses from './responses'
+import common from './common'
+import resolvers from './resolvers'
 
 const objects = {
-  responses
+  common,
+  resolvers
 }
 
 export default objects

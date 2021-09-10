@@ -1,11 +1,11 @@
 import { NonEmptyArray } from 'type-graphql'
 
-import PostResolvers from './posts'
-import UserResolvers from './users'
+import root from './root'
+import objects from './objects'
 
 const resolvers: NonEmptyArray<Function> = [
-  ...PostResolvers,
-  ...UserResolvers
+  ...root,
+  ...objects
 ]
 
 export default resolvers
