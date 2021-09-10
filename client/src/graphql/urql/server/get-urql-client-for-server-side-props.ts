@@ -10,15 +10,10 @@ import isServer from '../../../util/common/functions/is-server'
 const getUrqlClientForServerSideProps = (ctx: GetServerSidePropsContext<ParsedUrlQuery>): [Client, SSRExchange] => {
   const ssrCache = ssrExchange({ isClient: false })
 
-  let url = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT_URL!
-
-  if (process.env.NEXT_PUBLIC_USES_PROXY === 'true' && isServer()) {
-    const { origin } = absoluteUrl(ctx.req)
-    url = `${origin}${process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT_URL!}`
-  }
-
   const client = initUrqlClient({
-    url,
+    url: (process.env.NEXT_PUBLIC_USES_PROXY === 'true' && isServer() && ctx && ctx.req)
+      ? `${absoluteUrl(ctx.req).origin}${process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT_URL!}`
+      : process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT_URL!,
     fetchOptions: {
       credentials: 'include',
       headers: {
