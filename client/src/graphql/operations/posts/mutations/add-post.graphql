@@ -6,6 +6,7 @@ mutation AddPost($addPostData: AddPostInput!) {
     _kind
     data {
       newPost {
+        __typename
         id
         createdAt
         updatedAt

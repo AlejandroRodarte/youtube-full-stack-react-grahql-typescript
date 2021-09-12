@@ -1,11 +1,14 @@
 query Posts($postsData: PostsInput!) {
   posts(data: $postsData) {
+    __typename
     status
     message
     code
     _kind
     data {
+      __typename
       posts {
+        __typename
         id
         createdAt
         updatedAt

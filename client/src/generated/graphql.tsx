@@ -252,7 +252,7 @@ export type PostResponse = {
 
 export type PostsData = {
   __typename?: 'PostsData';
-  posts?: Maybe<Array<Post>>;
+  posts: Array<Post>;
 };
 
 export type PostsInput = {
@@ -320,13 +320,13 @@ export type AddPostMutationVariables = Exact<{
   addPostData: AddPostInput;
 }>;
 
-export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type PostsQueryVariables = Exact<{
   postsData: PostsInput;
 }>;
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'PostsData', posts?: Maybe<Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number }>> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', posts: Array<{ __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type ChangePasswordMutationVariables = Exact<{
   changePasswordData: ChangePasswordInput;
@@ -373,6 +373,7 @@ export const AddPostDocument = gql`
     _kind
     data {
       newPost {
+        __typename
         id
         createdAt
         updatedAt
@@ -395,12 +396,15 @@ export function useAddPostMutation () {
 export const PostsDocument = gql`
     query Posts($postsData: PostsInput!) {
   posts(data: $postsData) {
+    __typename
     status
     message
     code
     _kind
     data {
+      __typename
       posts {
+        __typename
         id
         createdAt
         updatedAt

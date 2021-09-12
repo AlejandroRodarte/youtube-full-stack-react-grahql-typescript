@@ -29,7 +29,7 @@ const posts: Resolver<GraphQLPostsOperations.PostsOperationResponse, QueryPostsA
     const _kind = cache.resolve(posts as string, '_kind') as string
 
     // create mock parent response that includes the operation name
-    const result = { ...parent, posts: { ...parent.posts, _kind } }
+    const result: GraphQLPostsOperations.PostsOperationResponse = { ...parent, posts: { ...parent.posts, _kind } }
 
     // if we called query Posts($postsData: PostsInput!)...
     if (isResponseOfKind<PostsQuery, GraphQLPostsOperations.PostsOperationResponse>(result, 'posts', 'Posts')) {
