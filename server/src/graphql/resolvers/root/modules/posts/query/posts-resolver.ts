@@ -23,16 +23,16 @@ export default class PostsResolver {
         .getRepository(Post)
         .createQueryBuilder('p')
         .orderBy(`p.${field}`, 'DESC')
-        .take(data.limit)
+        .take(data.limit + 1)
 
       switch (data.sort) {
         case constants.args.posts.SortTypes.NEW:
           if (data.cursor) {
-            const parsedCursor = constants.resolvers.root.modules.posts.sortMapper[data.sort].cursorParser(data.cursor)
+            const createdAt = constants.resolvers.root.modules.posts.sortMapper[data.sort].cursorParser(data.cursor)
 
             query.where(
-              `p.${field} < :cursor`,
-              { cursor: parsedCursor }
+              `p.${field} < :createdAt`,
+              { createdAt }
             )
           }
           break
@@ -62,7 +62,7 @@ export default class PostsResolver {
             constants.responses.payloads.postsPayloads.success[constants.responses.symbols.PostsSymbols.POSTS_FETCHED].code,
             req.body.operationName,
             new objects
-              .PostsData(posts)
+              .PostsData(posts.slice(0, data.limit), posts.length === data.limit + 1)
           )
 
       return response

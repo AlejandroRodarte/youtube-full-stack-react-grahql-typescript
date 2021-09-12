@@ -7,7 +7,14 @@ export default class PostsData {
   @Field(() => [Post])
   posts: Post[]
 
-  constructor (posts: Post[]) {
+  @Field(() => Boolean)
+  hasMore: boolean
+
+  constructor (
+    posts: Post[],
+    hasMore: boolean
+  ) {
     this.posts = posts
+    this.hasMore = hasMore
   }
 }
