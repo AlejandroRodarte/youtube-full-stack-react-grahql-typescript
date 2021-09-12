@@ -14,7 +14,8 @@ type PostsResponse {
 }
 
 type PostsData {
-  posts: [Post!]
+  posts: [Post!]!
+  hasMore: Boolean!
 }
 
 type Post {
