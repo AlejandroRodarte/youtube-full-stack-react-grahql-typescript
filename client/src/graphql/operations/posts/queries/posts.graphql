@@ -16,6 +16,9 @@ query Posts($postsData: PostsInput!) {
         title
         textSnippet
         points
+        originalPoster {
+          username
+        }
       }
     }
     errors {
