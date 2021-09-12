@@ -29,6 +29,7 @@ export default class AddPostResolver {
 
     try {
       await post.save()
+      post.originalPoster = req.user
 
       const response =
         new objects

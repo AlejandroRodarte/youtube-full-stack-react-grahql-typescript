@@ -18,7 +18,7 @@ export default class PostResolver {
     @Ctx() { req }: GraphQLContext.ApplicationContext
   ) {
     try {
-      const post = await Post.findOne(data.id)
+      const post = await Post.findOne(data.id, { relations: ['originalPoster'] })
 
       if (!post) {
         return new objects
