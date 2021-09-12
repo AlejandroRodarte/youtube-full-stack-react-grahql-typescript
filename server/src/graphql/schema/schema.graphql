@@ -24,9 +24,18 @@ type Post {
   text: String!
   points: Float!
   originalPosterId: Float!
+  originalPoster: User!
   createdAt: String!
   updatedAt: String!
   textSnippet: String!
+}
+
+type User {
+  id: Float!
+  username: String!
+  email: String
+  createdAt: String!
+  updatedAt: String!
 }
 
 type FieldError {
@@ -70,14 +79,6 @@ type MeResponse {
 
 type MeData {
   user: User!
-}
-
-type User {
-  id: Float!
-  username: String!
-  email: String!
-  createdAt: String!
-  updatedAt: String!
 }
 
 type Mutation {

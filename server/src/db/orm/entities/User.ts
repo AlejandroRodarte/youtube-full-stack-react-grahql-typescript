@@ -17,7 +17,7 @@ export default class User extends BaseEntity {
   @Column()
   username!: string
 
-  @Field()
+  @Field({ nullable: true })
   @Column()
   email!: string
 
