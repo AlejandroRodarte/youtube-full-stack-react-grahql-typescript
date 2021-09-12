@@ -33,7 +33,7 @@ type Post {
 type User {
   id: Float!
   username: String!
-  email: String!
+  email: String
   createdAt: String!
   updatedAt: String!
 }
@@ -90,6 +90,7 @@ type Mutation {
   logout: LogoutResponse!
   changePassword(data: ChangePasswordInput!): ChangePasswordResponse!
   forgotPassword(data: ForgotPasswordInput!): ForgotPasswordResponse!
+  vote(data: VoteInput!): VoteResponse!
 }
 
 type AddPostResponse {
@@ -237,4 +238,30 @@ type ForgotPasswordData {
 
 input ForgotPasswordInput {
   email: String!
+}
+
+type VoteResponse {
+  status: Int!
+  message: String!
+  code: String!
+  _kind: String
+  data: VoteData
+  errors: [FieldError!]
+}
+
+type VoteData {
+  updoot: Updoot
+}
+
+type Updoot {
+  userId: Float!
+  postId: Float!
+  value: Float!
+  user: User!
+  post: Post!
+}
+
+input VoteInput {
+  postId: Int!
+  value: Int!
 }
