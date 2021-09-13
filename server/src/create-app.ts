@@ -2,7 +2,7 @@ import express from 'express'
 import session from 'express-session'
 import cors from 'cors'
 
-import settings from './settings'
+import options from './options'
 
 import createApolloServer from './graphql/apollo/create-apollo-server'
 import mountHttpsServer from './util/functions/server/mount-https-server'
@@ -25,8 +25,8 @@ const createApp = async (): Promise<AppTuples.CreateAppTuple> => {
   const app = express()
 
   if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1)
-  app.use(cors(settings.cors))
-  app.use(session(settings.session))
+  app.use(cors(options.cors))
+  app.use(session(options.session))
 
   apolloServer.applyMiddleware({
     app,

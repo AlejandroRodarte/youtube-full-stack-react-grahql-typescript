@@ -1,4 +1,5 @@
 import mail from '../../../mail'
+import * as MailConstants from '../../../constants/mail'
 
 export default async function sendHtmlMail (
   to: string,
@@ -8,7 +9,7 @@ export default async function sendHtmlMail (
   try {
     const transporter = await mail.transporter()
     await transporter.sendMail({
-      from: mail.MailConstants.FROM,
+      from: MailConstants.FROM,
       to,
       subject,
       html

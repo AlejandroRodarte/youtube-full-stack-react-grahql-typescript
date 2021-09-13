@@ -6,12 +6,16 @@ mutation AddPost($addPostData: AddPostInput!) {
     _kind
     data {
       newPost {
+        __typename
         id
         createdAt
         updatedAt
         title
         textSnippet
         points
+        originalPoster {
+          username
+        }
       }
     }
     errors {
