@@ -12,10 +12,10 @@ import { DBRawEntities } from '../../../../../../../types/db'
 interface UpdootTransactionContext {
   user: User
   input: VoteInput
-  operationName: string | undefined
+  namespace: string | undefined
 }
 
-const updootTransaction = ({ user, input, operationName }: UpdootTransactionContext) => async (tm: EntityManager) => {
+const updootTransaction = ({ user, input, namespace }: UpdootTransactionContext) => async (tm: EntityManager) => {
   let deltaPoints = 0
   let finalUpdoot: Updoot | null = null
 
@@ -32,7 +32,7 @@ const updootTransaction = ({ user, input, operationName }: UpdootTransactionCont
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.SAME_VOTE_VALUE].httpCode,
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.SAME_VOTE_VALUE].message,
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.SAME_VOTE_VALUE].code,
-        operationName
+        namespace
       )
   }
 
@@ -72,7 +72,7 @@ const updootTransaction = ({ user, input, operationName }: UpdootTransactionCont
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_CANT_BE_ZERO].httpCode,
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_CANT_BE_ZERO].message,
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_CANT_BE_ZERO].code,
-        operationName
+        namespace
       )
   }
 
@@ -96,7 +96,7 @@ const updootTransaction = ({ user, input, operationName }: UpdootTransactionCont
       responses.payloads.updootsPayloads.success[symbol].httpCode,
       responses.payloads.updootsPayloads.success[symbol].message,
       responses.payloads.updootsPayloads.success[symbol].code,
-      operationName,
+      namespace,
       finalUpdoot ? new objects.VoteData(finalUpdoot) : undefined
     )
 }

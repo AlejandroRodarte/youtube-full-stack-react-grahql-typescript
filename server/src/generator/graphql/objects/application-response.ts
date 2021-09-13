@@ -19,7 +19,7 @@ export default function ApplicationResponse<T, U> (
       () => String,
       { nullable: true }
     )
-    _kind?: string
+    namespace?: string
 
     @Field(
       () => TClass,
@@ -44,7 +44,7 @@ export default function ApplicationResponse<T, U> (
       this.status = status
       this.message = message
       this.code = code
-      this._kind = kind
+      this.namespace = kind
       this.data = data
       this.errors = errors
     }

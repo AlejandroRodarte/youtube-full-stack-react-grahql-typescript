@@ -1,4 +1,4 @@
-import { Resolver, Query, Ctx, Arg, UseMiddleware } from 'type-graphql'
+import { Resolver, Query, Arg, UseMiddleware } from 'type-graphql'
 
 import Post from '../../../../../../db/orm/entities/Post'
 import PostInput from './../../../../../args/resolvers/root/modules/posts/query/inputs/post-input'
@@ -7,15 +7,14 @@ import FieldError from '../../../../../objects/common/error/field-error'
 import objects from '../../../../../objects/resolvers/modules/posts/query/post'
 import responses from '../../../../.././../constants/graphql/responses'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
-import { GraphQLContext } from '../../../../../../types/graphql'
 
 @Resolver()
 export default class PostResolver {
   @Query(() => objects.PostResponse)
   @UseMiddleware(generatedMiddlewares.ValidateArgs(PostArgsSchema))
   async post (
-    @Arg('data', () => PostInput) data: PostInput,
-    @Ctx() { req }: GraphQLContext.ApplicationContext
+    @Arg('namespace', () => String) namespace: string,
+    @Arg('data', () => PostInput) data: PostInput
   ) {
     try {
       const post = await Post.findOne(data.id, { relations: ['originalPoster'] })
@@ -26,7 +25,7 @@ export default class PostResolver {
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].httpCode,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].message,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
@@ -45,7 +44,7 @@ export default class PostResolver {
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_FETCHED].httpCode,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_FETCHED].message,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_FETCHED].code,
-            req.body.operationName,
+            namespace,
             new objects
               .PostData(post)
           )
@@ -58,7 +57,7 @@ export default class PostResolver {
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.QUERY_POST_ERROR].httpCode,
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.QUERY_POST_ERROR].message,
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.QUERY_POST_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

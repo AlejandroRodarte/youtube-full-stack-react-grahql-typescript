@@ -11,7 +11,7 @@ const meQueryUpdaterDelegate: (query: MeQuery) => MeQuery = (query) => {
       status: constants.queries.users.error.me.httpCode,
       message: constants.queries.users.error.me.message,
       code: constants.queries.users.error.me.code,
-      _kind: 'Me',
+      namespace: 'Me',
       data: null,
       errors: null
     }

@@ -19,6 +19,7 @@ export default class VoteResolver {
     generatedMiddlewares.ValidateArgs(VoteArgsSchema)
   )
   async vote (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => VoteInput) data: VoteInput,
     @Ctx() { req, db }: GraphQLContext.ApplicationContext
   ) {
@@ -26,7 +27,7 @@ export default class VoteResolver {
       const response = await db.transaction(updootTransaction({
         user: req.user!,
         input: data,
-        operationName: req.body.operationName
+        namespace
       }))
 
       return response
@@ -39,7 +40,7 @@ export default class VoteResolver {
             responses.payloads.constraintPayloads[e.constraint].httpCode,
             responses.payloads.constraintPayloads[e.constraint].message,
             responses.payloads.constraintPayloads[e.constraint].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
@@ -57,7 +58,7 @@ export default class VoteResolver {
           responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_ERROR].httpCode,
           responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_ERROR].message,
           responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

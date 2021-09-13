@@ -17,7 +17,7 @@ const meQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<ChangePas
         status: constants.queries.users.success.me.httpCode,
         message: constants.queries.users.success.me.message,
         code: constants.queries.users.success.me.code,
-        _kind: 'Me',
+        namespace: 'Me',
         data: {
           __typename: 'MeData',
           user: {

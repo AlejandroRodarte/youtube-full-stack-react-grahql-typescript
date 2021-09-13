@@ -7,6 +7,7 @@ const handlePushMode = (queriesInfo: FieldInfo[], result: AddPostMutation, cache
   // try to find query cached response from fetching the newest posts (no cursor on argument)
   const newestPostsInfo = queriesInfo.find(
     (info) => info.fieldName === 'posts' &&
+    (info.arguments as QueryPostsArgs).namespace === 'Posts' &&
     (info.arguments as QueryPostsArgs).data.sort === 'new' &&
     !(info.arguments as QueryPostsArgs).data.cursor
   )

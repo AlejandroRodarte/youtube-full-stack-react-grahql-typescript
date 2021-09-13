@@ -8,7 +8,7 @@ import responses from '../../../../../../constants/graphql/responses'
 import { GraphQLContext } from '../../../../../../types/graphql'
 
 const CanMutatePost: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
-  { context: { req } },
+  { context: { req }, args },
   next
 ) => {
   const ApplicationResponseClass = class extends ApplicationResponse(
@@ -36,7 +36,7 @@ const CanMutatePost: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
         responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].httpCode,
         responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].message,
         responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].code,
-        req.body.operationName
+        args.namespace
       )
     }
 
@@ -45,7 +45,7 @@ const CanMutatePost: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
         responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.NOT_POST_OWNER].httpCode,
         responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.NOT_POST_OWNER].message,
         responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.NOT_POST_OWNER].code,
-        req.body.operationName
+        args.namespace
       )
     }
 
@@ -56,7 +56,7 @@ const CanMutatePost: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
       responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_CAN_MUTATE_POST_ERROR].httpCode,
       responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_CAN_MUTATE_POST_ERROR].message,
       responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_CAN_MUTATE_POST_ERROR].code,
-      req.body.operationName
+      args.namespace
     )
   }
 }

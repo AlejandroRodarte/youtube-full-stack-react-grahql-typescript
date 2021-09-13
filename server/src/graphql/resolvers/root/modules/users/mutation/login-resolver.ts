@@ -19,6 +19,7 @@ export default class LoginResolver {
     generatedMiddlewares.ValidateArgs(LoginArgsSchema)
   )
   async login (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => LoginInput) data: LoginInput,
     @Ctx() { req }: GraphQLContext.ApplicationContext
   ) {
@@ -38,7 +39,7 @@ export default class LoginResolver {
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].httpCode,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].message,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
@@ -61,7 +62,7 @@ export default class LoginResolver {
             responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.INCORRECT_PASSWORD].httpCode,
             responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.INCORRECT_PASSWORD].message,
             responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.INCORRECT_PASSWORD].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
@@ -80,7 +81,7 @@ export default class LoginResolver {
           responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_LOGGED_IN].httpCode,
           responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_LOGGED_IN].message,
           responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_LOGGED_IN].code,
-          req.body.operationName,
+          namespace,
           new objects
             .LoginData(user)
         )
@@ -91,7 +92,7 @@ export default class LoginResolver {
           responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.MUTATION_LOGIN_ERROR].httpCode,
           responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.MUTATION_LOGIN_ERROR].message,
           responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.MUTATION_LOGIN_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

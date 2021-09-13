@@ -13,7 +13,8 @@ export default class PostsResolver {
   @Query(() => objects.PostsResponse)
   @UseMiddleware(generatedMiddlewares.ValidateArgs(PostsArgsSchema))
   async posts (
-    @Ctx() { req, db }: GraphQLContext.ApplicationContext,
+    @Arg('namespace', () => String) namespace: string,
+    @Ctx() { db }: GraphQLContext.ApplicationContext,
     @Arg('data', () => PostsInput) data: PostsInput
   ) {
     const field = constants.resolvers.root.modules.posts.sortMapper[data.sort].field
@@ -65,7 +66,7 @@ export default class PostsResolver {
             constants.responses.payloads.postsPayloads.success[constants.responses.symbols.PostsSymbols.POSTS_FETCHED].httpCode,
             constants.responses.payloads.postsPayloads.success[constants.responses.symbols.PostsSymbols.POSTS_FETCHED].message,
             constants.responses.payloads.postsPayloads.success[constants.responses.symbols.PostsSymbols.POSTS_FETCHED].code,
-            req.body.operationName,
+            namespace,
             new objects
               .PostsData(posts.slice(0, data.limit), posts.length === data.limit + 1)
           )
@@ -78,7 +79,7 @@ export default class PostsResolver {
           constants.responses.payloads.postsPayloads.error[constants.responses.symbols.PostsSymbols.QUERY_POSTS_ERROR].httpCode,
           constants.responses.payloads.postsPayloads.error[constants.responses.symbols.PostsSymbols.QUERY_POSTS_ERROR].message,
           constants.responses.payloads.postsPayloads.error[constants.responses.symbols.PostsSymbols.QUERY_POSTS_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

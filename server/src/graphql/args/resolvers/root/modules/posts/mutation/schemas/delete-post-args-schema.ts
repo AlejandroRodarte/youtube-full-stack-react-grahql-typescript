@@ -1,12 +1,15 @@
 import Joi from 'joi'
 
+import { GraphQLArgs } from '../../../../../../../../types/graphql'
+
+import commonPrimitives from '../../../../../../common/primitive'
 import primitive from './primitive'
 
 interface DeletePostDataSchemaInterface {
   id: Joi.NumberSchema
 }
 
-interface DeletePostArgsSchemaInterface {
+interface DeletePostArgsSchemaInterface extends GraphQLArgs.NamespaceSchema {
   data: Joi.ObjectSchema<DeletePostDataSchemaInterface>
 }
 
@@ -20,6 +23,9 @@ const DeletePostDataSchema =
 const DeletePostArgsSchema =
   Joi
     .object<DeletePostArgsSchemaInterface>()
-    .keys({ data: DeletePostDataSchema })
+    .keys({
+      namespace: commonPrimitives.namespaceSchema,
+      data: DeletePostDataSchema
+    })
 
 export default DeletePostArgsSchema

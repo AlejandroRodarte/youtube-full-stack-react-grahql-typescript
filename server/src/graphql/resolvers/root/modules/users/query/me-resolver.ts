@@ -1,15 +1,21 @@
-import { Resolver, Ctx, Query, UseMiddleware } from 'type-graphql'
+import { Resolver, Ctx, Arg, Query, UseMiddleware } from 'type-graphql'
 
+import MeArgsSchema from '../../../../../args/resolvers/root/modules/users/query/schemas/me-args-schema'
 import objects from '../../../../../objects/resolvers/modules/users/query/me'
 import responses from '../../../../../../constants/graphql/responses'
 import middlewares from '../../../../../../middleware/graphql/resolvers/common'
+import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 import { GraphQLContext } from '../../../../../../types/graphql'
 
 @Resolver()
 export default class MeResolver {
   @Query(() => objects.MeResponse)
-  @UseMiddleware(middlewares.Auth)
+  @UseMiddleware(
+    middlewares.Auth,
+    generatedMiddlewares.ValidateArgs(MeArgsSchema)
+  )
   async me (
+    @Arg('namespace', () => String) namespace: string,
     @Ctx() { req }: GraphQLContext.ApplicationContext
   ) {
     const user = req.user!
@@ -19,7 +25,7 @@ export default class MeResolver {
         responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.OWN_USER_FETCHED].httpCode,
         responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.OWN_USER_FETCHED].message,
         responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.OWN_USER_FETCHED].code,
-        req.body.operationName,
+        namespace,
         new objects
           .MeData(user)
       )

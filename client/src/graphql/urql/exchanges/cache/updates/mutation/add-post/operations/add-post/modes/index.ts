@@ -1,9 +1,9 @@
 import handlePushMode from './handle-push-mode'
-import handleInvalidateMode from './handle-invalidate-mode'
+import handleInvalidateAllMode from './handle-invalidate-all-mode'
 
 const modes = {
   handlePushMode,
-  handleInvalidateMode
+  handleInvalidateAllMode
 }
 
 export default modes

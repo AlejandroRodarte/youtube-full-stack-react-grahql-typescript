@@ -1,7 +1,7 @@
-import isResponseOfKind from './is-response-of-kind'
+import isResponseOfNamespace from './is-response-of-namespace'
 
 const functions = {
-  isResponseOfKind
+  isResponseOfNamespace
 }
 
 export default functions

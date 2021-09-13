@@ -1,5 +1,8 @@
 import Joi from 'joi'
 
+import { GraphQLArgs } from '../../../../../../../../types/graphql'
+
+import commonPrimitives from '../../../../../../common/primitive'
 import primitive from './primitive'
 
 interface PostsDataSchemaInterface {
@@ -8,7 +11,7 @@ interface PostsDataSchemaInterface {
   cursor: Joi.AlternativesSchema
 }
 
-interface PostArgsSchemaInterface {
+interface PostArgsSchemaInterface extends GraphQLArgs.NamespaceSchema {
   data: Joi.ObjectSchema<PostsDataSchemaInterface>
 }
 
@@ -25,6 +28,7 @@ const PostsArgsSchema =
   Joi
     .object<PostArgsSchemaInterface>()
     .keys({
+      namespace: commonPrimitives.namespaceSchema,
       data: PostDataSchema
     })
 

@@ -21,6 +21,7 @@ export default class ChangePasswordResolver {
     generatedMiddlewares.ValidateArgs(ChangePasswordArgsSchema)
   )
   async changePassword (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => ChangePasswordInput) data: ChangePasswordInput,
     @Ctx() { db, req, redis }: GraphQLContext.ApplicationContext
   ) {
@@ -35,7 +36,7 @@ export default class ChangePasswordResolver {
             constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND].httpCode,
             constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND].message,
             constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
@@ -70,7 +71,7 @@ export default class ChangePasswordResolver {
             constants.graphql.responses.payloads.sharedPayloads.error[constants.graphql.responses.symbols.SharedSymbols.USER_NOT_FOUND].httpCode,
             constants.graphql.responses.payloads.sharedPayloads.error[constants.graphql.responses.symbols.SharedSymbols.USER_NOT_FOUND].message,
             constants.graphql.responses.payloads.sharedPayloads.error[constants.graphql.responses.symbols.SharedSymbols.USER_NOT_FOUND].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
@@ -93,7 +94,7 @@ export default class ChangePasswordResolver {
           constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.USER_PASSWORD_UPDATED].httpCode,
           constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.USER_PASSWORD_UPDATED].message,
           constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.USER_PASSWORD_UPDATED].code,
-          req.body.operationName,
+          namespace,
           new objects
             .ChangePasswordData(updatedUser)
         )
@@ -104,7 +105,7 @@ export default class ChangePasswordResolver {
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR].httpCode,
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR].message,
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

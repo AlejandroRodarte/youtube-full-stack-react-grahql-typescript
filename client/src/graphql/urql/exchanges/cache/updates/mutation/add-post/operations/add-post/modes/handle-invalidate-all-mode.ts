@@ -1,6 +1,6 @@
 import { FieldInfo, Cache } from '@urql/exchange-graphcache'
 
-const handleInvalidateMode = (queriesInfo: FieldInfo[], cache: Cache) => {
+const handleInvalidateAllMode = (queriesInfo: FieldInfo[], cache: Cache) => {
   const fieldInfos = queriesInfo.filter((info) => info.fieldName === 'posts')
 
   fieldInfos.forEach((fieldInfo) => {
@@ -8,4 +8,4 @@ const handleInvalidateMode = (queriesInfo: FieldInfo[], cache: Cache) => {
   })
 }
 
-export default handleInvalidateMode
+export default handleInvalidateAllMode

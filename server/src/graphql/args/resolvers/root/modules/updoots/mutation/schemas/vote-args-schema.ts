@@ -1,5 +1,8 @@
 import Joi from 'joi'
 
+import { GraphQLArgs } from '../../../../../../../../types/graphql'
+
+import commonPrimitives from '../../../../../../common/primitive'
 import primitive from './primitive'
 
 interface VoteDataSchemaInterface {
@@ -7,7 +10,7 @@ interface VoteDataSchemaInterface {
   value: Joi.NumberSchema
 }
 
-interface VoteArgsSchemaInterface {
+interface VoteArgsSchemaInterface extends GraphQLArgs.NamespaceSchema {
   data: Joi.ObjectSchema<VoteDataSchemaInterface>
 }
 
@@ -22,6 +25,9 @@ const VoteArgsDataSchema =
 const VoteArgsSchema =
   Joi
     .object<VoteArgsSchemaInterface>()
-    .keys({ data: VoteArgsDataSchema })
+    .keys({
+      namespace: commonPrimitives.namespaceSchema,
+      data: VoteArgsDataSchema
+    })
 
 export default VoteArgsSchema

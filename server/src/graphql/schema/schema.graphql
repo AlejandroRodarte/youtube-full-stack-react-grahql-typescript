@@ -1,14 +1,14 @@
 type Query {
-  posts(data: PostsInput!): PostsResponse!
-  post(data: PostInput!): PostResponse!
-  me: MeResponse!
+  posts(data: PostsInput!, namespace: String!): PostsResponse!
+  post(data: PostInput!, namespace: String!): PostResponse!
+  me(namespace: String!): MeResponse!
 }
 
 type PostsResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: PostsData
   errors: [FieldError!]
 }
@@ -55,7 +55,7 @@ type PostResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: PostData
   errors: [FieldError!]
 }
@@ -72,7 +72,7 @@ type MeResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: MeData
   errors: [FieldError!]
 }
@@ -82,22 +82,22 @@ type MeData {
 }
 
 type Mutation {
-  addPost(data: AddPostInput!): AddPostResponse!
-  editPost(data: EditPostInput!): EditPostResponse!
-  deletePost(data: DeletePostInput!): DeletePostResponse!
-  register(data: RegisterInput!): RegisterResponse!
-  login(data: LoginInput!): LoginResponse!
-  logout: LogoutResponse!
-  changePassword(data: ChangePasswordInput!): ChangePasswordResponse!
-  forgotPassword(data: ForgotPasswordInput!): ForgotPasswordResponse!
-  vote(data: VoteInput!): VoteResponse!
+  addPost(data: AddPostInput!, namespace: String!): AddPostResponse!
+  editPost(data: EditPostInput!, namespace: String!): EditPostResponse!
+  deletePost(data: DeletePostInput!, namespace: String!): DeletePostResponse!
+  register(data: RegisterInput!, namespace: String!): RegisterResponse!
+  login(data: LoginInput!, namespace: String!): LoginResponse!
+  logout(namespace: String!): LogoutResponse!
+  changePassword(data: ChangePasswordInput!, namespace: String!): ChangePasswordResponse!
+  forgotPassword(data: ForgotPasswordInput!, namespace: String!): ForgotPasswordResponse!
+  vote(data: VoteInput!, namespace: String!): VoteResponse!
 }
 
 type AddPostResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: AddPostData
   errors: [FieldError!]
 }
@@ -115,7 +115,7 @@ type EditPostResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: EditPostData
   errors: [FieldError!]
 }
@@ -138,7 +138,7 @@ type DeletePostResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: DeletePostData
   errors: [FieldError!]
 }
@@ -155,7 +155,7 @@ type RegisterResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: RegisterData
   errors: [FieldError!]
 }
@@ -174,7 +174,7 @@ type LoginResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: LoginData
   errors: [FieldError!]
 }
@@ -192,7 +192,7 @@ type LogoutResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: LogoutData
   errors: [FieldError!]
 }
@@ -205,7 +205,7 @@ type ChangePasswordResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: ChangePasswordData
   errors: [FieldError!]
 }
@@ -227,7 +227,7 @@ type ForgotPasswordResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: ForgotPasswordData
   errors: [FieldError!]
 }
@@ -244,7 +244,7 @@ type VoteResponse {
   status: Int!
   message: String!
   code: String!
-  _kind: String
+  namespace: String
   data: VoteData
   errors: [FieldError!]
 }

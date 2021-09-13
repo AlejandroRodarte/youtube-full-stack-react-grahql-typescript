@@ -1,10 +1,10 @@
 query Posts($postsData: PostsInput!) {
-  posts(data: $postsData) {
+  posts(namespace: "Posts", data: $postsData) {
     __typename
     status
     message
     code
-    _kind
+    namespace
     data {
       __typename
       hasMore

@@ -8,7 +8,7 @@ import responses from '../../../../constants/graphql/responses'
 import { GraphQLContext } from '../../../../types/graphql'
 
 const Auth: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
-  { context: { req } },
+  { context: { req }, args },
   next
 ) => {
   const ApplicationResponseClass = class extends ApplicationResponse(
@@ -29,7 +29,7 @@ const Auth: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
         responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].httpCode,
         responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].message,
         responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].code,
-        req.body.operationName
+        args.namespace
       )
     } catch (e) {
       if (process.env.LOG_ERRORS === 'true') console.error(e)
@@ -37,7 +37,7 @@ const Auth: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
         responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].httpCode,
         responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].message,
         responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.MIDDLEWARE_AUTH_ERROR].code,
-        req.body.operationName
+        args.namespace
       )
     }
   }
@@ -46,7 +46,7 @@ const Auth: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
     responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.UNAUTHORIZED].httpCode,
     responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.UNAUTHORIZED].message,
     responses.payloads.middlewarePayloads.error[responses.symbols.MiddlewareSymbols.UNAUTHORIZED].code,
-    req.body.operationName
+    args.namespace
   )
 }
 

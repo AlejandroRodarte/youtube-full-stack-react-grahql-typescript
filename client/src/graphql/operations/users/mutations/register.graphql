@@ -1,9 +1,9 @@
 mutation Register($registerData: RegisterInput!) {
-  register(data: $registerData) {
+  register(namespace: "Register", data: $registerData) {
     status
     message
     code
-    _kind
+    namespace
     data {
       newUser {
         id

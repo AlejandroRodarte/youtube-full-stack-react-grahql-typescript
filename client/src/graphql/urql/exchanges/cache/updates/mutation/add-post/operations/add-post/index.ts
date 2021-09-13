@@ -16,8 +16,8 @@ const handleAddPostOperation = (mode: GraphQLUrqlCache.AddPostResolverAddPostOpe
   switch (mode) {
     case 'push':
       return modes.handlePushMode(queriesInfo, result, cache)
-    case 'invalidate':
-      return modes.handleInvalidateMode(queriesInfo, cache)
+    case 'invalidate-all':
+      return modes.handleInvalidateAllMode(queriesInfo, cache)
     default:
       return modes.handlePushMode(queriesInfo, result, cache)
   }
