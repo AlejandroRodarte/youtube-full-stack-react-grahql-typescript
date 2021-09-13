@@ -250,7 +250,7 @@ type VoteResponse {
 }
 
 type VoteData {
-  updoot: Updoot
+  updoot: Updoot!
 }
 
 type Updoot {
