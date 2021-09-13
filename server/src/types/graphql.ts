@@ -51,8 +51,14 @@ export namespace GraphQLConstants {
     }
   }
 
-  export interface Constraints {
-    [constraint: string]: ConstraintPayload
+  export type ConstraintNames =
+    'user_email_unique' |
+    'user_username_unique' |
+    'updoot_post_postId_id'
+
+  export type Constraints = {
+    // eslint-disable-next-line no-unused-vars
+    [constraint in ConstraintNames]: ConstraintPayload
   }
 }
 

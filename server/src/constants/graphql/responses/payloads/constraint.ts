@@ -8,7 +8,7 @@ const constraintPayloads: GraphQLConstants.Constraints = {
     fieldError: {
       path: 'data.email',
       message: 'That email is already taken.',
-      type: 'db.user_email_unique',
+      type: 'db.constraints.user_email_unique',
       label: 'Email'
     }
   },
@@ -19,8 +19,19 @@ const constraintPayloads: GraphQLConstants.Constraints = {
     fieldError: {
       path: 'data.username',
       message: 'That username is already taken.',
-      type: 'db.user_username_unique',
+      type: 'db.constraints.user_username_unique',
       label: 'Username'
+    }
+  },
+  updoot_post_postId_id: {
+    httpCode: 400,
+    code: 'UPDOOT_POST_POSTID_ID',
+    message: 'There is no post with that given postId.',
+    fieldError: {
+      path: 'data.postId',
+      message: 'That post does not exist.',
+      type: 'db.constraints.updoot_post_postId_id',
+      label: 'Post ID'
     }
   }
 }

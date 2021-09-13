@@ -23,7 +23,7 @@ const postPayloads = {
       message: 'The post has been updated.'
     },
     [PostsSymbols.POST_DELETED]: {
-      httpCode: 200,
+      httpCode: 204,
       code: 'POST_DELETED',
       message: 'The post has been deleted.'
     }

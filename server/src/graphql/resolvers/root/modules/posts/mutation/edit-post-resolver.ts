@@ -57,7 +57,6 @@ export default class EditPostResolver {
       }
 
       const updatedPost = Post.create(rawPost as DBRawEntities.UpdatePostRawEntity)
-      updatedPost.originalPoster = req.user
 
       const response =
         new objects

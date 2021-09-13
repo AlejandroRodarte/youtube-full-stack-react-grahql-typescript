@@ -1,14 +1,16 @@
 import path from 'path'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
 
-import entities from '../entities'
+import CustomNamingStrategy from './custom-naming-strategy'
 
 const config: PostgresConnectionOptions = {
   url: process.env.POSTGRES_URL,
   type: 'postgres',
   logging: process.env.NODE_ENV === 'development',
   synchronize: process.env.NODE_ENV === 'development',
-  entities,
+  entities: [
+    path.join(__dirname, '..', 'entities/**/*{.ts,.js}')
+  ],
   migrations: [
     path.join(__dirname, '..', 'migrations/**/*{.ts,.js}')
   ],
@@ -19,7 +21,8 @@ const config: PostgresConnectionOptions = {
     ? {
         rejectUnauthorized: false
       }
-    : undefined
+    : undefined,
+  namingStrategy: new CustomNamingStrategy()
 }
 
 export = config

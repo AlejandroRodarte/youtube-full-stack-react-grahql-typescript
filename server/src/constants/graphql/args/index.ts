@@ -1,7 +1,9 @@
 import posts from './posts'
+import updoots from './updoots'
 
 const args = {
-  posts
+  posts,
+  updoots
 }
 
 export default args
