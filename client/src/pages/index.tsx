@@ -79,6 +79,9 @@ const Index: React.FC<IndexProps> = ({ me }: IndexProps) => {
                     { post.title } : { post.points }
                   </Heading>
                   <Text mt={ 4 }>
+                    Posted by: { post.originalPoster.username }
+                  </Text>
+                  <Text mt={ 4 }>
                     { post.textSnippet }
                   </Text>
                 </Box>

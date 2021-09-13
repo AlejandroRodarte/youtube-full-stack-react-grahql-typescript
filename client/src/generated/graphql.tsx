@@ -184,6 +184,7 @@ export type Mutation = {
   logout: LogoutResponse;
   changePassword: ChangePasswordResponse;
   forgotPassword: ForgotPasswordResponse;
+  vote: VoteResponse;
 };
 
 export type MutationAddPostArgs = {
@@ -212,6 +213,10 @@ export type MutationChangePasswordArgs = {
 
 export type MutationForgotPasswordArgs = {
   data: ForgotPasswordInput;
+};
+
+export type MutationVoteArgs = {
+  data: VoteInput;
 };
 
 export type OptionalPostFieldsInput = {
@@ -309,6 +314,15 @@ export type RegisterResponse = {
   errors?: Maybe<Array<FieldError>>;
 };
 
+export type Updoot = {
+  __typename?: 'Updoot';
+  userId: Scalars['Float'];
+  postId: Scalars['Float'];
+  value: Scalars['Float'];
+  user: User;
+  post: Post;
+};
+
 export type User = {
   __typename?: 'User';
   id: Scalars['Float'];
@@ -318,17 +332,37 @@ export type User = {
   updatedAt: Scalars['String'];
 };
 
+export type VoteData = {
+  __typename?: 'VoteData';
+  updoot: Updoot;
+};
+
+export type VoteInput = {
+  postId: Scalars['Int'];
+  value: Scalars['Int'];
+};
+
+export type VoteResponse = {
+  __typename?: 'VoteResponse';
+  status: Scalars['Int'];
+  message: Scalars['String'];
+  code: Scalars['String'];
+  _kind?: Maybe<Scalars['String']>;
+  data?: Maybe<VoteData>;
+  errors?: Maybe<Array<FieldError>>;
+};
+
 export type AddPostMutationVariables = Exact<{
   addPostData: AddPostInput;
 }>;
 
-export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, originalPoster: { __typename?: 'User', username: string } } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, originalPoster: { __typename?: 'User', id: number, username: string } } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type PostsQueryVariables = Exact<{
   postsData: PostsInput;
 }>;
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, originalPoster: { __typename?: 'User', username: string } }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, originalPoster: { __typename?: 'User', id: number, username: string } }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type ChangePasswordMutationVariables = Exact<{
   changePasswordData: ChangePasswordInput;
@@ -383,6 +417,7 @@ export const AddPostDocument = gql`
         textSnippet
         points
         originalPoster {
+          id
           username
         }
       }
@@ -418,6 +453,7 @@ export const PostsDocument = gql`
         textSnippet
         points
         originalPoster {
+          id
           username
         }
       }

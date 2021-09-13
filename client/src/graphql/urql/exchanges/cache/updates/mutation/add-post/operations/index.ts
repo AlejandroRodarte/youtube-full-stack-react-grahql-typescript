@@ -1,7 +1,7 @@
-import addPost from './add-post'
+import handleAddPostOperation from './add-post'
 
 const operations = {
-  addPost
+  handleAddPostOperation
 }
 
 export default operations
