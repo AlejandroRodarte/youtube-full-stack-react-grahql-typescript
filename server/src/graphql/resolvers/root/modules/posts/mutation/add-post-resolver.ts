@@ -17,6 +17,7 @@ export default class AddPostResolver {
     generatedMiddlewares.ValidateArgs(AddPostArgsSchema)
   )
   async addPost (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => AddPostInput) data: AddPostInput,
     @Ctx() { req }: GraphQLContext.ApplicationContext
   ) {
@@ -29,6 +30,7 @@ export default class AddPostResolver {
 
     try {
       await post.save()
+      post.originalPoster = req.user
 
       const response =
         new objects
@@ -36,7 +38,7 @@ export default class AddPostResolver {
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_CREATED].httpCode,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_CREATED].message,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_CREATED].code,
-            req.body.operationName,
+            namespace,
             new objects
               .AddPostData(post)
           )
@@ -49,7 +51,7 @@ export default class AddPostResolver {
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.MUTATION_ADD_POST_ERROR].httpCode,
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.MUTATION_ADD_POST_ERROR].message,
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.MUTATION_ADD_POST_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

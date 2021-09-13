@@ -1,5 +1,8 @@
 import Joi from 'joi'
 
+import { GraphQLArgs } from '../../../../../../../../types/graphql'
+
+import commonPrimitives from '../../../../../../common/primitive'
 import primitive from './primitive'
 
 interface ChangePasswordDataFormSchemaInterface {
@@ -10,7 +13,7 @@ interface ChangePasswordDataSchemaInterface {
   form: Joi.ObjectSchema<ChangePasswordDataFormSchemaInterface>
 }
 
-interface ChangePasswordArgsSchemaInterface {
+interface ChangePasswordArgsSchemaInterface extends GraphQLArgs.NamespaceSchema {
   data: Joi.ObjectSchema<ChangePasswordDataSchemaInterface>
 }
 
@@ -29,6 +32,9 @@ const ChangePasswordDataSchema =
 const ChangePasswordArgsSchema =
   Joi
     .object<ChangePasswordArgsSchemaInterface>()
-    .keys({ data: ChangePasswordDataSchema })
+    .keys({
+      namespace: commonPrimitives.namespaceSchema,
+      data: ChangePasswordDataSchema
+    })
 
 export default ChangePasswordArgsSchema

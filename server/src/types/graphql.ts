@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import { GraphQLSchema } from 'graphql'
 import { Redis } from 'ioredis'
 import TypeORM from 'typeorm'
+import Joi from 'joi'
 
 import PostInput from '../graphql/args/resolvers/root/modules/posts/query/inputs/post-input'
 import PostsInput from '../graphql/args/resolvers/root/modules/posts/query/inputs/posts-input'
@@ -51,8 +52,14 @@ export namespace GraphQLConstants {
     }
   }
 
-  export interface Constraints {
-    [constraint: string]: ConstraintPayload
+  export type ConstraintNames =
+    'user_email_unique' |
+    'user_username_unique' |
+    'updoot_post_postId_id'
+
+  export type Constraints = {
+    // eslint-disable-next-line no-unused-vars
+    [constraint in ConstraintNames]: ConstraintPayload
   }
 }
 
@@ -149,5 +156,11 @@ export namespace GraphQLResolverConstants {
       field: string,
       cursorParser: (cursor: string) => [Date, number]
     }
+  }
+}
+
+export namespace GraphQLArgs {
+  export interface NamespaceSchema {
+    namespace: Joi.StringSchema
   }
 }

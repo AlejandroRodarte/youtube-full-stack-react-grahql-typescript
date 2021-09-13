@@ -26,4 +26,10 @@ export namespace DBRawEntities {
     email: string
     password: string
   }
+
+  export interface UpdateUpdootRawEntity {
+    userId: number
+    postId: number
+    value: number
+  }
 }

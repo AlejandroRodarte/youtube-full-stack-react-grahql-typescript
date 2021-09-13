@@ -3,7 +3,7 @@ import { UpdateResolver } from '@urql/exchange-graphcache'
 import { MeQuery, MeDocument, MutationRegisterArgs, RegisterMutation } from '../../../../../../../generated/graphql'
 
 import operations from './operations'
-import isResponseOfKind from '../../../../../../../util/graphql/operations/functions/is-response-of-kind'
+import isResponseOfNamespace from '../../../../../../../util/graphql/operations/functions/is-response-of-namespace'
 
 import { GraphQLUsersOperations } from '../../../../../../../types/graphql/operations/users'
 
@@ -13,7 +13,7 @@ const register: UpdateResolver<GraphQLUsersOperations.RegisterOperationResponse,
   cache,
   info
 ) => {
-  if (isResponseOfKind<RegisterMutation, GraphQLUsersOperations.RegisterOperationResponse>(result, 'register', 'Register')) {
+  if (isResponseOfNamespace<RegisterMutation, GraphQLUsersOperations.RegisterOperationResponse>(result, 'register', 'Register')) {
     return cache
       .updateQuery<MeQuery>(
         { query: MeDocument },

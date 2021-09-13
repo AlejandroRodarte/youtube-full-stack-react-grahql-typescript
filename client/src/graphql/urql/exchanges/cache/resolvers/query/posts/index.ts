@@ -3,7 +3,7 @@ import { GraphQLPostsOperations } from '../../../../../../../types/graphql/opera
 
 import { QueryPostsArgs, PostsQuery } from '../../../../../../../generated/graphql'
 
-import isResponseOfKind from '../../../../../../../util/graphql/operations/functions/is-response-of-kind'
+import isResponseOfNamespace from '../../../../../../../util/graphql/operations/functions/is-response-of-namespace'
 import operations from './operations'
 
 const posts: Resolver<GraphQLPostsOperations.PostsOperationResponse, QueryPostsArgs> =
@@ -25,14 +25,14 @@ const posts: Resolver<GraphQLPostsOperations.PostsOperationResponse, QueryPostsA
       return undefined
     }
 
-    // get operation name from response
-    const _kind = cache.resolve(posts as string, '_kind') as string
+    // get operation name from args.namespace
+    const namespace = args.namespace
 
     // create mock parent response that includes the operation name
-    const result = { ...parent, posts: { ...parent.posts, _kind } }
+    const result: GraphQLPostsOperations.PostsOperationResponse = { ...parent, posts: { ...parent.posts, namespace } }
 
     // if we called query Posts($postsData: PostsInput!)...
-    if (isResponseOfKind<PostsQuery, GraphQLPostsOperations.PostsOperationResponse>(result, 'posts', 'Posts')) {
+    if (isResponseOfNamespace<PostsQuery, GraphQLPostsOperations.PostsOperationResponse>(result, 'posts', 'Posts')) {
       // ...paginate!
       return operations.posts.postsPaginatorDelegate(result, args, cache, info)
     }

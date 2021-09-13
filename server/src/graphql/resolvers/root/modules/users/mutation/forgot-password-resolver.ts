@@ -19,8 +19,9 @@ export default class ForgotPasswordResolver {
     generatedMiddlewares.ValidateArgs(ForgotPasswordArgsSchema)
   )
   async forgotPassword (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => ForgotPasswordInput) data: ForgotPasswordInput,
-    @Ctx() { req, redis }: GraphQLContext.ApplicationContext
+    @Ctx() { redis }: GraphQLContext.ApplicationContext
   ) {
     try {
       const user = await User.findOne({ where: { email: data.email } })
@@ -31,7 +32,7 @@ export default class ForgotPasswordResolver {
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].httpCode,
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].message,
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].code,
-            req.body.operationName,
+            namespace,
             new objects
               .ForgotPasswordData(true)
           )
@@ -58,7 +59,7 @@ export default class ForgotPasswordResolver {
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].httpCode,
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].message,
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].code,
-            req.body.operationName,
+            namespace,
             new objects
               .ForgotPasswordData(wasEmailSent)
           )
@@ -72,7 +73,7 @@ export default class ForgotPasswordResolver {
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].httpCode,
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].message,
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

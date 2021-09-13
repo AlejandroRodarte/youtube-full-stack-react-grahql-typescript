@@ -1,5 +1,8 @@
 import Joi from 'joi'
 
+import { GraphQLArgs } from '../../../../../../../../types/graphql'
+
+import commonPrimitives from '../../../../../../common/primitive'
 import primitive from './primitive'
 
 interface RegisterDataSchemaInterface {
@@ -8,7 +11,7 @@ interface RegisterDataSchemaInterface {
   password: Joi.StringSchema
 }
 
-interface RegisterArgsSchemaInterface {
+interface RegisterArgsSchemaInterface extends GraphQLArgs.NamespaceSchema {
   data: Joi.ObjectSchema<RegisterDataSchemaInterface>
 }
 
@@ -24,6 +27,9 @@ const RegisterDataSchema =
 const RegisterArgsSchema =
   Joi
     .object<RegisterArgsSchemaInterface>()
-    .keys({ data: RegisterDataSchema })
+    .keys({
+      namespace: commonPrimitives.namespaceSchema,
+      data: RegisterDataSchema
+    })
 
 export default RegisterArgsSchema

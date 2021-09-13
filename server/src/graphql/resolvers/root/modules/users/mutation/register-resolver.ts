@@ -20,6 +20,7 @@ export default class RegisterResolver {
     generatedMiddlewares.ValidateArgs(RegisterArgsSchema)
   )
   async register (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => RegisterInput) data: RegisterInput,
     @Ctx() { req }: GraphQLContext.ApplicationContext
   ) {
@@ -40,7 +41,7 @@ export default class RegisterResolver {
             responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_REGISTERED].httpCode,
             responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_REGISTERED].message,
             responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_REGISTERED].code,
-            req.body.operationName,
+            namespace,
             new objects
               .RegisterData(user)
           )
@@ -54,7 +55,7 @@ export default class RegisterResolver {
             responses.payloads.constraintPayloads[e.constraint].httpCode,
             responses.payloads.constraintPayloads[e.constraint].message,
             responses.payloads.constraintPayloads[e.constraint].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
@@ -72,7 +73,7 @@ export default class RegisterResolver {
           responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.MUTATION_REGISTER_ERROR].httpCode,
           responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.MUTATION_REGISTER_ERROR].message,
           responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.MUTATION_REGISTER_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

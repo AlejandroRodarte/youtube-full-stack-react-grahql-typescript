@@ -8,7 +8,7 @@ import middlewarePayloads from '../../../../constants/graphql/responses/payloads
 import { GraphQLContext } from '../../../../types/graphql'
 
 const Auth: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
-  { context: { req } },
+  { context: { req }, args },
   next
 ) => {
   const ApplicationResponseClass = class extends ApplicationResponse(
@@ -22,7 +22,7 @@ const Auth: MiddlewareFn<GraphQLContext.ApplicationContext> = async (
     middlewarePayloads.error[MiddlewareSymbols.MUST_BE_ANONYMOUS].httpCode,
     middlewarePayloads.error[MiddlewareSymbols.MUST_BE_ANONYMOUS].message,
     middlewarePayloads.error[MiddlewareSymbols.MUST_BE_ANONYMOUS].code,
-    req.body.operationName
+    args.namespace
   )
 }
 

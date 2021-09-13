@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { Field, ObjectType } from 'type-graphql'
 
 import Post from './Post'
+import Updoot from './Updoot'
 
 @ObjectType()
 @Entity()
@@ -17,7 +18,7 @@ export default class User extends BaseEntity {
   @Column()
   username!: string
 
-  @Field()
+  @Field({ nullable: true })
   @Column()
   email!: string
 
@@ -31,6 +32,12 @@ export default class User extends BaseEntity {
     post => post.originalPoster
   )
   posts: Post[]
+
+  @OneToMany(
+    () => Updoot,
+    updoot => updoot.user
+  )
+  updoots: Updoot[]
 
   @Field(() => String)
   @CreateDateColumn()

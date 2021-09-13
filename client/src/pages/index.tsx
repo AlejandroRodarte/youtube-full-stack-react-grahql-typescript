@@ -79,6 +79,9 @@ const Index: React.FC<IndexProps> = ({ me }: IndexProps) => {
                     { post.title } : { post.points }
                   </Heading>
                   <Text mt={ 4 }>
+                    Posted by: { post.originalPoster.username }
+                  </Text>
+                  <Text mt={ 4 }>
                     { post.textSnippet }
                   </Text>
                 </Box>
@@ -87,7 +90,10 @@ const Index: React.FC<IndexProps> = ({ me }: IndexProps) => {
           }
         </Stack>
         {
-          data && data.posts.status === 200 &&
+          data &&
+          data.posts.status === 200 &&
+          data.posts.data &&
+          data.posts.data.hasMore &&
           <Flex>
             <Button
               my={ 8 }

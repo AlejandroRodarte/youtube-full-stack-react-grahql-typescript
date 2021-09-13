@@ -1,17 +1,22 @@
 mutation AddPost($addPostData: AddPostInput!) {
-  addPost(data: $addPostData) {
+  addPost(namespace: "AddPost", data: $addPostData) {
     status
     message
     code
-    _kind
+    namespace
     data {
       newPost {
+        __typename
         id
         createdAt
         updatedAt
         title
         textSnippet
         points
+        originalPoster {
+          id
+          username
+        }
       }
     }
     errors {

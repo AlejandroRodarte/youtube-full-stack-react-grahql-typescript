@@ -1,17 +1,25 @@
 query Posts($postsData: PostsInput!) {
-  posts(data: $postsData) {
+  posts(namespace: "Posts", data: $postsData) {
+    __typename
     status
     message
     code
-    _kind
+    namespace
     data {
+      __typename
+      hasMore
       posts {
+        __typename
         id
         createdAt
         updatedAt
         title
         textSnippet
         points
+        originalPoster {
+          id
+          username
+        }
       }
     }
     errors {

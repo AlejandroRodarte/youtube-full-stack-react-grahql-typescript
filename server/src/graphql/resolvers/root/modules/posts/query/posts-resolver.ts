@@ -13,7 +13,8 @@ export default class PostsResolver {
   @Query(() => objects.PostsResponse)
   @UseMiddleware(generatedMiddlewares.ValidateArgs(PostsArgsSchema))
   async posts (
-    @Ctx() { req, db }: GraphQLContext.ApplicationContext,
+    @Arg('namespace', () => String) namespace: string,
+    @Ctx() { db }: GraphQLContext.ApplicationContext,
     @Arg('data', () => PostsInput) data: PostsInput
   ) {
     const field = constants.resolvers.root.modules.posts.sortMapper[data.sort].field
@@ -22,17 +23,22 @@ export default class PostsResolver {
       const query = db
         .getRepository(Post)
         .createQueryBuilder('p')
+        .innerJoinAndSelect(
+          'p.originalPoster',
+          'u',
+          'u.id = p.originalPosterId'
+        )
         .orderBy(`p.${field}`, 'DESC')
-        .take(data.limit)
+        .take(data.limit + 1)
 
       switch (data.sort) {
         case constants.args.posts.SortTypes.NEW:
           if (data.cursor) {
-            const parsedCursor = constants.resolvers.root.modules.posts.sortMapper[data.sort].cursorParser(data.cursor)
+            const createdAt = constants.resolvers.root.modules.posts.sortMapper[data.sort].cursorParser(data.cursor)
 
             query.where(
-              `p.${field} < :cursor`,
-              { cursor: parsedCursor }
+              `p.${field} < :createdAt`,
+              { createdAt }
             )
           }
           break
@@ -60,9 +66,9 @@ export default class PostsResolver {
             constants.responses.payloads.postsPayloads.success[constants.responses.symbols.PostsSymbols.POSTS_FETCHED].httpCode,
             constants.responses.payloads.postsPayloads.success[constants.responses.symbols.PostsSymbols.POSTS_FETCHED].message,
             constants.responses.payloads.postsPayloads.success[constants.responses.symbols.PostsSymbols.POSTS_FETCHED].code,
-            req.body.operationName,
+            namespace,
             new objects
-              .PostsData(posts)
+              .PostsData(posts.slice(0, data.limit), posts.length === data.limit + 1)
           )
 
       return response
@@ -73,7 +79,7 @@ export default class PostsResolver {
           constants.responses.payloads.postsPayloads.error[constants.responses.symbols.PostsSymbols.QUERY_POSTS_ERROR].httpCode,
           constants.responses.payloads.postsPayloads.error[constants.responses.symbols.PostsSymbols.QUERY_POSTS_ERROR].message,
           constants.responses.payloads.postsPayloads.error[constants.responses.symbols.PostsSymbols.QUERY_POSTS_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

@@ -1,6 +1,6 @@
-import { AddPostMutation, PostsQuery } from '../../../../../../../../../generated/graphql'
+import { AddPostMutation, PostsQuery } from '../../../../../../../../../../generated/graphql'
 
-import { GraphQLUrqlCache } from '../../../../../../../../../types/graphql/urql/cache'
+import { GraphQLUrqlCache } from '../../../../../../../../../../types/graphql/urql/cache'
 
 const postsQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<AddPostMutation, PostsQuery> = (
   result,
