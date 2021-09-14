@@ -251,6 +251,7 @@ type VoteResponse {
 
 type VoteData {
   updoot: Updoot!
+  postPoints: Int!
 }
 
 type Updoot {
