@@ -15,6 +15,11 @@ const addPost: UpdateResolver<GraphQLPostsOperations.AddPostOperationResponse, M
 ) => {
   // if this resolver got called from mutation AddPost($addPostData: AddPostInput!), call the appropiate handler
   if (isResponseOfNamespace<AddPostMutation, GraphQLPostsOperations.AddPostOperationResponse>(result, 'addPost', 'AddPost')) {
+    if (
+      result.addPost.status === 400 ||
+      result.addPost.status === 401 ||
+      result.addPost.errors
+    ) return
     return operations.handleAddPostOperation('push', result, cache)
   }
 }

@@ -9,4 +9,7 @@ export namespace UITypes {
     auth: Route[]
     anonymous: Route[]
   }
+
+  export type UpdootVoteTypes = 'upvote' | 'downvote'
+  export type UpdootVoteValues = 1 | -1
 }

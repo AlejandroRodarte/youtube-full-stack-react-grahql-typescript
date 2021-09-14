@@ -8,8 +8,6 @@ const meQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<LoginMuta
   result,
   query
 ) => {
-  if (result.login.errors) return query
-
   if (!query || !query.me || !query.me.data) {
     return {
       __typename: 'Query',

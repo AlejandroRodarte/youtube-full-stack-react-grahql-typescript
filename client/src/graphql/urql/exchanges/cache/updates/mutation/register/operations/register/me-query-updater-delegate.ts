@@ -8,8 +8,6 @@ const meQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<RegisterM
   result,
   query
 ) => {
-  if (result.register.errors) return query
-
   if (!query || !query.me || !query.me.data) {
     return {
       __typename: 'Query',

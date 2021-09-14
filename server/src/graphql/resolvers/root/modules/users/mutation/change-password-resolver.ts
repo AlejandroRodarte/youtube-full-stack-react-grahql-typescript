@@ -41,7 +41,7 @@ export default class ChangePasswordResolver {
             [
               new FieldError(
                 'data.token',
-                'db.notfound',
+                'db.not-found',
                 'Token',
                 'The recovery password token was not found in the database.'
               )
@@ -75,8 +75,8 @@ export default class ChangePasswordResolver {
             undefined,
             [
               new FieldError(
-                'etc.id',
-                'db.notexists',
+                'etc.user.id',
+                'db.not-found',
                 'ID',
                 'There is no registered account with this user ID.'
               )

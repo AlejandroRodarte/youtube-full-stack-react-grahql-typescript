@@ -14,6 +14,11 @@ const login: UpdateResolver<GraphQLUsersOperations.LoginOperationResponse, Mutat
   info
 ) => {
   if (isResponseOfNamespace<LoginMutation, GraphQLUsersOperations.LoginOperationResponse>(result, 'login', 'Login')) {
+    if (
+      result.login.status === 400 ||
+      result.login.status === 404 ||
+      result.login.errors
+    ) return
     return cache
       .updateQuery<MeQuery>(
         { query: MeDocument },

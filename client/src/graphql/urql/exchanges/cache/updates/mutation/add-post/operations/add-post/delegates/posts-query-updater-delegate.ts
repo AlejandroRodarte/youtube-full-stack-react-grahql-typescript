@@ -6,8 +6,7 @@ const postsQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<AddPos
   result,
   query
 ) => {
-  // if there was an error while adding the post, do nothing
-  if (result.addPost.errors || !query) return query
+  if (!query) return query
 
   // if post was added in database, use response to put it at the front of the cached response
   return {

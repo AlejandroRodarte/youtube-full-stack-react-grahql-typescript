@@ -14,6 +14,10 @@ const register: UpdateResolver<GraphQLUsersOperations.RegisterOperationResponse,
   info
 ) => {
   if (isResponseOfNamespace<RegisterMutation, GraphQLUsersOperations.RegisterOperationResponse>(result, 'register', 'Register')) {
+    if (
+      result.register.status === 400 ||
+      result.register.errors
+    ) return
     return cache
       .updateQuery<MeQuery>(
         { query: MeDocument },

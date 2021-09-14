@@ -24,7 +24,7 @@ const constraintPayloads: GraphQLConstants.Constraints = {
     }
   },
   updoot_post_postId_id: {
-    httpCode: 400,
+    httpCode: 404,
     code: 'UPDOOT_POST_POSTID_ID',
     message: 'There is no post with that given postId.',
     fieldError: {

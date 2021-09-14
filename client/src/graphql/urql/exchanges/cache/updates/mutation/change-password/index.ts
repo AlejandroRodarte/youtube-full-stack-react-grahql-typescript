@@ -14,6 +14,11 @@ const login: UpdateResolver<GraphQLUsersOperations.ChangePasswordOperationRespon
   info
 ) => {
   if (isResponseOfNamespace<ChangePasswordMutation, GraphQLUsersOperations.ChangePasswordOperationResponse>(result, 'changePassword', 'ChangePassword')) {
+    if (
+      result.changePassword.status === 400 ||
+      result.changePassword.status === 404 ||
+      result.changePassword.errors
+    ) return
     return cache
       .updateQuery<MeQuery>(
         { query: MeDocument },

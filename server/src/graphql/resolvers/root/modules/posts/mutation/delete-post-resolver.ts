@@ -36,7 +36,7 @@ export default class DeletePostResolver {
             [
               new FieldError(
                 'data.id',
-                'db.notfound',
+                'db.not-found',
                 'Post ID',
                 'There is no post with that ID.'
               )
