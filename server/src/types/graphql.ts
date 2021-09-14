@@ -14,6 +14,7 @@ import RegisterInput from '../graphql/args/resolvers/root/modules/users/mutation
 import LoginInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/login-input'
 import ChangePasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/change-password-input'
 import ForgotPasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/forgot-password-input'
+import VoteInput from '../graphql/args/resolvers/root/modules/updoots/mutation/inputs/vote-input'
 
 import argsConstants from '../constants/graphql/args'
 
@@ -110,6 +111,11 @@ export namespace GraphQLInputs {
     payload: ForgotPasswordInput
   }
 
+  interface VoteInputAction {
+    type: 'VoteInput'
+    payload: VoteInput
+  }
+
   export type InputType =
     'PostInput' |
     'PostsInput' |
@@ -119,7 +125,8 @@ export namespace GraphQLInputs {
     'RegisterInput' |
     'LoginInput' |
     'ChangePasswordInput' |
-    'ForgotPasswordInput'
+    'ForgotPasswordInput' |
+    'VoteInput'
 
   export type InputPayload =
     PostInput |
@@ -130,7 +137,8 @@ export namespace GraphQLInputs {
     RegisterInput |
     LoginInput |
     ChangePasswordInput |
-    ForgotPasswordInput
+    ForgotPasswordInput |
+    VoteInput
 
   export type InputAction =
     PostInputAction |
@@ -141,7 +149,8 @@ export namespace GraphQLInputs {
     RegisterInputAction |
     LoginInputAction |
     ChangePasswordInputAction |
-    ForgotPasswordInputAction
+    ForgotPasswordInputAction |
+    VoteInputAction
 
   export type ExpressInputFields = 'input' | 'posts/canMutatePost'
 }

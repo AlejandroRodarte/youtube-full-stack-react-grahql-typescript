@@ -8,13 +8,17 @@ export namespace GraphQLUsersArgs {
     form?: ChangePasswordFormErrors
   }
 
-  interface ChangePasswordEtcErrors {
+  interface ChangePasswordEtcUserErrors {
     id?: string
   }
 
+  interface ChangePasswordEtcErrors {
+    user?: ChangePasswordEtcUserErrors
+  }
+
   export interface ChangePasswordArgsErrors {
-    data: ChangePasswordDataErrors
-    etc: ChangePasswordEtcErrors
+    data?: ChangePasswordDataErrors
+    etc?: ChangePasswordEtcErrors
   }
 
   interface ForgotPasswordDataErrors {
@@ -22,7 +26,7 @@ export namespace GraphQLUsersArgs {
   }
 
   export interface ForgotPasswordArgsErrors {
-    data: ForgotPasswordDataErrors
+    data?: ForgotPasswordDataErrors
   }
 
   interface LoginDataErrors {

@@ -353,6 +353,7 @@ export type User = {
 export type VoteData = {
   __typename?: 'VoteData';
   updoot: Updoot;
+  postPoints: Scalars['Int'];
 };
 
 export type VoteInput = {
@@ -381,6 +382,12 @@ export type PostsQueryVariables = Exact<{
 }>;
 
 export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, originalPoster: { __typename?: 'User', id: number, username: string } }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+
+export type VoteMutationVariables = Exact<{
+  voteData: VoteInput;
+}>;
+
+export type VoteMutation = { __typename?: 'Mutation', vote: { __typename?: 'VoteResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'VoteData', postPoints: number, updoot: { __typename?: 'Updoot', value: number } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type ChangePasswordMutationVariables = Exact<{
   changePasswordData: ChangePasswordInput;
@@ -486,6 +493,30 @@ export const PostsDocument = gql`
 
 export function usePostsQuery (options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options })
+};
+export const VoteDocument = gql`
+    mutation Vote($voteData: VoteInput!) {
+  vote(namespace: "Vote", data: $voteData) {
+    status
+    message
+    code
+    namespace
+    data {
+      updoot {
+        value
+      }
+      postPoints
+    }
+    errors {
+      path
+      message
+    }
+  }
+}
+    `
+
+export function useVoteMutation () {
+  return Urql.useMutation<VoteMutation, VoteMutationVariables>(VoteDocument)
 };
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($changePasswordData: ChangePasswordInput!) {

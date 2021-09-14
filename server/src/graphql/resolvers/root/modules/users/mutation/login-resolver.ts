@@ -44,7 +44,7 @@ export default class LoginResolver {
             [
               new FieldError(
                 'data.credential',
-                'db.notexists',
+                'db.not-found',
                 labelMap[key],
                 `That ${key} does not exist.`)
             ]
@@ -67,7 +67,7 @@ export default class LoginResolver {
             [
               new FieldError(
                 'data.password',
-                'db.wrongpassword',
+                'server.wrong-password',
                 'Password',
                 'The password is wrong.')
             ]

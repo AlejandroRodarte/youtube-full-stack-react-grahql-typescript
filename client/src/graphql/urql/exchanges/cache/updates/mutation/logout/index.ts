@@ -14,6 +14,11 @@ const logout: UpdateResolver<GraphQLUsersOperations.LogoutOperationResponse> = (
   info
 ) => {
   if (isResponseOfNamespace<LogoutMutation, GraphQLUsersOperations.LogoutOperationResponse>(result, 'logout', 'Logout')) {
+    if (
+      result.logout.status === 401 ||
+      result.logout.status === 400 ||
+      result.logout.errors
+    ) return
     return cache
       .updateQuery<MeQuery>(
         { query: MeDocument },

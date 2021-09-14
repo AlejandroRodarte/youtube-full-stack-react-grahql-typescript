@@ -7,8 +7,6 @@ const meQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<ChangePas
   result,
   query
 ) => {
-  if (result.changePassword.errors) return query
-
   if (!query || !query.me || !query.me.data) {
     return {
       __typename: 'Query',
