@@ -24,11 +24,11 @@ type Post {
   text: String!
   points: Float!
   originalPosterId: Float!
-  originalPoster: User!
   createdAt: String!
   updatedAt: String!
   textSnippet: String!
   userVoteStatus: Int
+  originalPoster: User
 }
 
 type User {

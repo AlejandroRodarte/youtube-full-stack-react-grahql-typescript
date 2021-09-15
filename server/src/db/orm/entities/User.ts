@@ -1,7 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, Unique, OneToMany } from 'typeorm'
 import { Field, ObjectType } from 'type-graphql'
 
-import Post from './Post'
 import Updoot from './Updoot'
 
 @ObjectType()
@@ -26,12 +25,6 @@ export default class User extends BaseEntity {
   // we do not want to expose the password on our GraphQL definition
   @Column()
   password!: string
-
-  @OneToMany(
-    () => Post,
-    post => post.originalPoster
-  )
-  posts: Post[]
 
   @OneToMany(
     () => Updoot,

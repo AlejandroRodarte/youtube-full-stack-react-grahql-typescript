@@ -120,7 +120,7 @@ const updootTransaction = ({ userId, input, namespace }: UpdootTransactionContex
       namespace,
       new objects.VoteData(
         updatedPost.points,
-        finalUpdoot ? updoot : undefined
+        finalUpdoot || undefined
       )
     )
 }

@@ -23,11 +23,6 @@ export default class PostsResolver {
       const query = db
         .getRepository(Post)
         .createQueryBuilder('p')
-        .innerJoinAndSelect(
-          'p.originalPoster',
-          'u',
-          'u.id = p.originalPosterId'
-        )
         .orderBy(`p.${field}`, 'DESC')
         .take(data.limit + 1)
 
