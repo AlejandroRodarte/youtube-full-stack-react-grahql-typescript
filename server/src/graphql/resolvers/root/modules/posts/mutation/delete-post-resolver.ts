@@ -13,7 +13,7 @@ import generatedMiddlewares from '../../../../../../middleware/generator/graphql
 export default class DeletePostResolver {
   @Mutation(() => objects.DeletePostResponse)
   @UseMiddleware(
-    middlewares.common.Auth,
+    generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
     generatedMiddlewares.AttachInputAction('DeletePostInput', 'posts/canMutatePost'),
     middlewares.root.modules.posts.CanMutatePost,
     generatedMiddlewares.ValidateArgs(DeletePostArgsSchema)

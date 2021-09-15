@@ -5,7 +5,6 @@ import AddPostInput from './../../../../../args/resolvers/root/modules/posts/mut
 import AddPostArgsSchema from '../../../../../args/resolvers/root/modules/posts/mutation/schemas/add-post-args-schema'
 import objects from '../../../../../objects/resolvers/modules/posts/mutation/add-post'
 import responses from '../../../../.././../constants/graphql/responses'
-import middlewares from '../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 import { GraphQLContext } from '../../../../../../types/graphql'
 
@@ -13,7 +12,7 @@ import { GraphQLContext } from '../../../../../../types/graphql'
 export default class AddPostResolver {
   @Mutation(() => objects.AddPostResponse)
   @UseMiddleware(
-    middlewares.Auth,
+    generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),
     generatedMiddlewares.ValidateArgs(AddPostArgsSchema)
   )
   async addPost (
@@ -30,7 +29,7 @@ export default class AddPostResolver {
 
     try {
       await post.save()
-      post.originalPoster = req.user
+      post.originalPoster = user
 
       const response =
         new objects

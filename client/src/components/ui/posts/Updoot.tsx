@@ -4,15 +4,26 @@ import { IconButton } from '@chakra-ui/button'
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 
 import { UITypes } from '../../../types/components/ui'
+import { Contexts } from '../../../types/context'
 
 interface UpdootProps {
-  points: number
+  points: Contexts.Posts[number]['points']
+  userVoteStatus: Contexts.Posts[number]['userVoteStatus']
   vote: (type: UITypes.UpdootVoteTypes) => void
 }
 
-const Updoot: React.FC<UpdootProps> = ({ points, vote }: UpdootProps) => {
-  const onUpvote = useCallback(() => vote('upvote'), [vote])
-  const onDownVote = useCallback(() => vote('downvote'), [vote])
+const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootProps) => {
+  const onUpvote = useCallback(() => {
+    if (userVoteStatus === null) return
+    if (userVoteStatus === 1) return vote('zero')
+    return vote('upvote')
+  }, [userVoteStatus, vote])
+
+  const onDownVote = useCallback(() => {
+    if (userVoteStatus === null) return
+    if (userVoteStatus === -1) return vote('zero')
+    return vote('downvote')
+  }, [userVoteStatus, vote])
 
   return (
     <Flex
@@ -28,7 +39,7 @@ const Updoot: React.FC<UpdootProps> = ({ points, vote }: UpdootProps) => {
           <ChevronUpIcon
             w={ 6 }
             h={ 6 }
-            color="red.500"
+            color={ userVoteStatus !== null && userVoteStatus === 1 ? 'red.500' : 'gray.500' }
           />
         }
       />
@@ -40,7 +51,7 @@ const Updoot: React.FC<UpdootProps> = ({ points, vote }: UpdootProps) => {
           <ChevronDownIcon
             w={ 6 }
             h={ 6 }
-            color="blue.500"
+            color={ userVoteStatus !== null && userVoteStatus === -1 ? 'blue.500' : 'gray.500' }
           />
         }
       />

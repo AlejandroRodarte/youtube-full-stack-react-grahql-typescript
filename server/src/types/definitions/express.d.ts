@@ -1,4 +1,4 @@
-import { User } from '../../db/orm/entities/User'
+import User from './../../db/orm/entities/User'
 import { GraphQLInputs } from '../../types/graphql'
 
 import 'express'

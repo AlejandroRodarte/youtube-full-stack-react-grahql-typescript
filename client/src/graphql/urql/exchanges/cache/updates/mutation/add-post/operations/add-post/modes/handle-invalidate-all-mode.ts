@@ -1,11 +1,14 @@
-import { FieldInfo, Cache } from '@urql/exchange-graphcache'
+import { Cache } from '@urql/exchange-graphcache'
 
-const handleInvalidateAllMode = (queriesInfo: FieldInfo[], cache: Cache) => {
-  const fieldInfos = queriesInfo.filter((info) => info.fieldName === 'posts')
+import invalidateAllResolverCache from '../../../../../../../../../../util/graphql/urql/invalidate-all-resolver-cache'
 
-  fieldInfos.forEach((fieldInfo) => {
-    cache.invalidate('Query', 'posts', fieldInfo.arguments)
-  })
+const handleInvalidateAllMode = (cache: Cache) => {
+  invalidateAllResolverCache(cache, [
+    {
+      name: 'posts',
+      namespaces: ['Posts']
+    }
+  ])
 }
 
 export default handleInvalidateAllMode

@@ -7,7 +7,6 @@ import ForgotPasswordArgsSchema from '../../../../../args/resolvers/root/modules
 import objects from '../../../../../objects/resolvers/modules/users/mutation/forgot-password'
 import constants from '../../../../../../constants'
 import mailFunctions from '../../../../../../util/functions/mail'
-import middlewares from '../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 import { GraphQLContext } from '../../../../../../types/graphql'
 
@@ -15,7 +14,7 @@ import { GraphQLContext } from '../../../../../../types/graphql'
 export default class ForgotPasswordResolver {
   @Mutation(() => objects.ForgotPasswordResponse)
   @UseMiddleware(
-    middlewares.Anonymous,
+    generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
     generatedMiddlewares.ValidateArgs(ForgotPasswordArgsSchema)
   )
   async forgotPassword (

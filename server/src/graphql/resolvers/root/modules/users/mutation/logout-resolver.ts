@@ -3,7 +3,6 @@ import { Resolver, Ctx, Arg, Mutation, UseMiddleware } from 'type-graphql'
 import LogoutArgsSchema from '../../../../../args/resolvers/root/modules/users/mutation/schemas/logout-args-schema'
 import objects from '../../../../../objects/resolvers/modules/users/mutation/logout'
 import constants from '../../../../../../constants'
-import middlewares from '../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 import { GraphQLContext } from '../../../../../../types/graphql'
 
@@ -11,7 +10,7 @@ import { GraphQLContext } from '../../../../../../types/graphql'
 export default class LogoutResolver {
   @Mutation(() => objects.LogoutResponse)
   @UseMiddleware(
-    middlewares.Auth,
+    generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),
     generatedMiddlewares.ValidateArgs(LogoutArgsSchema)
   )
   async logout (

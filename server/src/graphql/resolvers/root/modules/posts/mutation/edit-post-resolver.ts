@@ -15,7 +15,7 @@ import { DBRawEntities } from '../../../../../../types/db'
 export default class EditPostResolver {
   @Mutation(() => objects.EditPostResponse)
   @UseMiddleware(
-    middlewares.common.Auth,
+    generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),
     generatedMiddlewares.AttachInputAction('EditPostInput', 'posts/canMutatePost'),
     middlewares.root.modules.posts.CanMutatePost,
     generatedMiddlewares.ValidateArgs(EditPostArgsSchema)

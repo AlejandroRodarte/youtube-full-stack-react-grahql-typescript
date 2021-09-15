@@ -43,8 +43,8 @@ const Index: React.FC<IndexProps> = ({ me }: IndexProps) => {
     reexecutePostsQuery()
   }, [reexecutePostsQuery])
 
-  const onLogout = useCallback(() => {
-    logout()
+  const onLogout = useCallback(async () => {
+    await logout()
   }, [logout])
 
   const onVote = useCallback(async (value: UITypes.UpdootVoteValues, postId: number) => {

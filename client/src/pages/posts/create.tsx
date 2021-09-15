@@ -78,8 +78,8 @@ const CreatePost: React.FC<CreatePostProps> = ({ me }: CreatePostProps) => {
     }
   }
 
-  const onLogout = useCallback(() => {
-    logout()
+  const onLogout = useCallback(async () => {
+    await logout()
   }, [logout])
 
   return (

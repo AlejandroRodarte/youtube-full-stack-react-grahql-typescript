@@ -8,7 +8,6 @@ import RegisterArgsSchema from '../../../../../args/resolvers/root/modules/users
 import FieldError from '../../../../../objects/common/error/field-error'
 import objects from '../../../../../objects/resolvers/modules/users/mutation/register'
 import responses from '../../../../../../constants/graphql/responses'
-import middlewares from '../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 import { GraphQLContext } from '../../../../../../types/graphql'
 
@@ -16,7 +15,7 @@ import { GraphQLContext } from '../../../../../../types/graphql'
 export default class RegisterResolver {
   @Mutation(() => objects.RegisterResponse)
   @UseMiddleware(
-    middlewares.Anonymous,
+    generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
     generatedMiddlewares.ValidateArgs(RegisterArgsSchema)
   )
   async register (

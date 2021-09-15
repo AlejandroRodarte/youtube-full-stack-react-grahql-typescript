@@ -23,7 +23,8 @@ const handleServerMode = (result: VoteMutation, args: MutationVoteArgs, cache: C
       {
         __typename: 'Post',
         id: args.data.postId,
-        points: result.vote.data.postPoints
+        points: result.vote.data.postPoints,
+        userVoteStatus: args.data.value
       }
     )
 }

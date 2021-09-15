@@ -1,17 +1,19 @@
 import gql from 'graphql-tag'
 
 const WritePostFragment = gql`
-  fragment WritePostFragment on Post {
+  fragment VoteResolverVoteOperationServerModeWritePostFragment on Post {
     id
     points
+    userVoteStatus
   }
 `
 
 export namespace WritePost {
   export type Query = {
-    __typename: 'Post',
-    id: number,
+    __typename: 'Post'
+    id: number
     points: number
+    userVoteStatus: number
   }
 
   export interface Variables {

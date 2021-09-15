@@ -16,6 +16,7 @@ query Posts($postsData: PostsInput!) {
         title
         textSnippet
         points
+        userVoteStatus
         originalPoster {
           id
           username

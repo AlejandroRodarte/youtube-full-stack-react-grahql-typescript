@@ -3,7 +3,6 @@ import { Resolver, Ctx, Arg, Query, UseMiddleware } from 'type-graphql'
 import MeArgsSchema from '../../../../../args/resolvers/root/modules/users/query/schemas/me-args-schema'
 import objects from '../../../../../objects/resolvers/modules/users/query/me'
 import responses from '../../../../../../constants/graphql/responses'
-import middlewares from '../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 import { GraphQLContext } from '../../../../../../types/graphql'
 
@@ -11,7 +10,7 @@ import { GraphQLContext } from '../../../../../../types/graphql'
 export default class MeResolver {
   @Query(() => objects.MeResponse)
   @UseMiddleware(
-    middlewares.Auth,
+    generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),
     generatedMiddlewares.ValidateArgs(MeArgsSchema)
   )
   async me (
