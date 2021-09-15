@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 const WritePostFragment = gql`
-  fragment VoteResolverVoteOperationServerModeWritePostFragment on Post {
+  fragment VoteResolverVoteOperationClientModeWritePostFragment on Post {
     id
     points
     userVoteStatus

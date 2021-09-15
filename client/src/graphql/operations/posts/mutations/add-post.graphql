@@ -13,6 +13,7 @@ mutation AddPost($addPostData: AddPostInput!) {
         title
         textSnippet
         points
+        userVoteStatus
         originalPoster {
           id
           username

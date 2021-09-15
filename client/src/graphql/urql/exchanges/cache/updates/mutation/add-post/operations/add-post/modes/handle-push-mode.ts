@@ -1,9 +1,11 @@
-import { Cache, FieldInfo } from '@urql/exchange-graphcache'
+import { Cache } from '@urql/exchange-graphcache'
 
 import { AddPostMutation, PostsQuery, PostsQueryVariables, PostsDocument, QueryPostsArgs } from '../../../../../../../../../../generated/graphql'
 import delegates from '../delegates'
 
-const handlePushMode = (queriesInfo: FieldInfo[], result: AddPostMutation, cache: Cache) => {
+const handlePushMode = (result: AddPostMutation, cache: Cache) => {
+  const queriesInfo = cache.inspectFields('Query')
+
   // try to find query cached response from fetching the newest posts (no cursor on argument)
   const newestPostsInfo = queriesInfo.find(
     (info) => info.fieldName === 'posts' &&

@@ -4,6 +4,7 @@ import { MeQuery, MeDocument, MutationRegisterArgs, RegisterMutation } from '../
 
 import operations from './operations'
 import isResponseOfNamespace from '../../../../../../../util/graphql/operations/functions/is-response-of-namespace'
+import invalidateAllResolverCache from '../../../../../../../util/graphql/urql/invalidate-all-resolver-cache'
 
 import { GraphQLUsersOperations } from '../../../../../../../types/graphql/operations/users'
 
@@ -18,6 +19,14 @@ const register: UpdateResolver<GraphQLUsersOperations.RegisterOperationResponse,
       result.register.status === 400 ||
       result.register.errors
     ) return
+
+    invalidateAllResolverCache(cache, [
+      {
+        name: 'posts',
+        namespaces: ['Posts']
+      }
+    ])
+
     return cache
       .updateQuery<MeQuery>(
         { query: MeDocument },

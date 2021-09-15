@@ -7,7 +7,6 @@ import ChangePasswordArgsSchema from '../../../../../args/resolvers/root/modules
 import FieldError from '../../../../../objects/common/error/field-error'
 import objects from '../../../../../objects/resolvers/modules/users/mutation/change-password'
 import constants from '../../../../../../constants'
-import middlewares from '../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 
 import { GraphQLContext } from '../../../../../../types/graphql'
@@ -17,7 +16,7 @@ import { DBRawEntities } from '../../../../../../types/db'
 export default class ChangePasswordResolver {
   @Mutation(() => objects.ChangePasswordResponse)
   @UseMiddleware(
-    middlewares.Anonymous,
+    generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
     generatedMiddlewares.ValidateArgs(ChangePasswordArgsSchema)
   )
   async changePassword (

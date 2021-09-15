@@ -18,6 +18,8 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
         return vote(1, post.id)
       case 'downvote':
         return vote(-1, post.id)
+      case 'zero':
+        return vote(0, post.id)
       default:
         return vote(1, post.id)
     }
@@ -33,6 +35,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
       <Updoot
         points={ post.points }
         vote={ onVote }
+        userVoteStatus={ post.userVoteStatus }
       />
       <Box>
         <Heading fontSize="xl">

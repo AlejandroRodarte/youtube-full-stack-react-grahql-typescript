@@ -1,6 +1,6 @@
 import { UpdateResolver } from '@urql/exchange-graphcache'
 
-import { MeQuery, MeDocument, LogoutMutation } from '../../../../../../../generated/graphql'
+import { LogoutMutation } from '../../../../../../../generated/graphql'
 
 import operations from './operations'
 import isResponseOfNamespace from '../../../../../../../util/graphql/operations/functions/is-response-of-namespace'
@@ -19,11 +19,7 @@ const logout: UpdateResolver<GraphQLUsersOperations.LogoutOperationResponse> = (
       result.logout.status === 400 ||
       result.logout.errors
     ) return
-    return cache
-      .updateQuery<MeQuery>(
-        { query: MeDocument },
-        (data) => operations.logout.meQueryUpdaterDelegate(data)
-      )
+    return operations.handleLogoutOperation(cache)
   }
 }
 

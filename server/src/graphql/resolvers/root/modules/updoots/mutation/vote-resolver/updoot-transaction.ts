@@ -1,7 +1,6 @@
 import { EntityManager } from 'typeorm'
 
 import Post from '../../../../../../../db/orm/entities/Post'
-import User from '../../../../../../../db/orm/entities/User'
 import FieldError from './../../../../../../objects/common/error/field-error'
 import Updoot from '../../../../../../../db/orm/entities/Updoot'
 import VoteInput from '../../../../../../args/resolvers/root/modules/updoots/mutation/inputs/vote-input'
@@ -11,18 +10,18 @@ import constants from '../../../../../../../constants/graphql/args/updoots'
 import { DBRawEntities } from '../../../../../../../types/db'
 
 interface UpdootTransactionContext {
-  user: User
+  userId: number
   input: VoteInput
   namespace: string | undefined
 }
 
-const updootTransaction = ({ user, input, namespace }: UpdootTransactionContext) => async (tm: EntityManager) => {
+const updootTransaction = ({ userId, input, namespace }: UpdootTransactionContext) => async (tm: EntityManager) => {
   let deltaPoints = 0
   let finalUpdoot: Updoot | null = null
 
   const updoot = await tm.findOne(Updoot, {
     where: {
-      userId: user.id,
+      userId,
       postId: input.postId
     }
   })
@@ -66,7 +65,7 @@ const updootTransaction = ({ user, input, namespace }: UpdootTransactionContext)
         .createQueryBuilder()
         .insert()
         .values({
-          userId: user.id,
+          userId,
           ...input
         })
         .returning('*')
@@ -119,7 +118,10 @@ const updootTransaction = ({ user, input, namespace }: UpdootTransactionContext)
       responses.payloads.updootsPayloads.success[symbol].message,
       responses.payloads.updootsPayloads.success[symbol].code,
       namespace,
-      finalUpdoot ? new objects.VoteData(finalUpdoot, updatedPost.points) : undefined
+      new objects.VoteData(
+        updatedPost.points,
+        finalUpdoot ? updoot : undefined
+      )
     )
 }
 

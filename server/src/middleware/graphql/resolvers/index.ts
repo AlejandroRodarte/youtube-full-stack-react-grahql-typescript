@@ -1,9 +1,7 @@
 import root from './root'
-import common from './common'
 
 const resolvers = {
-  root,
-  common
+  root
 }
 
 export default resolvers

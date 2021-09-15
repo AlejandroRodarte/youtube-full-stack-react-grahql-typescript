@@ -1,5 +1,5 @@
-import { MeQuery } from '../../../../../../../../../generated/graphql'
-import constants from '../../../../../../../../constants/index'
+import { MeQuery } from '../../../../../../../../../../generated/graphql'
+import constants from '../../../../../../../../../constants/index'
 
 const meQueryUpdaterDelegate: (query: MeQuery) => MeQuery = (query) => {
   return {
