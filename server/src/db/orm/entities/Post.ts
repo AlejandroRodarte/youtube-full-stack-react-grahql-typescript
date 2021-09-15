@@ -1,8 +1,7 @@
 
 import { Field, ObjectType } from 'type-graphql'
-import { Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, Column, BaseEntity, ManyToOne, OneToMany } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, Column, BaseEntity, OneToMany } from 'typeorm'
 
-import User from './User'
 import Updoot from './Updoot'
 
 // @ObjectType to make this available to our GraphQL schema
@@ -32,13 +31,6 @@ export default class Post extends BaseEntity {
   @Field()
   @Column()
   originalPosterId: number
-
-  @Field()
-  @ManyToOne(
-    () => User,
-    user => user.posts
-  )
-  originalPoster: User
 
   @OneToMany(
     () => Updoot,

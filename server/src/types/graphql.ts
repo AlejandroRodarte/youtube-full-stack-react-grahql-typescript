@@ -4,6 +4,10 @@ import { GraphQLSchema } from 'graphql'
 import { Redis } from 'ioredis'
 import TypeORM from 'typeorm'
 import Joi from 'joi'
+import DataLoader from 'dataloader'
+
+import Updoot from './../db/orm/entities/Updoot'
+import User from './../db/orm/entities/User'
 
 import PostInput from '../graphql/args/resolvers/root/modules/posts/query/inputs/post-input'
 import PostsInput from '../graphql/args/resolvers/root/modules/posts/query/inputs/posts-input'
@@ -17,6 +21,7 @@ import ForgotPasswordInput from '../graphql/args/resolvers/root/modules/users/mu
 import VoteInput from '../graphql/args/resolvers/root/modules/updoots/mutation/inputs/vote-input'
 
 import argsConstants from '../constants/graphql/args'
+import { CacheTypes } from './cache'
 
 export namespace GraphQLTuples {
   export type CreateSchemaTuple = [
@@ -31,11 +36,21 @@ export namespace GraphQLTuples {
 }
 
 export namespace GraphQLContext {
+  interface ObjectLoaders {
+    updoot: DataLoader<CacheTypes.UpdootDataLoaderKey, Updoot | null, CacheTypes.UpdootDataLoaderKey>
+    user: DataLoader<number, User, number>
+  }
+
+  interface DataLoaderContext {
+    objects: ObjectLoaders
+  }
+
   export type ApplicationContext = {
     req: Request,
     res: Response,
     db: TypeORM.Connection
     redis: Redis
+    dataloader: DataLoaderContext
   }
 }
 

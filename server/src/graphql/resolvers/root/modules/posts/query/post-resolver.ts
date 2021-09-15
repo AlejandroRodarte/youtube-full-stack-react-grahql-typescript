@@ -17,7 +17,7 @@ export default class PostResolver {
     @Arg('data', () => PostInput) data: PostInput
   ) {
     try {
-      const post = await Post.findOne(data.id, { relations: ['originalPoster'] })
+      const post = await Post.findOne(data.id)
 
       if (!post) {
         return new objects
