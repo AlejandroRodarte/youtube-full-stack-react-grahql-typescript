@@ -28,6 +28,7 @@ type Post {
   createdAt: String!
   updatedAt: String!
   textSnippet: String!
+  userVoteStatus: Int
 }
 
 type User {
@@ -250,8 +251,8 @@ type VoteResponse {
 }
 
 type VoteData {
-  updoot: Updoot!
   postPoints: Int!
+  updoot: Updoot
 }
 
 type Updoot {
