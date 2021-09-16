@@ -130,7 +130,6 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
             w={ 6 }
             h={ 6 }
             color={ styleProps.chevronUp.color }
-            _hover={ { color: updootUtils.colors.RED } }
           />
         }
       />
@@ -150,7 +149,6 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
             w={ 6 }
             h={ 6 }
             color={ styleProps.chevronDown.color }
-            _hover={ { color: updootUtils.colors.BLUE } }
           />
         }
       />
