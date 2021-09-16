@@ -43,11 +43,6 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
       chevronDown: {
         ...prevStyleProps.chevronDown,
         iconClasses: type === 'downvote' ? [styles['animate-downvote']] : []
-      },
-      points: {
-        ...prevStyleProps.points,
-        color: type === 'zero' ? 'black' : (type === 'upvote' ? updootUtils.colors.RED : updootUtils.colors.BLUE),
-        weight: type === 'zero' ? 'normal' : 'semibold'
       }
     }))
   }, [setStyleProps])
