@@ -11,14 +11,29 @@ import updootUtils from '../../../../util/components/ui/posts/updoot'
 import { UITypes } from '../../../../types/components/ui'
 import { Contexts } from '../../../../types/context'
 
+interface StyleState {
+  chevronUp: {
+    color: string
+    iconClasses: string[]
+  }
+  chevronDown: {
+    color: string
+    iconClasses: string[]
+  }
+  points: {
+    color: string
+    fontWeight: string
+  }
+}
+
 interface UpdootProps {
   points: Contexts.Posts[number]['points']
-  userVoteStatus: Contexts.Posts[number]['userVoteStatus']
+  voteStatus: UITypes.UpdootStatus,
   vote: (type: UITypes.UpdootVoteTypes, successHandler: () => void) => void
 }
 
-const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootProps) => {
-  const [styleProps, setStyleProps] = useState({
+const Updoot: React.FC<UpdootProps> = ({ points, voteStatus, vote }: UpdootProps) => {
+  const [stylesState, setStylesState] = useState<StyleState>({
     chevronUp: {
       color: updootUtils.colors.GRAY,
       iconClasses: []
@@ -28,13 +43,13 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
       iconClasses: []
     },
     points: {
-      color: 'black',
-      weight: 'normal'
+      color: updootUtils.colors.BLACK,
+      fontWeight: updootUtils.fontWeights.NORMAL
     }
   })
 
   const updateStyles = useCallback((type: UITypes.UpdootVoteTypes) => {
-    setStyleProps((prevStyleProps) => ({
+    setStylesState((prevStyleProps) => ({
       ...prevStyleProps,
       chevronUp: {
         ...prevStyleProps.chevronUp,
@@ -45,29 +60,29 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
         iconClasses: type === 'downvote' ? [styles['animate-downvote']] : []
       }
     }))
-  }, [setStyleProps])
+  }, [setStylesState])
 
   const onVoteSuccess = useCallback((type: UITypes.UpdootVoteTypes) => () => {
     updateStyles(type)
   }, [updateStyles])
 
   const onUpvote = useCallback(() => {
-    if (userVoteStatus === null) return
-    if (userVoteStatus === 1) return vote('zero', onVoteSuccess('zero'))
+    if (voteStatus === 'unknown') return
+    if (voteStatus === 'upvoted') return vote('zero', onVoteSuccess('zero'))
     return vote('upvote', onVoteSuccess('upvote'))
-  }, [onVoteSuccess, userVoteStatus, vote])
+  }, [onVoteSuccess, voteStatus, vote])
 
   const onDownVote = useCallback(() => {
-    if (userVoteStatus === null) return
-    if (userVoteStatus === -1) return vote('zero', onVoteSuccess('zero'))
+    if (voteStatus === 'unknown') return
+    if (voteStatus === 'downvoted') return vote('zero', onVoteSuccess('zero'))
     return vote('downvote', onVoteSuccess('downvote'))
-  }, [onVoteSuccess, userVoteStatus, vote])
+  }, [onVoteSuccess, voteStatus, vote])
 
   useEffect(() => {
-    switch (userVoteStatus) {
-      case null:
-      case 0:
-        setStyleProps((prevStyleProps) => ({
+    switch (voteStatus) {
+      case 'unknown':
+      case 'no-vote':
+        setStylesState((prevStyleProps) => ({
           ...prevStyleProps,
           chevronUp: {
             ...prevStyleProps.chevronUp,
@@ -79,13 +94,13 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
           },
           points: {
             ...prevStyleProps.points,
-            color: 'black',
-            weight: 'normal'
+            color: updootUtils.colors.BLACK,
+            fontWeight: updootUtils.fontWeights.NORMAL
           }
         }))
         break
-      case 1:
-        setStyleProps((prevStyleProps) => ({
+      case 'upvoted':
+        setStylesState((prevStyleProps) => ({
           ...prevStyleProps,
           chevronUp: {
             ...prevStyleProps.chevronUp,
@@ -98,12 +113,12 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
           points: {
             ...prevStyleProps.points,
             color: updootUtils.colors.RED,
-            weight: 'semibold'
+            fontWeight: updootUtils.fontWeights.SEMIBOLD
           }
         }))
         break
-      case -1:
-        setStyleProps((prevStyleProps) => ({
+      case 'downvoted':
+        setStylesState((prevStyleProps) => ({
           ...prevStyleProps,
           chevronUp: {
             ...prevStyleProps.chevronUp,
@@ -116,12 +131,12 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
           points: {
             ...prevStyleProps.points,
             color: updootUtils.colors.BLUE,
-            weight: 'semibold'
+            fontWeight: updootUtils.fontWeights.SEMIBOLD
           }
         }))
         break
     }
-  }, [userVoteStatus, setStyleProps])
+  }, [voteStatus, setStylesState])
 
   return (
     <Flex
@@ -136,16 +151,16 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
         _focus={ { outline: 'none' } }
         icon={
           <ChevronUpIcon
-            className={ styleProps.chevronUp.iconClasses.join(' ') }
+            className={ stylesState.chevronUp.iconClasses.join(' ') }
             w={ 6 }
             h={ 6 }
-            color={ styleProps.chevronUp.color }
+            color={ stylesState.chevronUp.color }
           />
         }
       />
       <Text
-        color={ styleProps.points.color }
-        fontWeight={ styleProps.points.weight }
+        color={ stylesState.points.color }
+        fontWeight={ stylesState.points.fontWeight }
       >
         { points }
       </Text>
@@ -155,10 +170,10 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
         _focus={ { outline: 'none' } }
         icon={
           <ChevronDownIcon
-            className={ styleProps.chevronDown.iconClasses.join(' ') }
+            className={ stylesState.chevronDown.iconClasses.join(' ') }
             w={ 6 }
             h={ 6 }
-            color={ styleProps.chevronDown.color }
+            color={ stylesState.chevronDown.color }
           />
         }
       />

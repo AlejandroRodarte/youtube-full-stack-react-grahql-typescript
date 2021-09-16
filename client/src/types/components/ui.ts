@@ -10,6 +10,11 @@ export namespace UITypes {
     anonymous: Route[]
   }
 
+  export interface PageItemUserVoteStatusMap {
+    [key: string]: UpdootStatus
+  }
+
+  export type UpdootStatus = 'upvoted' | 'downvoted' | 'no-vote' | 'unknown'
   export type UpdootVoteTypes = 'upvote' | 'downvote' | 'zero'
   export type UpdootVoteValues = 1 | -1 | 0
 }
