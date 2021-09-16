@@ -14,9 +14,9 @@ export default class DeletePostResolver {
   @Mutation(() => objects.DeletePostResponse)
   @UseMiddleware(
     generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
+    generatedMiddlewares.ValidateArgs(DeletePostArgsSchema),
     generatedMiddlewares.AttachInputAction('DeletePostInput', 'posts/canMutatePost'),
-    middlewares.root.modules.posts.CanMutatePost,
-    generatedMiddlewares.ValidateArgs(DeletePostArgsSchema)
+    middlewares.root.modules.posts.CanMutatePost
   )
   async deletePost (
     @Arg('namespace', () => String) namespace: string,
