@@ -81,6 +81,11 @@ const Updoot: React.FC<UpdootProps> = ({ points, userVoteStatus, vote }: UpdootP
           chevronDown: {
             ...prevStyleProps.chevronDown,
             color: updootUtils.colors.GRAY
+          },
+          points: {
+            ...prevStyleProps.points,
+            color: 'black',
+            weight: 'normal'
           }
         }))
         break
