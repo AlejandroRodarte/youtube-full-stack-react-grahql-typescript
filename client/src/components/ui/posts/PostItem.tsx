@@ -1,27 +1,27 @@
 import React, { useCallback } from 'react'
 import { Flex, Box, Heading, Text } from '@chakra-ui/react'
 
-import Updoot from './Updoot'
+import Updoot from './Updoot/Updoot'
 
 import { Contexts } from '../../../types/context'
 import { UITypes } from '../../../types/components/ui'
 
 interface PostItemProps {
   post: Contexts.Posts[number]
-  vote: (value: UITypes.UpdootVoteValues, postId: number) => void
+  vote: (value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => void
 }
 
 const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
-  const onVote = useCallback((type: UITypes.UpdootVoteTypes) => {
+  const onVote = useCallback((type: UITypes.UpdootVoteTypes, successHandler: () => void) => {
     switch (type) {
       case 'upvote':
-        return vote(1, post.id)
+        return vote(1, post.id, successHandler)
       case 'downvote':
-        return vote(-1, post.id)
+        return vote(-1, post.id, successHandler)
       case 'zero':
-        return vote(0, post.id)
+        return vote(0, post.id, successHandler)
       default:
-        return vote(1, post.id)
+        return vote(1, post.id, successHandler)
     }
   }, [post.id, vote])
 

@@ -243,11 +243,11 @@ export type Post = {
   text: Scalars['String'];
   points: Scalars['Float'];
   originalPosterId: Scalars['Float'];
-  originalPoster: User;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   textSnippet: Scalars['String'];
   userVoteStatus?: Maybe<Scalars['Int']>;
+  originalPoster?: Maybe<User>;
 };
 
 export type PostData = {
@@ -376,13 +376,13 @@ export type AddPostMutationVariables = Exact<{
   addPostData: AddPostInput;
 }>;
 
-export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, userVoteStatus?: Maybe<number>, originalPoster: { __typename?: 'User', id: number, username: string } } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, userVoteStatus?: Maybe<number>, originalPoster?: Maybe<{ __typename?: 'User', id: number, username: string }> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type PostsQueryVariables = Exact<{
   postsData: PostsInput;
 }>;
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, userVoteStatus?: Maybe<number>, originalPoster: { __typename?: 'User', id: number, username: string } }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, userVoteStatus?: Maybe<number>, originalPoster?: Maybe<{ __typename?: 'User', id: number, username: string }> }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type VoteMutationVariables = Exact<{
   voteData: VoteInput;
@@ -420,7 +420,7 @@ export type RegisterMutation = { __typename?: 'Mutation', register: { __typename
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'MeData', user: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type MeQuery = { __typename?: 'Query', me: { __typename: 'MeResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'MeData', user: { __typename: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type MyStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -641,12 +641,15 @@ export function useRegisterMutation () {
 export const MeDocument = gql`
     query Me {
   me(namespace: "Me") {
+    __typename
     status
     message
     code
     namespace
     data {
+      __typename
       user {
+        __typename
         id
         username
         email

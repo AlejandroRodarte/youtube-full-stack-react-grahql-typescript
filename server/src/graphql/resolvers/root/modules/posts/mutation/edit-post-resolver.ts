@@ -16,9 +16,9 @@ export default class EditPostResolver {
   @Mutation(() => objects.EditPostResponse)
   @UseMiddleware(
     generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),
+    generatedMiddlewares.ValidateArgs(EditPostArgsSchema),
     generatedMiddlewares.AttachInputAction('EditPostInput', 'posts/canMutatePost'),
-    middlewares.root.modules.posts.CanMutatePost,
-    generatedMiddlewares.ValidateArgs(EditPostArgsSchema)
+    middlewares.root.modules.posts.CanMutatePost
   )
   async editPost (
     @Arg('namespace', () => String) namespace: string,

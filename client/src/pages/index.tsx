@@ -15,7 +15,7 @@ import { UITypes } from '../types/components/ui'
 
 interface IndexProps extends UserDataProps {}
 
-const Index: React.FC<IndexProps> = ({ me }: IndexProps) => {
+const Index: React.FC<IndexProps> = (props: IndexProps) => {
   const [postsQueryVariables, setPostsQueryVariables] = useState<PostsQueryVariables>({
     postsData: {
       limit: 10,
@@ -47,7 +47,7 @@ const Index: React.FC<IndexProps> = ({ me }: IndexProps) => {
     await logout()
   }, [logout])
 
-  const onVote = useCallback(async (value: UITypes.UpdootVoteValues, postId: number) => {
+  const onVote = useCallback(async (value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => {
     const voteArgsInput: VoteMutationVariables = {
       voteData: {
         postId,
@@ -55,7 +55,12 @@ const Index: React.FC<IndexProps> = ({ me }: IndexProps) => {
       }
     }
 
-    await vote(voteArgsInput)
+    const response = await vote(voteArgsInput)
+
+    if (response.data) {
+      const { data } = response.data.vote
+      if (data) successHandler()
+    }
   }, [vote])
 
   useEffect(() => {
@@ -66,7 +71,7 @@ const Index: React.FC<IndexProps> = ({ me }: IndexProps) => {
     <>
       <MainLayout
         variant="regular"
-        me={ me }
+        me={ props.me }
         logout={
           {
             handler: onLogout,
