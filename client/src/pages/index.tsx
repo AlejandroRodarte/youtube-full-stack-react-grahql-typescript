@@ -45,7 +45,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
         break
       case 'popular': {
         const createdAt = lastPost.createdAt
-        const points = lastPost.points
+        const points = home.pristine.popular.points.value
         cursor = `createdAt=${createdAt},points=${points}`
         home.cursors.popular.set(() => cursor)
         break
@@ -59,7 +59,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
         cursor
       }
     }))
-  }, [home.cursors.new, home.cursors.popular, home.posts, home.sort.value])
+  }, [home.cursors.new, home.cursors.popular, home.posts, home.pristine.popular.points, home.sort.value])
 
   const onTryAgainClick = useCallback(() => {
     reexecutePostsQuery()
@@ -100,8 +100,18 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
   }, [home.cursors, home.sort])
 
   useEffect(() => {
-    if (!fetching && data && data.posts.data) home.posts[home.sort.value].set(() => data.posts.data.posts)
-  }, [data, fetching, home.posts, home.sort.value])
+    if (!fetching && data && data.posts.data) {
+      home.posts[home.sort.value].set(() => data.posts.data.posts)
+
+      if (
+        home.sort.value === 'popular' &&
+        data.posts.data.posts.length !== home.posts[home.sort.value].value.length
+      ) {
+        const lastPost = data.posts.data.posts[data.posts.data.posts.length - 1]
+        home.pristine.popular.points.set(() => lastPost.points)
+      }
+    }
+  }, [data, fetching, home.posts, home.pristine.popular.points, home.sort.value])
 
   return (
     <>

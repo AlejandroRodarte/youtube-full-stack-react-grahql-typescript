@@ -13,10 +13,17 @@ export namespace Contexts {
     [key in Sort]: UseStateValues<T>
   }
 
+  interface PristineConfig {
+    popular: {
+      points: UseStateValues<number>
+    }
+  }
+
   interface HomePageContext {
     sort: UseStateValues<Sort>
     posts: SortConfig<Posts>
     cursors: SortConfig<string | null>
+    pristine: PristineConfig
   }
 
   interface PagesContext {

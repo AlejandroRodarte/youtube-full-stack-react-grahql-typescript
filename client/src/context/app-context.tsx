@@ -29,19 +29,29 @@ const AppContext = createContext<Contexts.AppContext>({
           value: null,
           set: () => {}
         }
+      },
+      pristine: {
+        popular: {
+          points: {
+            value: 0,
+            set: () => {}
+          }
+        }
       }
     }
   }
 })
 
 export const AppContextWrapper: React.FC = ({ children }) => {
-  const [sort, setSort] = useState<Contexts.Sort>('new')
+  const [sort, setSort] = useState<Contexts.Sort>('popular')
 
   const [newPosts, setNewPosts] = useState<Contexts.Posts>([])
   const [popularPosts, setPopularPosts] = useState<Contexts.Posts>([])
 
   const [newCursor, setNewCursor] = useState<string | null>(null)
   const [popularCursor, setPopularCursor] = useState<string | null>(null)
+
+  const [pristinePopularPoints, setPristinePopularPoints] = useState<number>(0)
 
   const initialContext: Contexts.AppContext = {
     pages: {
@@ -68,6 +78,14 @@ export const AppContextWrapper: React.FC = ({ children }) => {
           popular: {
             value: popularCursor,
             set: setPopularCursor
+          }
+        },
+        pristine: {
+          popular: {
+            points: {
+              value: pristinePopularPoints,
+              set: setPristinePopularPoints
+            }
           }
         }
       }
