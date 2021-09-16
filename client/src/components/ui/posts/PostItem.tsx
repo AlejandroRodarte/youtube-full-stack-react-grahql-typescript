@@ -11,6 +11,13 @@ interface PostItemProps {
   vote: (value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => void
 }
 
+const userVoteStatusMap: UITypes.PageItemUserVoteStatusMap = {
+  0: 'no-vote',
+  1: 'upvoted',
+  [-1]: 'downvoted',
+  null: 'unknown'
+}
+
 const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
   const onVote = useCallback((type: UITypes.UpdootVoteTypes, successHandler: () => void) => {
     switch (type) {
@@ -35,7 +42,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
       <Updoot
         points={ post.points }
         vote={ onVote }
-        userVoteStatus={ post.userVoteStatus }
+        voteStatus={ userVoteStatusMap[post.userVoteStatus] }
       />
       <Box>
         <Heading fontSize="xl">

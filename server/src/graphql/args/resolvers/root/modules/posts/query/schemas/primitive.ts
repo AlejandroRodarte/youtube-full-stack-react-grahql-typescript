@@ -36,6 +36,7 @@ const sortSchema =
 const cursorSchema =
   Joi
     .alternatives()
+    .allow(null)
     .conditional(
       'sort',
       [
