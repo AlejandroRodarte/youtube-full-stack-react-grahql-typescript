@@ -14,7 +14,7 @@ const limitSchema =
     .number()
     .required()
     .min(1)
-    .max(50)
+    .max(25)
     .label('Posts limit')
 
 const baseCursorSchema =
