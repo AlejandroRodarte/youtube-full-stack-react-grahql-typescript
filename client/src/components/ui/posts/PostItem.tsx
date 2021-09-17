@@ -8,7 +8,7 @@ import { UITypes } from '../../../types/components/ui'
 
 interface PostItemProps {
   post: Contexts.Posts[number]
-  vote: (value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => void
+  vote: (value: UITypes.UpdootVoteValues, postId: number, cb: (error?: Error) => void) => void
 }
 
 const userVoteStatusMap: UITypes.PageItemUserVoteStatusMap = {
@@ -19,16 +19,16 @@ const userVoteStatusMap: UITypes.PageItemUserVoteStatusMap = {
 }
 
 const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
-  const onVote = useCallback((type: UITypes.UpdootVoteTypes, successHandler: () => void) => {
+  const onVote = useCallback((type: UITypes.UpdootVoteTypes, cb: (error?: Error) => void) => {
     switch (type) {
       case 'upvote':
-        return vote(1, post.id, successHandler)
+        return vote(1, post.id, cb)
       case 'downvote':
-        return vote(-1, post.id, successHandler)
+        return vote(-1, post.id, cb)
       case 'zero':
-        return vote(0, post.id, successHandler)
+        return vote(0, post.id, cb)
       default:
-        return vote(1, post.id, successHandler)
+        return vote(1, post.id, cb)
     }
   }, [post.id, vote])
 

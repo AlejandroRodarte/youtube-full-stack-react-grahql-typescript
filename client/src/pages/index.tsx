@@ -57,7 +57,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
             : (
                 home.excludeIds.popular.value.length === 0
                   ? null
-                  : home.excludeIds.popular.value
+                  : home.excludeIds.popular.value.map((post) => post.postId)
               )
 
         home.cursors.popular.set(() => cursor)
@@ -83,7 +83,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     await logout()
   }, [logout])
 
-  const onVote = useCallback(async (value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => {
+  const onVote = useCallback(async (value: UITypes.UpdootVoteValues, postId: number, cb: (error?: Error) => void) => {
     const voteArgsInput: VoteMutationVariables = {
       voteData: {
         postId,
@@ -94,31 +94,46 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     const response = await vote(voteArgsInput)
 
     if (response.data) {
-      const { data: voteData } = response.data.vote
+      const { message, data } = response.data.vote
 
-      if (voteData) {
-        successHandler()
+      if (data) {
+        cb()
 
-        if (home.sort.value === 'popular' && data && data.posts.data && data.posts.data.hasMore) {
-          const currentPostPoints = voteData.postPoints
+        if (home.sort.value === 'popular') {
+          const currentPostPoints = data.postPoints
           const pristinePostPoints = home.pristine.popular.points.value.find((post) => post.postId === postId)
 
           if (currentPostPoints < pristinePostPoints.points) {
             home.excludeIds.popular.set((prevExcludedIds) => {
-              if (prevExcludedIds === null) return [postId]
-              if (!prevExcludedIds.includes(postId)) return [...prevExcludedIds, postId]
-              else return prevExcludedIds
+              const excludedPost = { postId, points: data.postPoints }
+              if (prevExcludedIds === null) return [excludedPost]
+
+              const index = prevExcludedIds.findIndex((post) => post.postId === postId)
+
+              if (index === -1) return [...prevExcludedIds, excludedPost]
+              else {
+                return prevExcludedIds.map((post) => {
+                  if (post.postId === postId) return { ...post, points: data.postPoints }
+                  return post
+                })
+              }
             })
           } else {
             home.excludeIds.popular.set((prevExcludedIds) => {
               if (prevExcludedIds === null) return prevExcludedIds
-              return prevExcludedIds.filter((id) => id !== postId)
+              return prevExcludedIds.filter((post) => post.postId !== postId)
             })
           }
         }
+        return
       }
+
+      cb(new Error(message))
+      return
     }
-  }, [data, home.excludeIds.popular, home.pristine.popular.points.value, home.sort.value, vote])
+
+    cb(new Error('The server is not responding.'))
+  }, [home.excludeIds.popular, home.pristine.popular.points.value, home.sort.value, vote])
 
   const onRadioGroupChange = useCallback((sort: string) => {
     const castedSort = sort as Contexts.Sort
@@ -153,8 +168,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
 
         home.excludeIds.popular.set((prevExcludedIds) => {
           if (prevExcludedIds === null) return prevExcludedIds
-          return prevExcludedIds.filter((id) => {
-            const post = data.posts.data.posts.find((post) => post.id === id)
+          return prevExcludedIds.filter((post) => {
             if (lastPost.points < post.points) return false
             return true
           })

@@ -59,7 +59,7 @@ export const AppContextWrapper: React.FC = ({ children }) => {
 
   const [pristinePopularPoints, setPristinePopularPoints] = useState<Contexts.PostPointsCondensedObject[]>([])
 
-  const [popularExcludeIds, setPopularExcludeIds] = useState<number[] | null>(null)
+  const [popularExcludeIds, setPopularExcludeIds] = useState<Contexts.PostPointsCondensedObject[] | null>(null)
 
   const initialContext: Contexts.AppContext = {
     pages: {

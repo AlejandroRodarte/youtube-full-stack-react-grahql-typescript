@@ -8,12 +8,12 @@ import { UITypes } from '../../../types/components/ui'
 
 interface PostListProps {
   posts: Contexts.Posts
-  vote: (value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => void
+  vote: (value: UITypes.UpdootVoteValues, postId: number, cb: (error?: Error) => void) => void
 }
 
 const PostList: React.FC<PostListProps> = ({ posts, vote }: PostListProps) => {
-  const onVote = useCallback((value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => {
-    vote(value, postId, successHandler)
+  const onVote = useCallback((value: UITypes.UpdootVoteValues, postId: number, cb: (error?: Error) => void) => {
+    vote(value, postId, cb)
   }, [vote])
 
   return (

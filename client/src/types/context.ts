@@ -33,7 +33,7 @@ export namespace Contexts {
     sort: UseStateValues<Sort>
     posts: SortConfig<Posts>
     cursors: SortConfig<string | null>
-    excludeIds: OptionalSortConfig<number[] | null>
+    excludeIds: OptionalSortConfig<PostPointsCondensedObject[] | null>
     pristine: PristineConfig
   }
 
