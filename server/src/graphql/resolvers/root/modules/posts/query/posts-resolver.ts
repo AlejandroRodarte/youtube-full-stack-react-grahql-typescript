@@ -45,7 +45,7 @@ export default class PostsResolver {
 
             if (data.excludeIds) {
               query.where(
-                `p.id NOT IN (:...ids) AND ((p.${field} <= :points AND p.createdAt < :createdAt) OR (p.${field} < :points))`,
+                `((p.${field} <= :points AND p.createdAt < :createdAt) OR (p.${field} < :points)) AND (p.id NOT IN (:...ids))`,
                 { points, createdAt, ids: data.excludeIds }
               )
             } else {
