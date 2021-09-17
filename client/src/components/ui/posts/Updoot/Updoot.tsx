@@ -72,7 +72,7 @@ const Updoot: React.FC<UpdootProps> = ({ points, voteStatus, vote }: UpdootProps
     return vote('upvote', onVoteSuccess('upvote'))
   }, [onVoteSuccess, voteStatus, vote])
 
-  const onDownVote = useCallback(() => {
+  const onDownvote = useCallback(() => {
     if (voteStatus === 'unknown') return
     if (voteStatus === 'downvoted') return vote('zero', onVoteSuccess('zero'))
     return vote('downvote', onVoteSuccess('downvote'))
@@ -165,7 +165,7 @@ const Updoot: React.FC<UpdootProps> = ({ points, voteStatus, vote }: UpdootProps
         { points }
       </Text>
       <IconButton
-        onClick={ onDownVote }
+        onClick={ onDownvote }
         aria-label="Downvote"
         _focus={ { outline: 'none' } }
         icon={

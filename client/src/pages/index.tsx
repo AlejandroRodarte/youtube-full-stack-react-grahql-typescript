@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { withUrqlClient } from 'next-urql'
 import { Heading, Flex, Button } from '@chakra-ui/react'
+import { Radio, RadioGroup } from '@chakra-ui/radio'
 
 import { usePostsQuery, PostsQueryVariables, useLogoutMutation, useVoteMutation, VoteMutationVariables } from '../generated/graphql'
 
@@ -12,32 +13,53 @@ import { useAppContext } from '../context/app-context'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 import { UITypes } from '../types/components/ui'
+import { Stack } from '@chakra-ui/layout'
+import { Contexts } from '../types/context'
 
 interface IndexProps extends UserDataProps {}
 
 const Index: React.FC<IndexProps> = (props: IndexProps) => {
+  const { pages: { home } } = useAppContext()
+
   const [postsQueryVariables, setPostsQueryVariables] = useState<PostsQueryVariables>({
     postsData: {
       limit: 10,
-      sort: 'new'
+      sort: home.sort.value,
+      cursor: home.cursors[home.sort.value].value
     }
   })
-
-  const { posts, setPosts } = useAppContext()
 
   const [{ data, fetching, error }, reexecutePostsQuery] = usePostsQuery({ variables: postsQueryVariables })
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation()
   const [, vote] = useVoteMutation()
 
   const onLoadMoreClick = useCallback(() => {
+    let cursor = ''
+    const posts = home.posts[home.sort.value].value
+    const lastPost = posts[posts.length - 1]
+
+    switch (home.sort.value) {
+      case 'new':
+        cursor = lastPost.createdAt
+        home.cursors.new.set(() => cursor)
+        break
+      case 'popular': {
+        const createdAt = lastPost.createdAt
+        const points = home.pristine.popular.points.value
+        cursor = `createdAt=${createdAt},points=${points}`
+        home.cursors.popular.set(() => cursor)
+        break
+      }
+    }
+
     setPostsQueryVariables((prevPostsQueryInput) => ({
       ...prevPostsQueryInput,
       postsData: {
         ...prevPostsQueryInput.postsData,
-        cursor: posts[posts.length - 1].createdAt
+        cursor
       }
     }))
-  }, [posts])
+  }, [home.cursors.new, home.cursors.popular, home.posts, home.pristine.popular.points, home.sort.value])
 
   const onTryAgainClick = useCallback(() => {
     reexecutePostsQuery()
@@ -63,9 +85,33 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     }
   }, [vote])
 
+  const onRadioGroupChange = useCallback((sort: string) => {
+    const castedSort = sort as Contexts.Sort
+    home.sort.set(() => castedSort)
+
+    setPostsQueryVariables((prevPostsQueryVariables) => ({
+      ...prevPostsQueryVariables,
+      postsData: {
+        ...prevPostsQueryVariables.postsData,
+        sort: castedSort,
+        cursor: home.cursors[castedSort].value
+      }
+    }))
+  }, [home.cursors, home.sort])
+
   useEffect(() => {
-    if (data && data.posts.data) setPosts(() => data.posts.data.posts)
-  }, [data, setPosts])
+    if (!fetching && data && data.posts.data) {
+      home.posts[home.sort.value].set(() => data.posts.data.posts)
+
+      if (
+        home.sort.value === 'popular' &&
+        data.posts.data.posts.length !== home.posts[home.sort.value].value.length
+      ) {
+        const lastPost = data.posts.data.posts[data.posts.data.posts.length - 1]
+        home.pristine.popular.points.set(() => lastPost.points)
+      }
+    }
+  }, [data, fetching, home.posts, home.pristine.popular.points, home.sort.value])
 
   return (
     <>
@@ -79,15 +125,40 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
           }
         }
       >
-        <Flex>
-          <Heading>
+        <Flex
+          direction="row"
+          alignItems="center"
+        >
+          <Heading mr={ 5 }>
             LiReddit
           </Heading>
+          <RadioGroup
+            onChange={ onRadioGroupChange }
+            value={ home.sort.value }
+          >
+            <Stack
+              direction="row"
+              spacing={ 8 }
+            >
+              <Radio
+                value="new"
+                size="lg"
+              >
+                New
+              </Radio>
+              <Radio
+                value="popular"
+                size="lg"
+              >
+                Popular
+              </Radio>
+            </Stack>
+          </RadioGroup>
         </Flex>
         {
-          posts.length > 0 &&
+          home.posts[home.sort.value].value.length > 0 &&
           <PostList
-            posts={ posts }
+            posts={ home.posts[home.sort.value].value }
             vote={ onVote }
           />
         }

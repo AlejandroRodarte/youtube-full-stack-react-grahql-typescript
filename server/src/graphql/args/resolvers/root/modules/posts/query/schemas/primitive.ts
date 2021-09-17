@@ -33,6 +33,20 @@ const sortSchema =
     )
     .label('Posts sorting type')
 
+const excludeIdsSchema =
+  Joi
+    .alternatives()
+    .allow(null)
+    .conditional(
+      'sort',
+      [
+        {
+          is: constants.graphql.args.posts.SortTypes.POPULAR,
+          then: Joi.array().items(Joi.number())
+        }
+      ]
+    )
+
 const cursorSchema =
   Joi
     .alternatives()
@@ -63,6 +77,7 @@ const primitive = {
   postIdSchema,
   limitSchema,
   sortSchema,
+  excludeIdsSchema,
   cursorSchema
 }
 

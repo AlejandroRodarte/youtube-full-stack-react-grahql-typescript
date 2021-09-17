@@ -10,6 +10,7 @@ import Wrapper from '../components/ui/wrappers/Wrapper'
 import withAnonymous, { AnonymousProps } from '../hoc/withAnonymous'
 
 import commonFunctions from '../util/common/functions'
+import { useAppContext } from '../context/app-context'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 
@@ -19,6 +20,8 @@ import { GraphQLUsersArgs } from '../types/graphql/args/users'
 interface RegisterProps extends AnonymousProps {}
 
 const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps) => {
+  const { pages: { home } } = useAppContext()
+
   const registerFormInitialValues: FormTypes.RegisterForm = {
     username: '',
     email: '',
@@ -79,6 +82,8 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
       const { data, errors } = response.data.register
 
       if (data && !wasLoadedOnServer) {
+        home.cursors.new.set(() => null)
+        home.cursors.popular.set(() => null)
         router.push(redirectTo as string)
       }
 
@@ -88,7 +93,7 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
         setErrors(unflattenedErrors.data)
       }
     }
-  }, [redirectTo, register, router, wasLoadedOnServer])
+  }, [home.cursors.new, home.cursors.popular, redirectTo, register, router, wasLoadedOnServer])
 
   return (
     <Wrapper>
