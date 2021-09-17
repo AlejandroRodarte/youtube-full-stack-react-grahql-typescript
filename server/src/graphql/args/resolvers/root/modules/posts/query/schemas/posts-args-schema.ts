@@ -8,6 +8,7 @@ import primitive from './primitive'
 interface PostsDataSchemaInterface {
   limit: Joi.NumberSchema
   sort: Joi.StringSchema
+  excludeIds: Joi.ArraySchema
   cursor: Joi.AlternativesSchema
 }
 
@@ -21,6 +22,7 @@ const PostDataSchema =
     .keys({
       limit: primitive.limitSchema,
       sort: primitive.sortSchema,
+      excludeIds: primitive.excludeIdsSchema,
       cursor: primitive.cursorSchema
     })
 
