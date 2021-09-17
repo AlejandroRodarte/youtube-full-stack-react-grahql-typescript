@@ -278,6 +278,7 @@ export type PostsData = {
 export type PostsInput = {
   limit: Scalars['Int'];
   sort: Scalars['String'];
+  excludeIds?: Maybe<Array<Scalars['Int']>>;
   cursor?: Maybe<Scalars['String']>;
 };
 

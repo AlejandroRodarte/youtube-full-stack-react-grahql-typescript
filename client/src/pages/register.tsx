@@ -83,7 +83,10 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
 
       if (data && !wasLoadedOnServer) {
         home.cursors.new.set(() => null)
+        home.posts.new.set(() => [])
         home.cursors.popular.set(() => null)
+        home.posts.popular.set(() => [])
+        home.excludeIds.popular.set(() => null)
         router.push(redirectTo as string)
       }
 
@@ -93,7 +96,7 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
         setErrors(unflattenedErrors.data)
       }
     }
-  }, [home.cursors.new, home.cursors.popular, redirectTo, register, router, wasLoadedOnServer])
+  }, [home.cursors.new, home.cursors.popular, home.excludeIds.popular, home.posts.new, home.posts.popular, redirectTo, register, router, wasLoadedOnServer])
 
   return (
     <Wrapper>

@@ -73,7 +73,10 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
 
       if (data && !wasLoadedOnServer) {
         home.cursors.new.set(() => null)
+        home.posts.new.set(() => [])
         home.cursors.popular.set(() => null)
+        home.posts.popular.set(() => [])
+        home.excludeIds.popular.set(() => null)
         router.push(redirectTo as string)
       }
 
@@ -83,7 +86,7 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
         setErrors(unflattenedErrors.data)
       }
     }
-  }, [home.cursors.new, home.cursors.popular, login, redirectTo, router, wasLoadedOnServer])
+  }, [home.cursors.new, home.cursors.popular, home.excludeIds.popular, home.posts.new, home.posts.popular, login, redirectTo, router, wasLoadedOnServer])
 
   return (
     <Wrapper>

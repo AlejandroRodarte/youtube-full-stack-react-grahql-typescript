@@ -25,7 +25,8 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     postsData: {
       limit: 10,
       sort: home.sort.value,
-      cursor: home.cursors[home.sort.value].value
+      cursor: home.cursors[home.sort.value].value,
+      excludeIds: null
     }
   })
 
@@ -35,6 +36,8 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
 
   const onLoadMoreClick = useCallback(() => {
     let cursor = ''
+    let excludeIds: number[] | null = null
+
     const posts = home.posts[home.sort.value].value
     const lastPost = posts[posts.length - 1]
 
@@ -47,6 +50,16 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
         const createdAt = lastPost.createdAt
         const points = home.pristine.popular.points.value
         cursor = `createdAt=${createdAt},points=${points}`
+
+        excludeIds =
+          home.excludeIds.popular.value === null
+            ? null
+            : (
+                home.excludeIds.popular.value.length === 0
+                  ? null
+                  : home.excludeIds.popular.value
+              )
+
         home.cursors.popular.set(() => cursor)
         break
       }
@@ -56,10 +69,11 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
       ...prevPostsQueryInput,
       postsData: {
         ...prevPostsQueryInput.postsData,
-        cursor
+        cursor,
+        excludeIds
       }
     }))
-  }, [home.cursors.new, home.cursors.popular, home.posts, home.pristine.popular.points, home.sort.value])
+  }, [home.cursors.new, home.cursors.popular, home.excludeIds.popular.value, home.posts, home.pristine.popular.points.value, home.sort.value])
 
   const onTryAgainClick = useCallback(() => {
     reexecutePostsQuery()
@@ -81,9 +95,57 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
 
     if (response.data) {
       const { data } = response.data.vote
-      if (data) successHandler()
+
+      if (data) {
+        successHandler()
+
+        if (home.sort.value === 'popular') {
+          const previousVoteValue = home.posts.popular.value.find((post) => post.id === postId).userVoteStatus
+
+          if (
+            (
+              previousVoteValue === 1 &&
+              value === -1
+            ) ||
+            (
+              previousVoteValue === 1 &&
+              value === 0
+            ) ||
+            (
+              previousVoteValue === 0 &&
+              value === -1
+            )
+          ) {
+            home.excludeIds.popular.set((prevExcludedIds) => {
+              if (prevExcludedIds === null) return [postId]
+              if (!prevExcludedIds.includes(postId)) return [...prevExcludedIds, postId]
+              else return prevExcludedIds
+            })
+          }
+
+          if (
+            (
+              previousVoteValue === -1 &&
+              value === 1
+            ) ||
+            (
+              previousVoteValue === -1 &&
+              value === 0
+            ) ||
+            (
+              previousVoteValue === 0 &&
+              value === 1
+            )
+          ) {
+            home.excludeIds.popular.set((prevExcludedIds) => {
+              if (prevExcludedIds === null) return prevExcludedIds
+              return prevExcludedIds.filter((id) => id !== postId)
+            })
+          }
+        }
+      }
     }
-  }, [vote])
+  }, [home.excludeIds.popular, home.posts.popular.value, home.sort.value, vote])
 
   const onRadioGroupChange = useCallback((sort: string) => {
     const castedSort = sort as Contexts.Sort
@@ -109,9 +171,18 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
       ) {
         const lastPost = data.posts.data.posts[data.posts.data.posts.length - 1]
         home.pristine.popular.points.set(() => lastPost.points)
+
+        home.excludeIds.popular.set((prevExcludedIds) => {
+          if (prevExcludedIds === null) return prevExcludedIds
+          return prevExcludedIds.filter((id) => {
+            const post = data.posts.data.posts.find((post) => post.id === id)
+            if (lastPost.points < post.points) return false
+            return true
+          })
+        })
       }
     }
-  }, [data, fetching, home.posts, home.pristine.popular.points, home.sort.value])
+  }, [data, fetching, home.excludeIds.popular, home.posts, home.pristine.popular.points, home.sort.value])
 
   return (
     <>

@@ -13,6 +13,11 @@ export namespace Contexts {
     [key in Sort]: UseStateValues<T>
   }
 
+  type OptionalSortConfig<T> = {
+    // eslint-disable-next-line no-unused-vars
+    [key in Sort]?: UseStateValues<T>
+  }
+
   interface PristineConfig {
     popular: {
       points: UseStateValues<number>
@@ -23,6 +28,7 @@ export namespace Contexts {
     sort: UseStateValues<Sort>
     posts: SortConfig<Posts>
     cursors: SortConfig<string | null>
+    excludeIds: OptionalSortConfig<number[] | null>
     pristine: PristineConfig
   }
 
