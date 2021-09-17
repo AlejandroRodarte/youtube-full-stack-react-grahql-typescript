@@ -14,6 +14,7 @@ import withAnonymous, { AnonymousProps } from '../hoc/withAnonymous'
 import commonFunctions from '../util/common/functions'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
+import { useAppContext } from '../context/app-context'
 
 import { FormTypes } from '../types/forms'
 import { GraphQLUsersArgs } from '../types/graphql/args/users'
@@ -21,6 +22,8 @@ import { GraphQLUsersArgs } from '../types/graphql/args/users'
 interface LoginProps extends AnonymousProps {}
 
 const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
+  const { pages: { home } } = useAppContext()
+
   const loginFormInitialValues: FormTypes.LoginForm = {
     credential: '',
     password: ''
@@ -69,6 +72,8 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
       const { data, errors } = response.data.login
 
       if (data && !wasLoadedOnServer) {
+        home.cursors.new.set(() => null)
+        home.cursors.popular.set(() => null)
         router.push(redirectTo as string)
       }
 
@@ -78,7 +83,7 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
         setErrors(unflattenedErrors.data)
       }
     }
-  }, [login, redirectTo, router, wasLoadedOnServer])
+  }, [home.cursors.new, home.cursors.popular, login, redirectTo, router, wasLoadedOnServer])
 
   return (
     <Wrapper>

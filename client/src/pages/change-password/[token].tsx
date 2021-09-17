@@ -12,6 +12,7 @@ import SimpleForm from '../../components/ui/forms/SimpleForm'
 import withAnonymous, { AnonymousProps } from '../../hoc/withAnonymous'
 
 import commonFunctions from '../../util/common/functions'
+import { useAppContext } from '../../context/app-context'
 
 import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
 
@@ -23,6 +24,8 @@ interface ChangePasswordProps extends AnonymousProps {
 }
 
 const ChangePassword: React.FC<ChangePasswordProps> = () => {
+  const { pages: { home } } = useAppContext()
+
   const changePasswordInitialValues: FormTypes.ChangePasswordForm = {
     newPassword: ''
   }
@@ -61,6 +64,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
       const { data, errors } = response.data.changePassword
 
       if (data) {
+        home.cursors.new.set(() => null)
+        home.cursors.popular.set(() => null)
         router.push('/')
       }
 
@@ -74,7 +79,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
         setErrors(unflattenedErrors.data.form)
       }
     }
-  }, [changePassword, router, token])
+  }, [changePassword, home.cursors.new, home.cursors.popular, router, token])
 
   return (
     <Wrapper>

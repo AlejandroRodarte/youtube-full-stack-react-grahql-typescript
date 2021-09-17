@@ -25,7 +25,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     postsData: {
       limit: 10,
       sort: home.sort.value,
-      cursor: home.cursors.new.value
+      cursor: home.cursors[home.sort.value].value
     }
   })
 
