@@ -39,7 +39,7 @@ const AppContext = createContext<Contexts.AppContext>({
       pristine: {
         popular: {
           points: {
-            value: 0,
+            value: [],
             set: () => {}
           }
         }
@@ -57,7 +57,7 @@ export const AppContextWrapper: React.FC = ({ children }) => {
   const [newCursor, setNewCursor] = useState<string | null>(null)
   const [popularCursor, setPopularCursor] = useState<string | null>(null)
 
-  const [pristinePopularPoints, setPristinePopularPoints] = useState<number>(0)
+  const [pristinePopularPoints, setPristinePopularPoints] = useState<Contexts.PostPointsCondensedObject[]>([])
 
   const [popularExcludeIds, setPopularExcludeIds] = useState<number[] | null>(null)
 

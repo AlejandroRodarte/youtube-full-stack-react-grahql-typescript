@@ -18,9 +18,14 @@ export namespace Contexts {
     [key in Sort]?: UseStateValues<T>
   }
 
+  export interface PostPointsCondensedObject {
+    postId: number
+    points: number
+  }
+
   interface PristineConfig {
     popular: {
-      points: UseStateValues<number>
+      points: UseStateValues<PostPointsCondensedObject[]>
     }
   }
 

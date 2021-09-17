@@ -69,6 +69,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
         home.cursors.popular.set(() => null)
         home.posts.popular.set(() => [])
         home.excludeIds.popular.set(() => null)
+        home.pristine.popular.points.set(() => [])
         router.push('/')
       }
 
@@ -82,7 +83,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
         setErrors(unflattenedErrors.data.form)
       }
     }
-  }, [changePassword, home.cursors.new, home.cursors.popular, home.excludeIds.popular, home.posts.new, home.posts.popular, router, token])
+  }, [changePassword, home.cursors.new, home.cursors.popular, home.excludeIds.popular, home.posts.new, home.posts.popular, home.pristine.popular.points, router, token])
 
   return (
     <Wrapper>

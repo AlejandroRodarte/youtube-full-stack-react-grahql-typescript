@@ -48,7 +48,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
         break
       case 'popular': {
         const createdAt = lastPost.createdAt
-        const points = home.pristine.popular.points.value
+        const points = home.pristine.popular.points.value[home.pristine.popular.points.value.length - 1].points
         cursor = `createdAt=${createdAt},points=${points}`
 
         excludeIds =
@@ -94,49 +94,22 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     const response = await vote(voteArgsInput)
 
     if (response.data) {
-      const { data } = response.data.vote
+      const { data: voteData } = response.data.vote
 
-      if (data) {
+      if (voteData) {
         successHandler()
 
-        if (home.sort.value === 'popular') {
-          const previousVoteValue = home.posts.popular.value.find((post) => post.id === postId).userVoteStatus
+        if (home.sort.value === 'popular' && data && data.posts.data && data.posts.data.hasMore) {
+          const currentPostPoints = voteData.postPoints
+          const pristinePostPoints = home.pristine.popular.points.value.find((post) => post.postId === postId)
 
-          if (
-            (
-              previousVoteValue === 1 &&
-              value === -1
-            ) ||
-            (
-              previousVoteValue === 1 &&
-              value === 0
-            ) ||
-            (
-              previousVoteValue === 0 &&
-              value === -1
-            )
-          ) {
+          if (currentPostPoints < pristinePostPoints.points) {
             home.excludeIds.popular.set((prevExcludedIds) => {
               if (prevExcludedIds === null) return [postId]
               if (!prevExcludedIds.includes(postId)) return [...prevExcludedIds, postId]
               else return prevExcludedIds
             })
-          }
-
-          if (
-            (
-              previousVoteValue === -1 &&
-              value === 1
-            ) ||
-            (
-              previousVoteValue === -1 &&
-              value === 0
-            ) ||
-            (
-              previousVoteValue === 0 &&
-              value === 1
-            )
-          ) {
+          } else {
             home.excludeIds.popular.set((prevExcludedIds) => {
               if (prevExcludedIds === null) return prevExcludedIds
               return prevExcludedIds.filter((id) => id !== postId)
@@ -145,7 +118,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
         }
       }
     }
-  }, [home.excludeIds.popular, home.posts.popular.value, home.sort.value, vote])
+  }, [data, home.excludeIds.popular, home.pristine.popular.points.value, home.sort.value, vote])
 
   const onRadioGroupChange = useCallback((sort: string) => {
     const castedSort = sort as Contexts.Sort
@@ -169,8 +142,14 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
         home.sort.value === 'popular' &&
         data.posts.data.posts.length !== home.posts[home.sort.value].value.length
       ) {
+        const newPostsCount = data.posts.data.posts.length - home.posts[home.sort.value].value.length
+        const newPostsPristinePoints = data.posts.data.posts.slice(-newPostsCount).map((post) => ({
+          postId: post.id,
+          points: post.points
+        }))
+        home.pristine.popular.points.set((prevPristinePopularPoints) => [...prevPristinePopularPoints, ...newPostsPristinePoints])
+
         const lastPost = data.posts.data.posts[data.posts.data.posts.length - 1]
-        home.pristine.popular.points.set(() => lastPost.points)
 
         home.excludeIds.popular.set((prevExcludedIds) => {
           if (prevExcludedIds === null) return prevExcludedIds
