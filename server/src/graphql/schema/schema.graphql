@@ -49,6 +49,7 @@ type FieldError {
 input PostsInput {
   limit: Int!
   sort: String!
+  excludeIds: [Int!]
   cursor: String
 }
 

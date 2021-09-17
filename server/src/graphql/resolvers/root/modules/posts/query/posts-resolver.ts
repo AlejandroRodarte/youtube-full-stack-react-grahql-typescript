@@ -43,10 +43,17 @@ export default class PostsResolver {
           if (data.cursor) {
             const [createdAt, points] = constants.resolvers.root.modules.posts.sortMapper[data.sort].cursorParser(data.cursor)
 
-            query.where(
-              `p.${field} <= :points AND p.createdAt < :createdAt OR p.${field} < :points`,
-              { points, createdAt }
-            )
+            if (data.excludeIds) {
+              query.where(
+                `p.id NOT IN (:...ids) AND ((p.${field} <= :points AND p.createdAt < :createdAt) OR (p.${field} < :points))`,
+                { points, createdAt, ids: data.excludeIds }
+              )
+            } else {
+              query.where(
+                `(p.${field} <= :points AND p.createdAt < :createdAt) OR (p.${field} < :points)`,
+                { points, createdAt }
+              )
+            }
           }
           break
         default:
