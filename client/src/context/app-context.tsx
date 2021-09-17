@@ -30,6 +30,12 @@ const AppContext = createContext<Contexts.AppContext>({
           set: () => {}
         }
       },
+      excludeIds: {
+        popular: {
+          value: null,
+          set: () => {}
+        }
+      },
       pristine: {
         popular: {
           points: {
@@ -52,6 +58,8 @@ export const AppContextWrapper: React.FC = ({ children }) => {
   const [popularCursor, setPopularCursor] = useState<string | null>(null)
 
   const [pristinePopularPoints, setPristinePopularPoints] = useState<number>(0)
+
+  const [popularExcludeIds, setPopularExcludeIds] = useState<number[] | null>(null)
 
   const initialContext: Contexts.AppContext = {
     pages: {
@@ -78,6 +86,12 @@ export const AppContextWrapper: React.FC = ({ children }) => {
           popular: {
             value: popularCursor,
             set: setPopularCursor
+          }
+        },
+        excludeIds: {
+          popular: {
+            value: popularExcludeIds,
+            set: setPopularExcludeIds
           }
         },
         pristine: {
