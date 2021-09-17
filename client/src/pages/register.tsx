@@ -87,6 +87,7 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
         home.cursors.popular.set(() => null)
         home.posts.popular.set(() => [])
         home.excludeIds.popular.set(() => null)
+        home.pristine.popular.points.set(() => [])
         router.push(redirectTo as string)
       }
 
@@ -96,7 +97,7 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
         setErrors(unflattenedErrors.data)
       }
     }
-  }, [home.cursors.new, home.cursors.popular, home.excludeIds.popular, home.posts.new, home.posts.popular, redirectTo, register, router, wasLoadedOnServer])
+  }, [home.cursors.new, home.cursors.popular, home.excludeIds.popular, home.posts.new, home.posts.popular, home.pristine.popular.points, redirectTo, register, router, wasLoadedOnServer])
 
   return (
     <Wrapper>
