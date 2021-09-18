@@ -22,7 +22,7 @@ import { GraphQLUsersArgs } from '../types/graphql/args/users'
 interface LoginProps extends AnonymousProps {}
 
 const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
-  const { pages: { home } } = useAppContext()
+  const { store: { dispatch } } = useAppContext()
 
   const loginFormInitialValues: FormTypes.LoginForm = {
     credential: '',
@@ -72,12 +72,7 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
       const { data, errors } = response.data.login
 
       if (data && !wasLoadedOnServer) {
-        home.cursors.new.set(() => null)
-        home.posts.new.set(() => [])
-        home.cursors.popular.set(() => null)
-        home.posts.popular.set(() => [])
-        home.excludeIds.popular.set(() => null)
-        home.pristine.popular.points.set(() => [])
+        dispatch({ type: 'home/reset' })
         router.push(redirectTo as string)
       }
 
@@ -87,7 +82,7 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
         setErrors(unflattenedErrors.data)
       }
     }
-  }, [home.cursors.new, home.cursors.popular, home.excludeIds.popular, home.posts.new, home.posts.popular, home.pristine.popular.points, login, redirectTo, router, wasLoadedOnServer])
+  }, [dispatch, login, redirectTo, router, wasLoadedOnServer])
 
   return (
     <Wrapper>

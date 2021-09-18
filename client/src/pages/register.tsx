@@ -20,7 +20,7 @@ import { GraphQLUsersArgs } from '../types/graphql/args/users'
 interface RegisterProps extends AnonymousProps {}
 
 const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps) => {
-  const { pages: { home } } = useAppContext()
+  const { store: { dispatch } } = useAppContext()
 
   const registerFormInitialValues: FormTypes.RegisterForm = {
     username: '',
@@ -82,12 +82,7 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
       const { data, errors } = response.data.register
 
       if (data && !wasLoadedOnServer) {
-        home.cursors.new.set(() => null)
-        home.posts.new.set(() => [])
-        home.cursors.popular.set(() => null)
-        home.posts.popular.set(() => [])
-        home.excludeIds.popular.set(() => null)
-        home.pristine.popular.points.set(() => [])
+        dispatch({ type: 'home/reset' })
         router.push(redirectTo as string)
       }
 
@@ -97,7 +92,7 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
         setErrors(unflattenedErrors.data)
       }
     }
-  }, [home.cursors.new, home.cursors.popular, home.excludeIds.popular, home.posts.new, home.posts.popular, home.pristine.popular.points, redirectTo, register, router, wasLoadedOnServer])
+  }, [dispatch, redirectTo, register, router, wasLoadedOnServer])
 
   return (
     <Wrapper>

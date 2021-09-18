@@ -14,18 +14,18 @@ import { useAppContext } from '../context/app-context'
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 import { UITypes } from '../types/components/ui'
 import { Stack } from '@chakra-ui/layout'
-import { Contexts } from '../types/context'
+import { StateCommonTypes } from '../types/context'
 
 interface IndexProps extends UserDataProps {}
 
 const Index: React.FC<IndexProps> = (props: IndexProps) => {
-  const { pages: { home } } = useAppContext()
+  const { store: { state, dispatch } } = useAppContext()
 
   const [postsQueryVariables, setPostsQueryVariables] = useState<PostsQueryVariables>({
     postsData: {
       limit: 10,
-      sort: home.sort.value,
-      cursor: home.cursors[home.sort.value].value,
+      sort: state.pages.home.sort,
+      cursor: state.pages.home.cursors[state.pages.home.sort] || null,
       excludeIds: null
     }
   })
@@ -38,32 +38,29 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     let cursor = ''
     let excludeIds: number[] | null = null
 
-    const posts = home.posts[home.sort.value].value
+    const posts = state.pages.home.posts[state.pages.home.sort]
     const lastPost = posts[posts.length - 1]
 
-    switch (home.sort.value) {
+    switch (state.pages.home.sort) {
       case 'new':
         cursor = lastPost.createdAt
-        home.cursors.new.set(() => cursor)
         break
       case 'popular': {
         const createdAt = lastPost.createdAt
-        const points = home.pristine.popular.points.value[home.pristine.popular.points.value.length - 1].points
+        const points = state.pages.home.pristine.popular[state.pages.home.pristine.popular.length - 1].points
+
         cursor = `createdAt=${createdAt},points=${points}`
-
-        excludeIds =
-          home.excludeIds.popular.value === null
-            ? null
-            : (
-                home.excludeIds.popular.value.length === 0
-                  ? null
-                  : home.excludeIds.popular.value.map((post) => post.postId)
-              )
-
-        home.cursors.popular.set(() => cursor)
+        excludeIds = state.pages.home.exclude.popular.length === 0
+          ? null
+          : state.pages.home.exclude.popular.map((post) => post.id)
         break
       }
     }
+
+    dispatch({
+      type: 'home/setCursor',
+      payload: { cursor }
+    })
 
     setPostsQueryVariables((prevPostsQueryInput) => ({
       ...prevPostsQueryInput,
@@ -73,7 +70,13 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
         excludeIds
       }
     }))
-  }, [home.cursors.new, home.cursors.popular, home.excludeIds.popular.value, home.posts, home.pristine.popular.points.value, home.sort.value])
+  }, [
+    dispatch,
+    state.pages.home.exclude.popular,
+    state.pages.home.posts,
+    state.pages.home.pristine.popular,
+    state.pages.home.sort
+  ])
 
   const onTryAgainClick = useCallback(() => {
     reexecutePostsQuery()
@@ -83,7 +86,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     await logout()
   }, [logout])
 
-  const onVote = useCallback(async (value: UITypes.UpdootVoteValues, postId: number, cb: (error?: Error) => void) => {
+  const onVote = useCallback(async (value: UITypes.UpdootVoteValues, postId: number, postCreatedAt: string, cb: (error?: Error) => void) => {
     const voteArgsInput: VoteMutationVariables = {
       voteData: {
         postId,
@@ -98,32 +101,17 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
 
       if (data) {
         cb()
-
-        if (home.sort.value === 'popular') {
-          const currentPostPoints = data.postPoints
-          const pristinePostPoints = home.pristine.popular.points.value.find((post) => post.postId === postId)
-
-          if (currentPostPoints < pristinePostPoints.points) {
-            home.excludeIds.popular.set((prevExcludedIds) => {
-              const excludedPost = { postId, points: data.postPoints }
-              if (prevExcludedIds === null) return [excludedPost]
-
-              const index = prevExcludedIds.findIndex((post) => post.postId === postId)
-
-              if (index === -1) return [...prevExcludedIds, excludedPost]
-              else {
-                return prevExcludedIds.map((post) => {
-                  if (post.postId === postId) return { ...post, points: data.postPoints }
-                  return post
-                })
+        if (state.pages.home.sort === 'popular') {
+          dispatch({
+            type: 'home/updateExcludedPopularPostsFromUpdatedPost',
+            payload: {
+              post: {
+                id: postId,
+                points: data.postPoints,
+                createdAt: postCreatedAt
               }
-            })
-          } else {
-            home.excludeIds.popular.set((prevExcludedIds) => {
-              if (prevExcludedIds === null) return prevExcludedIds
-              return prevExcludedIds.filter((post) => post.postId !== postId)
-            })
-          }
+            }
+          })
         }
         return
       }
@@ -133,49 +121,64 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     }
 
     cb(new Error('The server is not responding.'))
-  }, [home.excludeIds.popular, home.pristine.popular.points.value, home.sort.value, vote])
+  }, [
+    dispatch,
+    state.pages.home.sort,
+    vote
+  ])
 
   const onRadioGroupChange = useCallback((sort: string) => {
-    const castedSort = sort as Contexts.Sort
-    home.sort.set(() => castedSort)
+    const castedSort = sort as StateCommonTypes.Sort
+
+    dispatch({
+      type: 'home/setSort',
+      payload: { sort: castedSort }
+    })
 
     setPostsQueryVariables((prevPostsQueryVariables) => ({
       ...prevPostsQueryVariables,
       postsData: {
         ...prevPostsQueryVariables.postsData,
         sort: castedSort,
-        cursor: home.cursors[castedSort].value
+        cursor: state.pages.home.cursors[castedSort] || null
       }
     }))
-  }, [home.cursors, home.sort])
+  }, [dispatch, state.pages.home.cursors])
 
   useEffect(() => {
     if (!fetching && data && data.posts.data) {
-      home.posts[home.sort.value].set(() => data.posts.data.posts)
+      dispatch({
+        type: 'home/setPosts',
+        payload: { posts: data.posts.data.posts }
+      })
 
       if (
-        home.sort.value === 'popular' &&
-        data.posts.data.posts.length !== home.posts[home.sort.value].value.length
+        state.pages.home.sort === 'popular' &&
+        data.posts.data.posts.length !== state.pages.home.posts.popular.length
       ) {
-        const newPostsCount = data.posts.data.posts.length - home.posts[home.sort.value].value.length
-        const newPostsPristinePoints = data.posts.data.posts.slice(-newPostsCount).map((post) => ({
-          postId: post.id,
-          points: post.points
-        }))
-        home.pristine.popular.points.set((prevPristinePopularPoints) => [...prevPristinePopularPoints, ...newPostsPristinePoints])
+        const newPostsCount = data.posts.data.posts.length - state.pages.home.posts.popular.length
+        const newPristinePosts = data.posts.data.posts.slice(-newPostsCount)
+
+        dispatch({
+          type: 'home/addPristinePopularPosts',
+          payload: { posts: newPristinePosts }
+        })
 
         const lastPost = data.posts.data.posts[data.posts.data.posts.length - 1]
 
-        home.excludeIds.popular.set((prevExcludedIds) => {
-          if (prevExcludedIds === null) return prevExcludedIds
-          return prevExcludedIds.filter((post) => {
-            if (lastPost.points < post.points) return false
-            return true
-          })
+        dispatch({
+          type: 'home/updateExcludedPopularPostsFromLastFetchedPost',
+          payload: { post: lastPost }
         })
       }
     }
-  }, [data, fetching, home.excludeIds.popular, home.posts, home.pristine.popular.points, home.sort.value])
+  }, [
+    data,
+    dispatch,
+    fetching,
+    state.pages.home.posts.popular.length,
+    state.pages.home.sort
+  ])
 
   return (
     <>
@@ -198,7 +201,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
           </Heading>
           <RadioGroup
             onChange={ onRadioGroupChange }
-            value={ home.sort.value }
+            value={ state.pages.home.sort }
           >
             <Stack
               direction="row"
@@ -220,9 +223,9 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
           </RadioGroup>
         </Flex>
         {
-          home.posts[home.sort.value].value.length > 0 &&
+          state.pages.home.posts[state.pages.home.sort].length > 0 &&
           <PostList
-            posts={ home.posts[home.sort.value].value }
+            posts={ state.pages.home.posts[state.pages.home.sort] }
             vote={ onVote }
           />
         }
