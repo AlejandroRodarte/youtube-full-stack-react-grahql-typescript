@@ -29,6 +29,7 @@ type Post {
   textSnippet: String!
   userVoteStatus: Int
   originalPoster: User
+  trendingScore(data: TrendingScoreInput!): Int!
 }
 
 type User {
@@ -37,6 +38,10 @@ type User {
   email: String
   createdAt: String!
   updatedAt: String!
+}
+
+input TrendingScoreInput {
+  timestamp: String!
 }
 
 type FieldError {
@@ -260,8 +265,8 @@ type Updoot {
   userId: Float!
   postId: Float!
   value: Float!
-  user: User!
-  post: Post!
+  createdAt: String!
+  updatedAt: String!
 }
 
 input VoteInput {

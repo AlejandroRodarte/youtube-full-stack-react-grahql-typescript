@@ -54,6 +54,11 @@ const createApolloServer = async (): Promise<GraphQLTuples.CreateApolloServerTup
       objects: {
         user: dataloader.objects.generateUserDataLoader(),
         updoot: dataloader.objects.generateUpdootDataLoader()
+      },
+      computed: {
+        posts: {
+          trendingScore: dataloader.computed.posts.generateTrendingScoreDataLoader()
+        }
       }
     }
   }

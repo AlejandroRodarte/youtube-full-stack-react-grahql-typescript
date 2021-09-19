@@ -1,6 +1,6 @@
 
 import { Field, ObjectType } from 'type-graphql'
-import { Entity, BaseEntity, ManyToOne, PrimaryColumn, Column } from 'typeorm'
+import { Entity, BaseEntity, ManyToOne, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
 import User from './User'
 import Post from './Post'
@@ -20,18 +20,24 @@ export default class Updoot extends BaseEntity {
   @Column({ type: 'int' })
   value: number
 
-  @Field(() => User)
   @ManyToOne(
     () => User,
     user => user.updoots
   )
   user: User
 
-  @Field(() => Post)
   @ManyToOne(
     () => Post,
     post => post.updoots,
     { onDelete: 'CASCADE' }
   )
   post: Post
+
+  @Field(() => String)
+  @CreateDateColumn()
+  createdAt: Date
+
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date
 }

@@ -32,4 +32,9 @@ export namespace DBRawEntities {
     postId: number
     value: number
   }
+
+  export interface PostTrendingScoreRawEntity {
+    postId: number
+    trendingScore: number
+  }
 }

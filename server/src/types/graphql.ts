@@ -19,9 +19,11 @@ import LoginInput from '../graphql/args/resolvers/root/modules/users/mutation/in
 import ChangePasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/change-password-input'
 import ForgotPasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/forgot-password-input'
 import VoteInput from '../graphql/args/resolvers/root/modules/updoots/mutation/inputs/vote-input'
+import TrendingScoreInput from '../graphql/args/objects/entities/post/inputs/trending-score-input'
 
 import argsConstants from '../constants/graphql/args'
 import { CacheTypes } from './cache'
+import { DBRawEntities } from './db'
 
 export namespace GraphQLTuples {
   export type CreateSchemaTuple = [
@@ -41,8 +43,17 @@ export namespace GraphQLContext {
     user: DataLoader<number, User, number>
   }
 
+  interface ComputedPostsLoaders {
+    trendingScore: DataLoader<CacheTypes.PostTrendingScoreDataLoaderKey, DBRawEntities.PostTrendingScoreRawEntity, CacheTypes.PostTrendingScoreDataLoaderKey>
+  }
+
+  interface ComputedLoaders {
+    posts: ComputedPostsLoaders
+  }
+
   interface DataLoaderContext {
     objects: ObjectLoaders
+    computed: ComputedLoaders
   }
 
   export type ApplicationContext = {
@@ -131,6 +142,11 @@ export namespace GraphQLInputs {
     payload: VoteInput
   }
 
+  interface TrendingScoreInputAction {
+    type: 'TrendingScoreInput'
+    payload: TrendingScoreInput
+  }
+
   export type InputType =
     'PostInput' |
     'PostsInput' |
@@ -141,7 +157,8 @@ export namespace GraphQLInputs {
     'LoginInput' |
     'ChangePasswordInput' |
     'ForgotPasswordInput' |
-    'VoteInput'
+    'VoteInput' |
+    'TrendingScoreInput'
 
   export type InputPayload =
     PostInput |
@@ -153,7 +170,8 @@ export namespace GraphQLInputs {
     LoginInput |
     ChangePasswordInput |
     ForgotPasswordInput |
-    VoteInput
+    VoteInput |
+    TrendingScoreInput
 
   export type InputAction =
     PostInputAction |
@@ -165,7 +183,8 @@ export namespace GraphQLInputs {
     LoginInputAction |
     ChangePasswordInputAction |
     ForgotPasswordInputAction |
-    VoteInputAction
+    VoteInputAction |
+    TrendingScoreInputAction
 
   export type ExpressInputFields = 'input' | 'posts/canMutatePost'
 }
