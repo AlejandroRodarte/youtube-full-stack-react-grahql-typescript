@@ -1,6 +1,7 @@
 import { Resolver, Ctx, Arg, Mutation, UseMiddleware } from 'type-graphql'
 
 import Post from '../../../../../../db/orm/entities/Post'
+import EditedPostDto from '../../../../../objects/dtos/posts/edited-post-dto'
 import EditPostInput from './../../../../../args/resolvers/root/modules/posts/mutation/inputs/edit-post-input'
 import EditPostArgsSchema from '../../../../../args/resolvers/root/modules/posts/mutation/schemas/edit-post-args-schema'
 import FieldError from '../../../../../objects/common/error/field-error'
@@ -12,7 +13,7 @@ import { GraphQLContext } from '../../../../../../types/graphql'
 import { DBRawEntities } from '../../../../../../types/db'
 
 @Resolver()
-export default class EditPostResolver {
+export default class RootEditPostResolver {
   @Mutation(() => objects.EditPostResponse)
   @UseMiddleware(
     generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),
@@ -57,7 +58,7 @@ export default class EditPostResolver {
           )
       }
 
-      const updatedPost = Post.create(rawPost as DBRawEntities.UpdatePostRawEntity)
+      const editedPostDto = EditedPostDto.fromPostRawEntity(rawPost as DBRawEntities.PostRawEntity)
 
       const response =
         new objects
@@ -66,8 +67,7 @@ export default class EditPostResolver {
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_UPDATED].message,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_UPDATED].code,
             namespace,
-            new objects
-              .EditPostData(updatedPost)
+            new objects.EditPostData(editedPostDto)
           )
 
       return response

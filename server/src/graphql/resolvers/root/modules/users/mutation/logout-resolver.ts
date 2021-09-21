@@ -7,7 +7,7 @@ import generatedMiddlewares from '../../../../../../middleware/generator/graphql
 import { GraphQLContext } from '../../../../../../types/graphql'
 
 @Resolver()
-export default class LogoutResolver {
+export default class RootLogoutResolver {
   @Mutation(() => objects.LogoutResponse)
   @UseMiddleware(
     generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),

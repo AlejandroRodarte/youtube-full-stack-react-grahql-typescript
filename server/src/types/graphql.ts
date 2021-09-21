@@ -38,22 +38,37 @@ export namespace GraphQLTuples {
 }
 
 export namespace GraphQLContext {
+  interface PostWithTrendingScoreEntityLoaders {
+    byId: DataLoader<number, DBRawEntities.PostWithTrendingScoreRawEntity, number>
+    byOriginalPosterId: DataLoader<number, DBRawEntities.PostWithTrendingScoreRawEntity[], number>
+  }
+
+  interface PostEntityLoaders {
+    withTrendingScore: PostWithTrendingScoreEntityLoaders
+  }
+
+  interface UpdootEntityLoaders {
+    byPostId: DataLoader<number, DBRawEntities.UpdootWithAliasRawEntity[], number>
+    byUserId: DataLoader<number, DBRawEntities.UpdootWithAliasRawEntity[], number>
+    byPrimaryKey: DataLoader<CacheTypes.UpdootPrimaryKey, Updoot | null, CacheTypes.UpdootPrimaryKey>
+  }
+
+  interface UserEntityLoaders {
+    byId: DataLoader<number, User, number>
+  }
+
+  interface EntityLoaders {
+    post: PostEntityLoaders
+    updoot: UpdootEntityLoaders
+    user: UserEntityLoaders
+  }
+
   interface ObjectLoaders {
-    updoot: DataLoader<CacheTypes.UpdootDataLoaderKey, Updoot | null, CacheTypes.UpdootDataLoaderKey>
-    user: DataLoader<number, User, number>
-  }
-
-  interface ComputedPostsLoaders {
-    trendingScore: DataLoader<CacheTypes.PostTrendingScoreDataLoaderKey, DBRawEntities.PostTrendingScoreRawEntity, CacheTypes.PostTrendingScoreDataLoaderKey>
-  }
-
-  interface ComputedLoaders {
-    posts: ComputedPostsLoaders
+    entities: EntityLoaders
   }
 
   interface DataLoaderContext {
     objects: ObjectLoaders
-    computed: ComputedLoaders
   }
 
   export type ApplicationContext = {
@@ -198,6 +213,10 @@ export namespace GraphQLResolverConstants {
     [argsConstants.posts.SortTypes.POPULAR]: {
       field: string,
       cursorParser: (cursor: string) => [Date, number]
+    },
+    [argsConstants.posts.SortTypes.TRENDING]: {
+      field: string,
+      cursorParser: (cursor: string) => [Date, number, number]
     }
   }
 }

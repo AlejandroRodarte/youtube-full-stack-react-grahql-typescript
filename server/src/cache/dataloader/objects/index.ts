@@ -1,9 +1,7 @@
-import generateUserDataLoader from './user'
-import generateUpdootDataLoader from './updoot'
+import entities from './entities'
 
 const objects = {
-  generateUserDataLoader,
-  generateUpdootDataLoader
+  entities
 }
 
 export default objects

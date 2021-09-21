@@ -1,6 +1,7 @@
 import { Resolver, Query, Arg, UseMiddleware } from 'type-graphql'
 
 import Post from '../../../../../../db/orm/entities/Post'
+import PostDto from '../../../../../objects/dtos/posts/post-dto'
 import PostInput from './../../../../../args/resolvers/root/modules/posts/query/inputs/post-input'
 import PostArgsSchema from '../../../../../args/resolvers/root/modules/posts/query/schemas/post-args-schema'
 import FieldError from '../../../../../objects/common/error/field-error'
@@ -9,7 +10,7 @@ import responses from '../../../../.././../constants/graphql/responses'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 
 @Resolver()
-export default class PostResolver {
+export default class RootPostResolver {
   @Query(() => objects.PostResponse)
   @UseMiddleware(generatedMiddlewares.ValidateArgs(PostArgsSchema))
   async post (
@@ -38,6 +39,8 @@ export default class PostResolver {
           )
       }
 
+      const postDto = PostDto.fromPostEntity(post)
+
       const response =
         new objects
           .PostResponse(
@@ -45,8 +48,7 @@ export default class PostResolver {
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_FETCHED].message,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_FETCHED].code,
             namespace,
-            new objects
-              .PostData(post)
+            new objects.PostData(postDto)
           )
 
       return response

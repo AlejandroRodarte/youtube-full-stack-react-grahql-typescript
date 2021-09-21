@@ -11,7 +11,7 @@ import { GraphQLContext } from '../../../../../../../types/graphql'
 import updootTransaction from './updoot-transaction'
 
 @Resolver()
-export default class VoteResolver {
+export default class RootVoteResolver {
   @Mutation(() => objects.VoteResponse)
   @UseMiddleware(
     generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: false }),

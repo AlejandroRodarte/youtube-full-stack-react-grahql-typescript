@@ -1,6 +1,7 @@
 import { Resolver, Ctx, Arg, Mutation, UseMiddleware } from 'type-graphql'
 
 import Post from '../../../../../../db/orm/entities/Post'
+import PostDto from '../../../../../objects/dtos/posts/post-dto'
 import AddPostInput from './../../../../../args/resolvers/root/modules/posts/mutation/inputs/add-post-input'
 import AddPostArgsSchema from '../../../../../args/resolvers/root/modules/posts/mutation/schemas/add-post-args-schema'
 import objects from '../../../../../objects/resolvers/modules/posts/mutation/add-post'
@@ -9,7 +10,7 @@ import generatedMiddlewares from '../../../../../../middleware/generator/graphql
 import { GraphQLContext } from '../../../../../../types/graphql'
 
 @Resolver()
-export default class AddPostResolver {
+export default class RootAddPostResolver {
   @Mutation(() => objects.AddPostResponse)
   @UseMiddleware(
     generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),
@@ -29,6 +30,7 @@ export default class AddPostResolver {
 
     try {
       await post.save()
+      const postDto = PostDto.fromPostEntity(post)
 
       const response =
         new objects
@@ -37,8 +39,7 @@ export default class AddPostResolver {
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_CREATED].message,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_CREATED].code,
             namespace,
-            new objects
-              .AddPostData(post)
+            new objects.AddPostData(postDto)
           )
 
       return response

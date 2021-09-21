@@ -14,34 +14,43 @@ type PostsResponse {
 }
 
 type PostsData {
-  posts: [Post!]!
+  posts: [PostDto!]!
   hasMore: Boolean!
 }
 
-type Post {
-  id: Float!
+type PostDto {
+  id: Int!
   title: String!
   text: String!
-  points: Float!
-  originalPosterId: Float!
+  points: Int!
+  originalPosterId: Int!
+  trendingScore: Int!
   createdAt: String!
   updatedAt: String!
   textSnippet: String!
   userVoteStatus: Int
-  originalPoster: User
-  trendingScore(data: TrendingScoreInput!): Int!
+  originalPoster: UserDto
+  updoots: [UpdootDto!]
 }
 
-type User {
-  id: Float!
+type UserDto {
+  id: Int!
   username: String!
   email: String
   createdAt: String!
   updatedAt: String!
+  posts: [PostDto!]
+  updoots: [UpdootDto!]
 }
 
-input TrendingScoreInput {
-  timestamp: String!
+type UpdootDto {
+  userId: Int!
+  postId: Int!
+  value: Int!
+  createdAt: String!
+  updatedAt: String!
+  user: UserDto
+  post: PostDto
 }
 
 type FieldError {
@@ -54,6 +63,7 @@ type FieldError {
 input PostsInput {
   limit: Int!
   sort: String!
+  timestamp: String!
   excludeIds: [Int!]
   cursor: String
 }
@@ -68,7 +78,7 @@ type PostResponse {
 }
 
 type PostData {
-  post: Post!
+  post: PostDto!
 }
 
 input PostInput {
@@ -85,7 +95,7 @@ type MeResponse {
 }
 
 type MeData {
-  user: User!
+  user: UserDto!
 }
 
 type Mutation {
@@ -110,7 +120,7 @@ type AddPostResponse {
 }
 
 type AddPostData {
-  newPost: Post!
+  newPost: PostDto!
 }
 
 input AddPostInput {
@@ -128,7 +138,13 @@ type EditPostResponse {
 }
 
 type EditPostData {
-  updatedPost: Post!
+  updatedPost: EditedPostDto!
+}
+
+type EditedPostDto {
+  id: Int!
+  title: String!
+  text: String!
 }
 
 input EditPostInput {
@@ -168,7 +184,7 @@ type RegisterResponse {
 }
 
 type RegisterData {
-  newUser: User!
+  newUser: UserDto!
 }
 
 input RegisterInput {
@@ -187,7 +203,7 @@ type LoginResponse {
 }
 
 type LoginData {
-  user: User!
+  user: UserDto!
 }
 
 input LoginInput {
@@ -218,7 +234,7 @@ type ChangePasswordResponse {
 }
 
 type ChangePasswordData {
-  updatedUser: User!
+  updatedUser: UserDto!
 }
 
 input ChangePasswordInput {
@@ -258,15 +274,7 @@ type VoteResponse {
 
 type VoteData {
   postPoints: Int!
-  updoot: Updoot
-}
-
-type Updoot {
-  userId: Float!
-  postId: Float!
-  value: Float!
-  createdAt: String!
-  updatedAt: String!
+  updoot: UpdootDto
 }
 
 input VoteInput {

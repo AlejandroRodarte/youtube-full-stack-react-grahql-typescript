@@ -1,7 +1,9 @@
 import functions from './functions'
+import db from './db'
 
 const util = {
-  functions
+  functions,
+  db
 }
 
 export default util

@@ -5,7 +5,8 @@ const regex = {
   positiveIntegers: /^(0|[1-9][0-9]*)$/,
   cursors: {
     posts: {
-      popular: /^createdAt=(0|[1-9][0-9]*),points=(-?\d*)$/
+      popular: /^createdAt=(0|[1-9][0-9]*),points=(-?\d*)$/,
+      trending: /^createdAt=(0|[1-9][0-9]*),points=(-?\d*),trendingScore=(-?\d*)$/
     }
   }
 }

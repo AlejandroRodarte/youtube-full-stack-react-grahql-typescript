@@ -1,15 +1,17 @@
 import { Resolver, Query, Ctx, UseMiddleware, Arg } from 'type-graphql'
 
-import Post from '../../../../../../db/orm/entities/Post'
+import PostDto from '../../../../../objects/dtos/posts/post-dto'
 import PostsInput from './../../../../../args/resolvers/root/modules/posts/query/inputs/posts-input'
 import PostsArgsSchema from '../../../../../args/resolvers/root/modules/posts/query/schemas/posts-args-schema'
 import objects from '../../../../../objects/resolvers/modules/posts/query/posts'
 import constants from '../../../../.././../constants/graphql'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
+import derivedTables from '../../../../../../util/db/derived-tables'
 import { GraphQLContext } from '../../../../../../types/graphql'
+import { DBRawEntities } from '../../../../../../types/db'
 
 @Resolver()
-export default class PostsResolver {
+export default class RootPostsResolver {
   @Query(() => objects.PostsResponse)
   @UseMiddleware(generatedMiddlewares.ValidateArgs(PostsArgsSchema))
   async posts (
@@ -17,41 +19,130 @@ export default class PostsResolver {
     @Ctx() { db }: GraphQLContext.ApplicationContext,
     @Arg('data', () => PostsInput) data: PostsInput
   ) {
-    const field = constants.resolvers.root.modules.posts.sortMapper[data.sort].field
+    const newDate = new Date(+data.timestamp)
+    const oldDate = new Date(newDate)
+
+    oldDate.setTime(oldDate.getTime() - (1 * 60 * 60 * 1000))
+
+    const sortMapper = constants.resolvers.root.modules.posts.sortMapper
+    const sortTypes = constants.args.posts.SortTypes
+
+    const createdAtField = derivedTables.postsWithTrendingScore.aliasAndSelects.selects.CREATED_AT
+    const pointsField = derivedTables.postsWithTrendingScore.aliasAndSelects.selects.POINTS
+    const idField = derivedTables.postsWithTrendingScore.aliasAndSelects.selects.ID
+
+    const field = sortMapper[data.sort].field
 
     try {
-      const query = db
-        .getRepository(Post)
-        .createQueryBuilder('p')
-        .orderBy(`p.${field}`, 'DESC')
-        .take(data.limit + 1)
+      const query =
+        db
+          .createQueryBuilder()
+          .select('*')
+          .from(
+            derivedTables.postsWithTrendingScore.query(oldDate, newDate),
+            derivedTables.postsWithTrendingScore.aliasAndSelects.alias
+          )
+          .orderBy(field, 'DESC')
+          .take(data.limit + 1)
 
       switch (data.sort) {
-        case constants.args.posts.SortTypes.NEW:
+        case sortTypes.NEW:
           if (data.cursor) {
-            const createdAt = constants.resolvers.root.modules.posts.sortMapper[data.sort].cursorParser(data.cursor)
+            const createdAt = sortMapper[data.sort].cursorParser(data.cursor)
 
             query.where(
-              `p.${field} < :createdAt`,
+              `${field} < :createdAt`,
               { createdAt }
             )
           }
           break
-        case constants.args.posts.SortTypes.POPULAR:
-          query.addOrderBy('p.createdAt', 'DESC')
+        case sortTypes.POPULAR:
+          query.addOrderBy(createdAtField, 'DESC')
 
           if (data.cursor) {
-            const [createdAt, points] = constants.resolvers.root.modules.posts.sortMapper[data.sort].cursorParser(data.cursor)
+            const [createdAt, points] = sortMapper[data.sort].cursorParser(data.cursor)
 
             if (data.excludeIds) {
               query.where(
-                `((p.${field} <= :points AND p.createdAt < :createdAt) OR (p.${field} < :points)) AND (p.id NOT IN (:...ids))`,
+                `
+                  (
+                    (
+                      ${field} < :points) OR
+                    (
+                      ${field} <= :points AND
+                      ${createdAtField} < :createdAt
+                    )
+                  ) AND
+                  (
+                    ${idField} NOT IN (:...ids)
+                  )
+                `,
                 { points, createdAt, ids: data.excludeIds }
               )
             } else {
               query.where(
-                `(p.${field} <= :points AND p.createdAt < :createdAt) OR (p.${field} < :points)`,
+                `
+                  (
+                    ${field} < :points
+                  ) OR
+                  (
+                    ${field} <= :points AND
+                    ${createdAtField} < :createdAt
+                  )
+                `,
                 { points, createdAt }
+              )
+            }
+          }
+          break
+        case sortTypes.TRENDING:
+          query
+            .addOrderBy(pointsField, 'DESC')
+            .addOrderBy(createdAtField, 'DESC')
+
+          if (data.cursor) {
+            const [createdAt, points, trendingScore] = sortMapper[data.sort].cursorParser(data.cursor)
+
+            if (data.excludeIds) {
+              query.where(
+                `
+                  (
+                    (
+                      ${field} < :trendingScore
+                    ) OR
+                    (
+                      ${field} <= :trendingScore AND
+                      ${pointsField} < :points
+                    ) OR
+                    (
+                      ${field} <= :trendingScore AND
+                      ${pointsField} <= :points AND
+                      ${createdAtField} < :createdAt
+                    )
+                  ) AND
+                  (
+                    ${idField} NOT IN (:...ids)
+                  )
+                `,
+                { createdAt, points, trendingScore, ids: data.excludeIds }
+              )
+            } else {
+              query.where(
+                `
+                  (
+                    ${field} < :trendingScore
+                  ) OR
+                  (
+                    ${field} <= :trendingScore AND
+                    ${pointsField} < :points
+                  ) OR
+                  (
+                    ${field} <= :trendingScore AND
+                    ${pointsField} <= :points AND
+                    ${createdAtField} < :createdAt
+                  )
+                `,
+                { createdAt, points, trendingScore }
               )
             }
           }
@@ -60,7 +151,8 @@ export default class PostsResolver {
           break
       }
 
-      const posts = await query.getMany()
+      const rawPosts: DBRawEntities.PostWithTrendingScoreRawEntity[] = await query.getRawMany()
+      const postDtos = PostDto.fromPostWithTrendingScoreRawEntityArray(rawPosts)
 
       const response =
         new objects
@@ -69,8 +161,10 @@ export default class PostsResolver {
             constants.responses.payloads.postsPayloads.success[constants.responses.symbols.PostsSymbols.POSTS_FETCHED].message,
             constants.responses.payloads.postsPayloads.success[constants.responses.symbols.PostsSymbols.POSTS_FETCHED].code,
             namespace,
-            new objects
-              .PostsData(posts.slice(0, data.limit), posts.length === data.limit + 1)
+            new objects.PostsData(
+              postDtos.slice(0, data.limit),
+              postDtos.length === data.limit + 1
+            )
           )
 
       return response

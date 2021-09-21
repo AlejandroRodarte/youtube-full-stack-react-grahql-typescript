@@ -1,13 +1,13 @@
 import { NonEmptyArray } from 'type-graphql'
 
-import AddPostResolver from './add-post-resolver'
-import EditPostResolver from './edit-post-resolver'
-import DeletePostResolver from './delete-post-resolver'
+import RootAddPostResolver from './add-post-resolver'
+import RootEditPostResolver from './edit-post-resolver'
+import RootDeletePostResolver from './delete-post-resolver'
 
 const mutation: NonEmptyArray<Function> = [
-  AddPostResolver,
-  EditPostResolver,
-  DeletePostResolver
+  RootAddPostResolver,
+  RootEditPostResolver,
+  RootDeletePostResolver
 ]
 
 export default mutation

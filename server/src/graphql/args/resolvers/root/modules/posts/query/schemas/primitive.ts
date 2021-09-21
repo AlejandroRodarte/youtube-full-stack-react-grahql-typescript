@@ -2,6 +2,12 @@ import Joi from 'joi'
 
 import constants from '../../../../../../../../constants'
 
+const numberArraySchema =
+  Joi
+    .array()
+    .optional()
+    .items(Joi.number())
+
 const postIdSchema =
   Joi
     .number()
@@ -29,20 +35,24 @@ const sortSchema =
     .required()
     .valid(
       constants.graphql.args.posts.SortTypes.NEW,
-      constants.graphql.args.posts.SortTypes.POPULAR
+      constants.graphql.args.posts.SortTypes.POPULAR,
+      constants.graphql.args.posts.SortTypes.TRENDING
     )
     .label('Posts sorting type')
 
 const excludeIdsSchema =
   Joi
     .alternatives()
-    .allow(null)
     .conditional(
       'sort',
       [
         {
           is: constants.graphql.args.posts.SortTypes.POPULAR,
-          then: Joi.array().items(Joi.number())
+          then: numberArraySchema.allow(null)
+        },
+        {
+          is: constants.graphql.args.posts.SortTypes.TRENDING,
+          then: numberArraySchema.allow(null)
         }
       ]
     )
@@ -50,13 +60,13 @@ const excludeIdsSchema =
 const cursorSchema =
   Joi
     .alternatives()
-    .allow(null)
     .conditional(
       'sort',
       [
         {
           is: constants.graphql.args.posts.SortTypes.NEW,
           then: baseCursorSchema
+            .allow(null)
             .regex(constants.regex.positiveIntegers)
             .messages({
               'string.pattern.base': '"Posts cursor" must be a positive integer.'
@@ -65,20 +75,41 @@ const cursorSchema =
         {
           is: constants.graphql.args.posts.SortTypes.POPULAR,
           then: baseCursorSchema
+            .allow(null)
             .regex(constants.regex.cursors.posts.popular)
             .messages({
               'string.pattern.base': '"Posts cursor" must follow this format: createdAt=<createdAt>,points=<points>.'
             })
+        },
+        {
+          is: constants.graphql.args.posts.SortTypes.TRENDING,
+          then: baseCursorSchema
+            .allow(null)
+            .regex(constants.regex.cursors.posts.trending)
+            .messages({
+              'string.pattern.base': '"Posts cursor" must follow this format: createdAt=<createdAt>,points=<points>,trendingScore=<trendingScore>.'
+            })
         }
       ]
     )
+
+const timestampSchema =
+  Joi
+    .string()
+    .required()
+    .regex(constants.regex.positiveIntegers)
+    .messages({
+      'string.pattern.base': '"Timestamp" must be a positive integer.'
+    })
+    .label('Timestamp')
 
 const primitive = {
   postIdSchema,
   limitSchema,
   sortSchema,
   excludeIdsSchema,
-  cursorSchema
+  cursorSchema,
+  timestampSchema
 }
 
 export default primitive

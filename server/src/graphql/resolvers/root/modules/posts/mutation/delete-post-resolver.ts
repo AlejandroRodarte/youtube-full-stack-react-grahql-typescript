@@ -10,7 +10,7 @@ import middlewares from '../../../../../../middleware/graphql/resolvers'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 
 @Resolver()
-export default class DeletePostResolver {
+export default class RootDeletePostResolver {
   @Mutation(() => objects.DeletePostResponse)
   @UseMiddleware(
     generatedMiddlewares.Anonymous({ isApplicationResponse: true }),

@@ -1,6 +1,7 @@
 import { EntityManager } from 'typeorm'
 
 import Post from '../../../../../../../db/orm/entities/Post'
+import UpdootDto from '../../../../../../objects/dtos/updoots/updoot-dto'
 import FieldError from './../../../../../../objects/common/error/field-error'
 import Updoot from '../../../../../../../db/orm/entities/Updoot'
 import VoteInput from '../../../../../../args/resolvers/root/modules/updoots/mutation/inputs/vote-input'
@@ -17,7 +18,7 @@ interface UpdootTransactionContext {
 
 const updootTransaction = ({ userId, input, namespace }: UpdootTransactionContext) => async (tm: EntityManager) => {
   let deltaPoints = 0
-  let finalUpdoot: Updoot | null = null
+  let finalUpdoot: UpdootDto | null = null
 
   const updoot = await tm.findOne(Updoot, {
     where: {
@@ -55,7 +56,7 @@ const updootTransaction = ({ userId, input, namespace }: UpdootTransactionContex
     deltaPoints = -updoot.value + input.value
     updoot.value = input.value
     await tm.save(updoot)
-    finalUpdoot = updoot
+    finalUpdoot = UpdootDto.fromUpdootEntity(updoot)
   }
 
   if (!updoot && input.value !== constants.VoteValueTypes.ZERO) {
@@ -71,7 +72,7 @@ const updootTransaction = ({ userId, input, namespace }: UpdootTransactionContex
         .returning('*')
         .execute()
 
-    finalUpdoot = Updoot.create(rawUpdoot as DBRawEntities.UpdateUpdootRawEntity)
+    finalUpdoot = UpdootDto.fromUpdootRawEntity(rawUpdoot as DBRawEntities.UpdootRawEntity)
     deltaPoints = input.value
   }
 
@@ -105,7 +106,7 @@ const updootTransaction = ({ userId, input, namespace }: UpdootTransactionContex
     .returning('*')
     .execute()
 
-  const updatedPost = Post.create(rawUpdatedPost as DBRawEntities.UpdatePostRawEntity)
+  const updatedPost = Post.create(rawUpdatedPost as DBRawEntities.PostRawEntity)
 
   const symbol =
     finalUpdoot

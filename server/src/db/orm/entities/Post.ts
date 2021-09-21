@@ -1,36 +1,34 @@
-
-import { Field, ObjectType } from 'type-graphql'
-import { Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, Column, BaseEntity, OneToMany } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, Column, BaseEntity, OneToMany, ManyToOne } from 'typeorm'
 
 import Updoot from './Updoot'
+import User from './User'
 
-// @ObjectType to make this available to our GraphQL schema
-@ObjectType()
 @Entity()
 export default class Post extends BaseEntity {
-  // @Field to expose this field to the GraphQL schema
-  @Field()
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Field()
   @Column()
   title!: string
 
-  @Field()
   @Column()
   text!: string
 
-  @Field()
   @Column({
     type: 'int',
     default: 0
   })
   points!: number
 
-  @Field()
   @Column()
   originalPosterId: number
+
+  @ManyToOne(
+    () => User,
+    user => user.posts,
+    { onDelete: 'CASCADE' }
+  )
+  originalPoster: User
 
   @OneToMany(
     () => Updoot,
@@ -38,11 +36,9 @@ export default class Post extends BaseEntity {
   )
   updoots: Updoot[]
 
-  @Field(() => String)
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date
 
-  @Field(() => String)
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt: Date
 }

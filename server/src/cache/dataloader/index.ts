@@ -1,9 +1,7 @@
 import objects from './objects'
-import computed from './computed'
 
 const dataloader = {
-  objects,
-  computed
+  objects
 }
 
 export default dataloader

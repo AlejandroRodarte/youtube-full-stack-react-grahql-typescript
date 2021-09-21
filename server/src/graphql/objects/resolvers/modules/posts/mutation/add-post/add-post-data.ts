@@ -1,14 +1,14 @@
 
 import { ObjectType, Field } from 'type-graphql'
 
-import Post from '../../../../../../../db/orm/entities/Post'
+import PostDto from '../../../../../dtos/posts/post-dto'
 
 @ObjectType()
 export default class AddPostData {
-  @Field(() => Post)
-  newPost: Post
+  @Field(() => PostDto)
+  newPost: PostDto
 
-  constructor (post: Post) {
+  constructor (post: PostDto) {
     this.newPost = post
   }
 }

@@ -2,6 +2,7 @@ import { Resolver, Arg, Ctx, Mutation, UseMiddleware } from 'type-graphql'
 import argon2 from 'argon2'
 
 import User from '../../../../../../db/orm/entities/User'
+import UserDto from '../../../../../objects/dtos/users/user-dto'
 import LoginInput from '../../../../../args/resolvers/root/modules/users/mutation/inputs/login-input'
 import LoginArgsSchema from '../../../../../args/resolvers/root/modules/users/mutation/schemas/login-args-schema'
 import FieldError from '../../../../../objects/common/error/field-error'
@@ -11,7 +12,7 @@ import generatedMiddlewares from '../../../../../../middleware/generator/graphql
 import { GraphQLContext } from '../../../../../../types/graphql'
 
 @Resolver()
-export default class LoginResolver {
+export default class RootLoginResolver {
   @Mutation(() => objects.LoginResponse)
   @UseMiddleware(
     generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
@@ -73,6 +74,7 @@ export default class LoginResolver {
           )
       }
 
+      const userDto = UserDto.fromUserEntity(user)
       req.session.userId = user.id
 
       return new objects
@@ -81,8 +83,7 @@ export default class LoginResolver {
           responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_LOGGED_IN].message,
           responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_LOGGED_IN].code,
           namespace,
-          new objects
-            .LoginData(user)
+          new objects.LoginData(userDto)
         )
     } catch (e) {
       if (process.env.LOG_ERRORS === 'true') console.error(e)

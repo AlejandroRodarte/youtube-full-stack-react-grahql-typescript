@@ -1,15 +1,13 @@
 import fs from 'fs'
 import path from 'path'
-import { ApolloServer, ExpressContext } from 'apollo-server-express'
+import { ApolloServer } from 'apollo-server-express'
 import { printSchema } from 'graphql'
 
-import dataloader from '../../cache/dataloader'
-
 import createSchema from '../schema/create-schema'
-import redisClient from '../../redis/redis-client'
 import { TypeORMConnection } from '../../db/orm/typeorm/connection'
 
-import { GraphQLContext, GraphQLTuples } from '../../types/graphql'
+import { GraphQLTuples } from '../../types/graphql'
+import generateContext from './generate-context'
 
 const createApolloServer = async (): Promise<GraphQLTuples.CreateApolloServerTuple> => {
   const [
@@ -47,32 +45,9 @@ const createApolloServer = async (): Promise<GraphQLTuples.CreateApolloServerTup
     )
   }
 
-  const context = {
-    redis: redisClient,
-    db: orm,
-    dataloader: {
-      objects: {
-        user: dataloader.objects.generateUserDataLoader(),
-        updoot: dataloader.objects.generateUpdootDataLoader()
-      },
-      computed: {
-        posts: {
-          trendingScore: dataloader.computed.posts.generateTrendingScoreDataLoader()
-        }
-      }
-    }
-  }
-
   const apolloServer = new ApolloServer({
     schema,
-    context: ({
-      req,
-      res
-    }: ExpressContext): GraphQLContext.ApplicationContext => ({
-      req,
-      res,
-      ...context
-    })
+    context: (expressContext) => generateContext(expressContext, orm)
   })
 
   await apolloServer.start()

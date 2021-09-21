@@ -1,5 +1,6 @@
 import { Resolver, Ctx, Arg, Query, UseMiddleware } from 'type-graphql'
 
+import UserDto from '../../../../../objects/dtos/users/user-dto'
 import MeArgsSchema from '../../../../../args/resolvers/root/modules/users/query/schemas/me-args-schema'
 import objects from '../../../../../objects/resolvers/modules/users/query/me'
 import responses from '../../../../../../constants/graphql/responses'
@@ -7,7 +8,7 @@ import generatedMiddlewares from '../../../../../../middleware/generator/graphql
 import { GraphQLContext } from '../../../../../../types/graphql'
 
 @Resolver()
-export default class MeResolver {
+export default class RootMeResolver {
   @Query(() => objects.MeResponse)
   @UseMiddleware(
     generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),
@@ -18,6 +19,7 @@ export default class MeResolver {
     @Ctx() { req }: GraphQLContext.ApplicationContext
   ) {
     const user = req.user!
+    const userDto = UserDto.fromUserEntity(user)
 
     return new objects
       .MeResponse(
@@ -25,8 +27,7 @@ export default class MeResolver {
         responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.OWN_USER_FETCHED].message,
         responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.OWN_USER_FETCHED].code,
         namespace,
-        new objects
-          .MeData(user)
+        new objects.MeData(userDto)
       )
   }
 }
