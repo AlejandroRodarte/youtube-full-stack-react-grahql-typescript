@@ -52,7 +52,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
             { post.title }
           </Heading>
           <Text>
-            { alteredTrendingStatus } points in the last hour
+            { alteredTrendingStatus } point{ alteredTrendingStatus === 1 ? '' : 's' } in the last hour
           </Text>
         </Flex>
         <Text mt={ 4 }>
