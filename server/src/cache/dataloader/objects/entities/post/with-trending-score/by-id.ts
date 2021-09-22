@@ -35,7 +35,7 @@ const byId = () => {
       const rawPostsMap: CacheTypes.LoaderMap<DBRawEntities.PostWithTrendingScoreRawEntity> = {}
 
       rawPosts.forEach((rawPost) => {
-        rawPostsMap[rawPost.id] = rawPost
+        rawPostsMap[rawPost.post_id] = rawPost
       })
 
       return ids.map((id) => rawPostsMap[id])
