@@ -5,6 +5,7 @@ type Query {
 }
 
 type PostsResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -69,6 +70,7 @@ input PostsInput {
 }
 
 type PostResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -86,6 +88,7 @@ input PostInput {
 }
 
 type MeResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -111,6 +114,7 @@ type Mutation {
 }
 
 type AddPostResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -129,6 +133,7 @@ input AddPostInput {
 }
 
 type EditPostResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -158,6 +163,7 @@ input OptionalPostFieldsInput {
 }
 
 type DeletePostResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -175,6 +181,7 @@ input DeletePostInput {
 }
 
 type RegisterResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -194,6 +201,7 @@ input RegisterInput {
 }
 
 type LoginResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -212,6 +220,7 @@ input LoginInput {
 }
 
 type LogoutResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -225,6 +234,7 @@ type LogoutData {
 }
 
 type ChangePasswordResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -247,6 +257,7 @@ input ChangePasswordFormInput {
 }
 
 type ForgotPasswordResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -264,6 +275,7 @@ input ForgotPasswordInput {
 }
 
 type VoteResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
