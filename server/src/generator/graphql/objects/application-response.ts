@@ -6,6 +6,9 @@ export default function ApplicationResponse<T, U> (
 ) {
   @ObjectType({ isAbstract: true })
   abstract class ApplicationResponseClass {
+    @Field(() => String)
+    timestamp: string
+
     @Field(() => Int)
     status: number
 
@@ -37,14 +40,15 @@ export default function ApplicationResponse<T, U> (
       status: number,
       message: string,
       code: string,
-      kind?: string,
+      namespace?: string,
       data?: T,
       errors?: U[]
     ) {
+      this.timestamp = new Date().getTime().toString()
       this.status = status
       this.message = message
       this.code = code
-      this.namespace = kind
+      this.namespace = namespace
       this.data = data
       this.errors = errors
     }

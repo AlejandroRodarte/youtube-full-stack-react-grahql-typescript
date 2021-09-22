@@ -47,6 +47,10 @@ const excludeIdsSchema =
       'sort',
       [
         {
+          is: constants.graphql.args.posts.SortTypes.NEW,
+          then: Joi.valid(null)
+        },
+        {
           is: constants.graphql.args.posts.SortTypes.POPULAR,
           then: numberArraySchema.allow(null)
         },

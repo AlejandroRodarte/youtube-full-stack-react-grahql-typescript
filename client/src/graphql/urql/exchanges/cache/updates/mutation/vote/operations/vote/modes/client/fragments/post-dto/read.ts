@@ -1,16 +1,16 @@
 import gql from 'graphql-tag'
 
-const WritePostFragment = gql`
-  fragment VoteResolverVoteOperationClientModeWritePostFragment on Post {
+const ReadPostDtoFragment = gql`
+  fragment VoteResolverVoteOperationClientModeReadPostFragment on PostDto {
     id
     points
     userVoteStatus
   }
 `
 
-export namespace WritePost {
+export namespace ReadPostDto {
   export type Query = {
-    __typename: 'Post'
+    __typename: 'PostDto'
     id: number
     points: number
     userVoteStatus: number
@@ -21,4 +21,4 @@ export namespace WritePost {
   }
 }
 
-export default WritePostFragment
+export default ReadPostDtoFragment

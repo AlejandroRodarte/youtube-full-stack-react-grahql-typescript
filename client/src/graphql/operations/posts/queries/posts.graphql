@@ -11,16 +11,17 @@ query Posts($postsData: PostsInput!) {
       posts {
         __typename
         id
-        createdAt
-        updatedAt
         title
         textSnippet
         points
-        userVoteStatus
+        createdAt
+        updatedAt
         originalPoster {
           id
           username
         }
+        userVoteStatus
+        trendingScore
       }
     }
     errors {

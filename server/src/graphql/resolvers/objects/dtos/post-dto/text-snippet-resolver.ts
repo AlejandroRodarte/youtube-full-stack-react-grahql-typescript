@@ -8,7 +8,7 @@ export default class PostDtoTextSnippetResolver {
   textSnippet (
     @Root() root: PostDto
   ) {
-    if (root.text.length <= 50) return root.text
-    return `${root.text.slice(0, 50)}...`
+    if (root.text.length <= 100) return root.text
+    return `${root.text.slice(0, 100)}...`
   }
 }

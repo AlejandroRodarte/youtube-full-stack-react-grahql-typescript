@@ -8,18 +8,22 @@ const initialState: State.AppState = {
     home: {
       posts: {
         new: [],
-        popular: []
+        popular: [],
+        trending: []
       },
-      sort: 'popular',
+      sort: 'trending',
       cursors: {
         new: '',
-        popular: ''
+        popular: '',
+        trending: ''
       },
       exclude: {
-        popular: []
+        popular: [],
+        trending: []
       },
       pristine: {
-        popular: []
+        popular: [],
+        trending: []
       }
     }
   }
@@ -37,20 +41,24 @@ const reducer: (state: State.AppState, action: State.AppActions) => State.AppSta
             posts: {
               ...state.pages.home.posts,
               new: [],
-              popular: []
+              popular: [],
+              trending: []
             },
             cursors: {
               ...state.pages.home.cursors,
               new: '',
-              popular: ''
+              popular: '',
+              trending: ''
             },
             exclude: {
               ...state.pages.home.exclude,
-              popular: []
+              popular: [],
+              trending: []
             },
             pristine: {
               ...state.pages.home.pristine,
-              popular: []
+              popular: [],
+              trending: []
             }
           }
         }
@@ -71,10 +79,10 @@ const reducer: (state: State.AppState, action: State.AppActions) => State.AppSta
         }
       }
     }
-    case 'home/updateExcludedPopularPostsFromUpdatedPost': {
+    case 'home/updateExcludedPostsFromUpdatedPost': {
       const update = (posts: StateCommonTypes.ExcludedPost[]): StateCommonTypes.ExcludedPost[] => {
         const currentPoints = action.payload.post.points
-        const pristinePoints = state.pages.home.pristine.popular.find((post) => post.id === action.payload.post.id).points
+        const pristinePoints = state.pages.home.pristine[state.pages.home.sort].find((post) => post.id === action.payload.post.id).points
 
         if (currentPoints < pristinePoints) {
           const index = posts.findIndex((post) => post.id === action.payload.post.id)
@@ -97,7 +105,7 @@ const reducer: (state: State.AppState, action: State.AppActions) => State.AppSta
             ...state.pages.home,
             exclude: {
               ...state.pages.home.exclude,
-              popular: update(state.pages.home.exclude.popular)
+              [state.pages.home.sort]: update(state.pages.home.exclude[state.pages.home.sort])
             }
           }
         }
@@ -130,7 +138,7 @@ const reducer: (state: State.AppState, action: State.AppActions) => State.AppSta
         }
       }
     }
-    case 'home/addPristinePopularPosts': {
+    case 'home/addPristinePosts': {
       return {
         ...state,
         pages: {
@@ -139,8 +147,8 @@ const reducer: (state: State.AppState, action: State.AppActions) => State.AppSta
             ...state.pages.home,
             pristine: {
               ...state.pages.home.pristine,
-              popular: [
-                ...state.pages.home.pristine.popular,
+              [state.pages.home.sort]: [
+                ...state.pages.home.pristine[state.pages.home.sort],
                 ...action.payload.posts.map((post) => ({
                   id: post.id,
                   points: post.points
@@ -151,7 +159,7 @@ const reducer: (state: State.AppState, action: State.AppActions) => State.AppSta
         }
       }
     }
-    case 'home/updateExcludedPopularPostsFromLastFetchedPost': {
+    case 'home/updateExcludedPostsFromLastFetchedPost': {
       const update = (posts: StateCommonTypes.ExcludedPost[]): StateCommonTypes.ExcludedPost[] => {
         return posts.filter((post) => {
           if (
@@ -170,7 +178,7 @@ const reducer: (state: State.AppState, action: State.AppActions) => State.AppSta
             ...state.pages.home,
             exclude: {
               ...state.pages.home.exclude,
-              popular: update(state.pages.home.exclude.popular)
+              [state.pages.home.sort]: update(state.pages.home.exclude[state.pages.home.sort])
             }
           }
         }

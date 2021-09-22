@@ -3,7 +3,7 @@ import React from 'react'
 import { PostsQuery } from '../generated/graphql'
 
 export namespace StateCommonTypes {
-  export type Sort = 'new' | 'popular'
+  export type Sort = 'new' | 'popular' | 'trending'
   export type Posts = PostsQuery['posts']['data']['posts']
 
   export interface ExcludedPost {
@@ -33,14 +33,11 @@ export namespace StateCommonTypes {
 }
 
 export namespace HomeModule {
-  interface Reset {
-    type: 'home/reset'
-  }
 
   interface SetCursorPayload {
     cursor: string
   }
-  interface UpdateExcludedPopularPostsFromUpdatedPostPayload {
+  interface UpdateExcludedPostsFromUpdatedPostPayload {
     post: StateCommonTypes.ExcludedPost
   }
 
@@ -52,24 +49,28 @@ export namespace HomeModule {
     posts: StateCommonTypes.Posts
   }
 
-  interface AddPristinePopularPostsPayload {
+  interface AddPristinePostsPayload {
     posts: StateCommonTypes.Posts
   }
 
-  interface UpdateExcludedPopularPostsFromLastFetchedPostPayload {
+  interface UpdateExcludedPostsFromLastFetchedPostPayload {
     post: StateCommonTypes.Posts[number]
+  }
+
+  interface Reset {
+    type: 'home/reset'
   }
 
   interface SetCursor extends StateCommonTypes.HasPayload<SetCursorPayload> {
     type: 'home/setCursor'
   }
 
-  interface UpdateExcludedPopularPostsFromUpdatedPost extends StateCommonTypes.HasPayload<UpdateExcludedPopularPostsFromUpdatedPostPayload> {
-    type: 'home/updateExcludedPopularPostsFromUpdatedPost'
+  interface UpdateExcludedPostsFromUpdatedPost extends StateCommonTypes.HasPayload<UpdateExcludedPostsFromUpdatedPostPayload> {
+    type: 'home/updateExcludedPostsFromUpdatedPost'
   }
 
-  interface UpdateExcludedPopularPostsFromLastFetchedPost extends StateCommonTypes.HasPayload<UpdateExcludedPopularPostsFromLastFetchedPostPayload> {
-    type: 'home/updateExcludedPopularPostsFromLastFetchedPost'
+  interface UpdateExcludedPostsFromLastFetchedPost extends StateCommonTypes.HasPayload<UpdateExcludedPostsFromLastFetchedPostPayload> {
+    type: 'home/updateExcludedPostsFromLastFetchedPost'
   }
 
   interface SetSort extends StateCommonTypes.HasPayload<SetSortPayload> {
@@ -80,18 +81,18 @@ export namespace HomeModule {
     type: 'home/setPosts'
   }
 
-  interface AddPristinePopularPosts extends StateCommonTypes.HasPayload<AddPristinePopularPostsPayload> {
-    type: 'home/addPristinePopularPosts'
+  interface AddPristinePosts extends StateCommonTypes.HasPayload<AddPristinePostsPayload> {
+    type: 'home/addPristinePosts'
   }
 
   export type HomeModuleActions =
     Reset |
     SetCursor |
-    UpdateExcludedPopularPostsFromUpdatedPost |
+    UpdateExcludedPostsFromUpdatedPost |
     SetSort |
     SetPosts |
-    AddPristinePopularPosts |
-    UpdateExcludedPopularPostsFromLastFetchedPost
+    AddPristinePosts |
+    UpdateExcludedPostsFromLastFetchedPost
 }
 
 export namespace State {

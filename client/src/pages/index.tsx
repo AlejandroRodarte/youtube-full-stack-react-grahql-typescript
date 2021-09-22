@@ -25,6 +25,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     postsData: {
       limit: 10,
       sort: state.pages.home.sort,
+      timestamp: props.me.timestamp,
       cursor: state.pages.home.cursors[state.pages.home.sort] || null,
       excludeIds: null
     }
@@ -55,6 +56,17 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
           : state.pages.home.exclude.popular.map((post) => post.id)
         break
       }
+      case 'trending': {
+        const createdAt = lastPost.createdAt
+        const points = state.pages.home.pristine.trending[state.pages.home.pristine.trending.length - 1].points
+        const trendingScore = lastPost.trendingScore
+
+        cursor = `createdAt=${createdAt},points=${points},trendingScore=${trendingScore}`
+        excludeIds = state.pages.home.exclude.trending.length === 0
+          ? null
+          : state.pages.home.exclude.trending.map((post) => post.id)
+        break
+      }
     }
 
     dispatch({
@@ -73,8 +85,10 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
   }, [
     dispatch,
     state.pages.home.exclude.popular,
+    state.pages.home.exclude.trending,
     state.pages.home.posts,
     state.pages.home.pristine.popular,
+    state.pages.home.pristine.trending,
     state.pages.home.sort
   ])
 
@@ -101,9 +115,12 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
 
       if (data) {
         cb()
-        if (state.pages.home.sort === 'popular') {
+        if (
+          state.pages.home.sort === 'popular' ||
+          state.pages.home.sort === 'trending'
+        ) {
           dispatch({
-            type: 'home/updateExcludedPopularPostsFromUpdatedPost',
+            type: 'home/updateExcludedPostsFromUpdatedPost',
             payload: {
               post: {
                 id: postId,
@@ -151,32 +168,36 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
         type: 'home/setPosts',
         payload: { posts: data.posts.data.posts }
       })
+    }
+  }, [data, dispatch, fetching])
 
-      if (
-        state.pages.home.sort === 'popular' &&
-        data.posts.data.posts.length !== state.pages.home.posts.popular.length
-      ) {
-        const newPostsCount = data.posts.data.posts.length - state.pages.home.posts.popular.length
-        const newPristinePosts = data.posts.data.posts.slice(-newPostsCount)
+  useEffect(() => {
+    if (
+      (
+        state.pages.home.sort === 'popular' ||
+        state.pages.home.sort === 'trending'
+      ) &&
+      data && data.posts.data && data.posts.data.posts.length !== state.pages.home.posts[state.pages.home.sort].length
+    ) {
+      const newPostsCount = data.posts.data.posts.length - state.pages.home.posts[state.pages.home.sort].length
+      const newPristinePosts = data.posts.data.posts.slice(-newPostsCount)
 
-        dispatch({
-          type: 'home/addPristinePopularPosts',
-          payload: { posts: newPristinePosts }
-        })
+      dispatch({
+        type: 'home/addPristinePosts',
+        payload: { posts: newPristinePosts }
+      })
 
-        const lastPost = data.posts.data.posts[data.posts.data.posts.length - 1]
+      const lastPost = data.posts.data.posts[data.posts.data.posts.length - 1]
 
-        dispatch({
-          type: 'home/updateExcludedPopularPostsFromLastFetchedPost',
-          payload: { post: lastPost }
-        })
-      }
+      dispatch({
+        type: 'home/updateExcludedPostsFromLastFetchedPost',
+        payload: { post: lastPost }
+      })
     }
   }, [
     data,
     dispatch,
-    fetching,
-    state.pages.home.posts.popular.length,
+    state.pages.home.posts,
     state.pages.home.sort
   ])
 
@@ -219,6 +240,12 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
               >
                 Popular
               </Radio>
+              <Radio
+                value="trending"
+                size="lg"
+              >
+                Trending
+              </Radio>
             </Stack>
           </RadioGroup>
         </Flex>
@@ -233,17 +260,18 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
           data &&
           data.posts.status === 200 &&
           data.posts.data &&
-          data.posts.data.hasMore &&
-          <Flex>
-            <Button
-              my={ 8 }
-              m="auto"
-              isLoading={ fetching }
-              onClick={ onLoadMoreClick }
-            >
-              Load more
-            </Button>
-          </Flex>
+          data.posts.data.hasMore && (
+            <Flex>
+              <Button
+                my={ 8 }
+                m="auto"
+                isLoading={ fetching }
+                onClick={ onLoadMoreClick }
+              >
+                Load more
+              </Button>
+            </Flex>
+          )
         }
         {
           ((data && data.posts.status === 400) || error) && (
