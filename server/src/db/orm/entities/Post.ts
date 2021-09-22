@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, Col
 
 import Updoot from './Updoot'
 import User from './User'
+import PostPointsLog from './PostPointsLog'
 
 @Entity()
 export default class Post extends BaseEntity {
@@ -35,6 +36,12 @@ export default class Post extends BaseEntity {
     updoot => updoot.post
   )
   updoots: Updoot[]
+
+  @OneToMany(
+    () => PostPointsLog,
+    log => log.post
+  )
+  pointLogs: PostPointsLog[]
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date

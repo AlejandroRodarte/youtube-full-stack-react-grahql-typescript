@@ -41,7 +41,14 @@ export namespace DBRawEntities {
     trendingScore: number
   }
 
-  export interface PostWithTrendingScoreRawEntity extends PostRawEntity {
+  export interface PostWithTrendingScoreRawEntity {
+    post_id: number
+    title: string
+    text: string
+    points: number
+    originalPosterId: number
+    createdAt: Date
+    updatedAt: Date
     trendingscore: string
   }
 

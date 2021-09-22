@@ -64,7 +64,7 @@ export default class PostDto {
 
   static fromPostWithTrendingScoreRawEntity (post: DBRawEntities.PostWithTrendingScoreRawEntity) {
     return new PostDto(
-      post.id,
+      post.post_id,
       post.title,
       post.text,
       post.points,
@@ -77,7 +77,7 @@ export default class PostDto {
 
   static fromPostWithTrendingScoreRawEntityArray (posts: DBRawEntities.PostWithTrendingScoreRawEntity[]) {
     return posts.map((post) => new PostDto(
-      post.id,
+      post.post_id,
       post.title,
       post.text,
       post.points,

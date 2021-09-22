@@ -1,6 +1,7 @@
 import { EntityManager } from 'typeorm'
 
 import Post from '../../../../../../../db/orm/entities/Post'
+import PostPointsLog from '../../../../../../../db/orm/entities/PostPointsLog'
 import UpdootDto from '../../../../../../objects/dtos/updoots/updoot-dto'
 import FieldError from './../../../../../../objects/common/error/field-error'
 import Updoot from '../../../../../../../db/orm/entities/Updoot'
@@ -105,6 +106,13 @@ const updootTransaction = ({ userId, input, namespace }: UpdootTransactionContex
     )
     .returning('*')
     .execute()
+
+  const log = PostPointsLog.create({
+    postId: input.postId,
+    delta: deltaPoints
+  })
+
+  await log.save()
 
   const updatedPost = Post.create(rawUpdatedPost as DBRawEntities.PostRawEntity)
 

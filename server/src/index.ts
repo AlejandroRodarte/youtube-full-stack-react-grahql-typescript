@@ -1,5 +1,6 @@
 import 'reflect-metadata'
 
+import './cronjobs'
 import createApp from './create-app'
 
 const main = async (): Promise<Error | undefined> => {

@@ -1,5 +1,5 @@
 
-import { Entity, BaseEntity, ManyToOne, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { Entity, BaseEntity, ManyToOne, PrimaryColumn, Column } from 'typeorm'
 
 import User from './User'
 import Post from './Post'
@@ -27,10 +27,4 @@ export default class Updoot extends BaseEntity {
     { onDelete: 'CASCADE' }
   )
   post: Post
-
-  @CreateDateColumn({ type: 'timestamp with time zone' })
-  createdAt: Date
-
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updatedAt: Date
 }
