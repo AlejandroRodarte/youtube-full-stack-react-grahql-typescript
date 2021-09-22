@@ -227,23 +227,23 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
           >
             <Stack
               direction="row"
-              spacing={ 8 }
+              spacing={ 4 }
             >
               <Radio
                 value="new"
-                size="lg"
+                size="md"
               >
                 New
               </Radio>
               <Radio
                 value="popular"
-                size="lg"
+                size="md"
               >
                 Popular
               </Radio>
               <Radio
                 value="trending"
-                size="lg"
+                size="md"
               >
                 Trending
               </Radio>
