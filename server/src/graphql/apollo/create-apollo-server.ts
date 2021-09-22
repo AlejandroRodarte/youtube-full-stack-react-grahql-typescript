@@ -3,10 +3,13 @@ import path from 'path'
 import { ApolloServer, ExpressContext } from 'apollo-server-express'
 import { printSchema } from 'graphql'
 
+import dataloader from '../../cache/dataloader'
+
 import createSchema from '../schema/create-schema'
-import { GraphQLContext, GraphQLTuples } from '../../types/graphql'
 import redisClient from '../../redis/redis-client'
 import { TypeORMConnection } from '../../db/orm/typeorm/connection'
+
+import { GraphQLContext, GraphQLTuples } from '../../types/graphql'
 
 const createApolloServer = async (): Promise<GraphQLTuples.CreateApolloServerTuple> => {
   const [
@@ -46,7 +49,13 @@ const createApolloServer = async (): Promise<GraphQLTuples.CreateApolloServerTup
 
   const context = {
     redis: redisClient,
-    db: orm
+    db: orm,
+    dataloader: {
+      objects: {
+        user: dataloader.objects.generateUserDataLoader(),
+        updoot: dataloader.objects.generateUpdootDataLoader()
+      }
+    }
   }
 
   const apolloServer = new ApolloServer({

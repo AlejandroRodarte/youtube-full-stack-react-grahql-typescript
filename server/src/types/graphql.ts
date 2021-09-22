@@ -3,6 +3,11 @@ import { Request, Response } from 'express'
 import { GraphQLSchema } from 'graphql'
 import { Redis } from 'ioredis'
 import TypeORM from 'typeorm'
+import Joi from 'joi'
+import DataLoader from 'dataloader'
+
+import Updoot from './../db/orm/entities/Updoot'
+import User from './../db/orm/entities/User'
 
 import PostInput from '../graphql/args/resolvers/root/modules/posts/query/inputs/post-input'
 import PostsInput from '../graphql/args/resolvers/root/modules/posts/query/inputs/posts-input'
@@ -13,8 +18,10 @@ import RegisterInput from '../graphql/args/resolvers/root/modules/users/mutation
 import LoginInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/login-input'
 import ChangePasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/change-password-input'
 import ForgotPasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/forgot-password-input'
+import VoteInput from '../graphql/args/resolvers/root/modules/updoots/mutation/inputs/vote-input'
 
 import argsConstants from '../constants/graphql/args'
+import { CacheTypes } from './cache'
 
 export namespace GraphQLTuples {
   export type CreateSchemaTuple = [
@@ -29,11 +36,21 @@ export namespace GraphQLTuples {
 }
 
 export namespace GraphQLContext {
+  interface ObjectLoaders {
+    updoot: DataLoader<CacheTypes.UpdootDataLoaderKey, Updoot | null, CacheTypes.UpdootDataLoaderKey>
+    user: DataLoader<number, User, number>
+  }
+
+  interface DataLoaderContext {
+    objects: ObjectLoaders
+  }
+
   export type ApplicationContext = {
     req: Request,
     res: Response,
     db: TypeORM.Connection
     redis: Redis
+    dataloader: DataLoaderContext
   }
 }
 
@@ -109,6 +126,11 @@ export namespace GraphQLInputs {
     payload: ForgotPasswordInput
   }
 
+  interface VoteInputAction {
+    type: 'VoteInput'
+    payload: VoteInput
+  }
+
   export type InputType =
     'PostInput' |
     'PostsInput' |
@@ -118,7 +140,8 @@ export namespace GraphQLInputs {
     'RegisterInput' |
     'LoginInput' |
     'ChangePasswordInput' |
-    'ForgotPasswordInput'
+    'ForgotPasswordInput' |
+    'VoteInput'
 
   export type InputPayload =
     PostInput |
@@ -129,7 +152,8 @@ export namespace GraphQLInputs {
     RegisterInput |
     LoginInput |
     ChangePasswordInput |
-    ForgotPasswordInput
+    ForgotPasswordInput |
+    VoteInput
 
   export type InputAction =
     PostInputAction |
@@ -140,7 +164,8 @@ export namespace GraphQLInputs {
     RegisterInputAction |
     LoginInputAction |
     ChangePasswordInputAction |
-    ForgotPasswordInputAction
+    ForgotPasswordInputAction |
+    VoteInputAction
 
   export type ExpressInputFields = 'input' | 'posts/canMutatePost'
 }
@@ -155,5 +180,11 @@ export namespace GraphQLResolverConstants {
       field: string,
       cursorParser: (cursor: string) => [Date, number]
     }
+  }
+}
+
+export namespace GraphQLArgs {
+  export interface NamespaceSchema {
+    namespace: Joi.StringSchema
   }
 }

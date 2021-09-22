@@ -18,21 +18,23 @@ const postsPaginatorDelegate: GraphQLUrqlCache.PostsPaginatorDelegateFunction<Po
     const allFields = cache.inspectFields(entityKey)
 
     // from all query records, filter only those related to the 'posts' resolver
-    // and that match the sorting type ('new' or 'popular')
+    // and that match the sorting type ('new' or 'popular') and namespace
     const fieldInfos = allFields.filter(
       (info) =>
         info.fieldName === fieldName &&
-        args.data.sort === (info.arguments as QueryPostsArgs).data.sort
+        args.data.sort === (info.arguments as QueryPostsArgs).data.sort &&
+        args.namespace === (info.arguments as QueryPostsArgs).namespace
     )
 
     // if no records exist yet, restart
     const size = fieldInfos.length
     if (size === 0) return undefined
 
+    let hasMore: boolean = true
     const results: string[] = []
 
     // loop through each query record
-    fieldInfos.forEach((fieldInfo) => {
+    fieldInfos.forEach((fieldInfo, index) => {
       // resolve for Query.posts(data: PostsInput!).data.posts
       // posts = ["Post:1", "Post:2", "Post:3", ...]
       // where __typename: "Post" and id: <id>; this is how graphcache locates cached data
@@ -40,15 +42,12 @@ const postsPaginatorDelegate: GraphQLUrqlCache.PostsPaginatorDelegateFunction<Po
       const data = cache.resolve(key, 'data') as string
       const posts = cache.resolve(data, 'posts')
 
-      // get the operation name for this query cache
-      const _kind = cache.resolve(key, '_kind') as string
-
       // if there is posts in this specific query cache, push to array
       // if there are no posts, invalidate this query cache so we can try to make the request again
-      if (_kind === 'Posts') {
-        if (posts) results.push(...(posts as string[]))
-        else cache.invalidate(entityKey, fieldInfo.fieldKey)
-      }
+      if (posts) {
+        results.push(...(posts as string[]))
+        if (index === fieldInfos.length - 1) hasMore = cache.resolve(data, 'hasMore') as boolean
+      } else cache.invalidate(entityKey, fieldInfo.fieldKey)
     })
 
     // if parent is an empty object...(only occurs when loading the page for the first time)
@@ -56,8 +55,10 @@ const postsPaginatorDelegate: GraphQLUrqlCache.PostsPaginatorDelegateFunction<Po
     if (!result.posts.__typename) {
       return {
         __typename: 'PostsResponse',
+        namespace: 'Posts',
         data: {
           __typename: 'PostsData',
+          hasMore,
           posts: results
         }
       }
@@ -69,6 +70,7 @@ const postsPaginatorDelegate: GraphQLUrqlCache.PostsPaginatorDelegateFunction<Po
       ...result.posts,
       data: {
         ...result.posts.data,
+        hasMore,
         posts: results
       }
     }

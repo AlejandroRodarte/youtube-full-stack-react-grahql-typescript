@@ -29,7 +29,7 @@ export type AddPostResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<AddPostData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -53,7 +53,7 @@ export type ChangePasswordResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<ChangePasswordData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -72,7 +72,7 @@ export type DeletePostResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<DeletePostData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -92,7 +92,7 @@ export type EditPostResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<EditPostData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -119,7 +119,7 @@ export type ForgotPasswordResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<ForgotPasswordData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -139,7 +139,7 @@ export type LoginResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<LoginData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -154,7 +154,7 @@ export type LogoutResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<LogoutData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -169,7 +169,7 @@ export type MeResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<MeData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -184,34 +184,51 @@ export type Mutation = {
   logout: LogoutResponse;
   changePassword: ChangePasswordResponse;
   forgotPassword: ForgotPasswordResponse;
+  vote: VoteResponse;
 };
 
 export type MutationAddPostArgs = {
   data: AddPostInput;
+  namespace: Scalars['String'];
 };
 
 export type MutationEditPostArgs = {
   data: EditPostInput;
+  namespace: Scalars['String'];
 };
 
 export type MutationDeletePostArgs = {
   data: DeletePostInput;
+  namespace: Scalars['String'];
 };
 
 export type MutationRegisterArgs = {
   data: RegisterInput;
+  namespace: Scalars['String'];
 };
 
 export type MutationLoginArgs = {
   data: LoginInput;
+  namespace: Scalars['String'];
+};
+
+export type MutationLogoutArgs = {
+  namespace: Scalars['String'];
 };
 
 export type MutationChangePasswordArgs = {
   data: ChangePasswordInput;
+  namespace: Scalars['String'];
 };
 
 export type MutationForgotPasswordArgs = {
   data: ForgotPasswordInput;
+  namespace: Scalars['String'];
+};
+
+export type MutationVoteArgs = {
+  data: VoteInput;
+  namespace: Scalars['String'];
 };
 
 export type OptionalPostFieldsInput = {
@@ -226,10 +243,11 @@ export type Post = {
   text: Scalars['String'];
   points: Scalars['Float'];
   originalPosterId: Scalars['Float'];
-  originalPoster: User;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   textSnippet: Scalars['String'];
+  userVoteStatus?: Maybe<Scalars['Int']>;
+  originalPoster?: Maybe<User>;
 };
 
 export type PostData = {
@@ -246,7 +264,7 @@ export type PostResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<PostData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -260,6 +278,7 @@ export type PostsData = {
 export type PostsInput = {
   limit: Scalars['Int'];
   sort: Scalars['String'];
+  excludeIds?: Maybe<Array<Scalars['Int']>>;
   cursor?: Maybe<Scalars['String']>;
 };
 
@@ -268,7 +287,7 @@ export type PostsResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<PostsData>;
   errors?: Maybe<Array<FieldError>>;
 };
@@ -282,10 +301,16 @@ export type Query = {
 
 export type QueryPostsArgs = {
   data: PostsInput;
+  namespace: Scalars['String'];
 };
 
 export type QueryPostArgs = {
   data: PostInput;
+  namespace: Scalars['String'];
+};
+
+export type QueryMeArgs = {
+  namespace: Scalars['String'];
 };
 
 export type RegisterData = {
@@ -304,9 +329,18 @@ export type RegisterResponse = {
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
-  _kind?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
   data?: Maybe<RegisterData>;
   errors?: Maybe<Array<FieldError>>;
+};
+
+export type Updoot = {
+  __typename?: 'Updoot';
+  userId: Scalars['Float'];
+  postId: Scalars['Float'];
+  value: Scalars['Float'];
+  user: User;
+  post: Post;
 };
 
 export type User = {
@@ -318,49 +352,76 @@ export type User = {
   updatedAt: Scalars['String'];
 };
 
+export type VoteData = {
+  __typename?: 'VoteData';
+  postPoints: Scalars['Int'];
+  updoot?: Maybe<Updoot>;
+};
+
+export type VoteInput = {
+  postId: Scalars['Int'];
+  value: Scalars['Int'];
+};
+
+export type VoteResponse = {
+  __typename?: 'VoteResponse';
+  status: Scalars['Int'];
+  message: Scalars['String'];
+  code: Scalars['String'];
+  namespace?: Maybe<Scalars['String']>;
+  data?: Maybe<VoteData>;
+  errors?: Maybe<Array<FieldError>>;
+};
+
 export type AddPostMutationVariables = Exact<{
   addPostData: AddPostInput;
 }>;
 
-export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, originalPoster: { __typename?: 'User', username: string } } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, userVoteStatus?: Maybe<number>, originalPoster?: Maybe<{ __typename?: 'User', id: number, username: string }> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type PostsQueryVariables = Exact<{
   postsData: PostsInput;
 }>;
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, originalPoster: { __typename?: 'User', username: string } }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, userVoteStatus?: Maybe<number>, originalPoster?: Maybe<{ __typename?: 'User', id: number, username: string }> }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+
+export type VoteMutationVariables = Exact<{
+  voteData: VoteInput;
+}>;
+
+export type VoteMutation = { __typename?: 'Mutation', vote: { __typename?: 'VoteResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'VoteData', postPoints: number, updoot?: Maybe<{ __typename?: 'Updoot', value: number }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type ChangePasswordMutationVariables = Exact<{
   changePasswordData: ChangePasswordInput;
 }>;
 
-export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'ChangePasswordData', updatedUser: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'ChangePasswordData', updatedUser: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   forgotPasswordData: ForgotPasswordInput;
 }>;
 
-export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: { __typename?: 'ForgotPasswordResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'ForgotPasswordData', wasEmailSent: boolean }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: { __typename?: 'ForgotPasswordResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'ForgotPasswordData', wasEmailSent: boolean }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type LoginMutationVariables = Exact<{
   loginData: LoginInput;
 }>;
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'LoginData', user: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'LoginData', user: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
-export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'LogoutResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'LogoutData', wasSessionDestroyed: boolean }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'LogoutResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'LogoutData', wasSessionDestroyed: boolean }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type RegisterMutationVariables = Exact<{
   registerData: RegisterInput;
 }>;
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'RegisterData', newUser: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'RegisterData', newUser: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeResponse', status: number, message: string, code: string, _kind?: Maybe<string>, data?: Maybe<{ __typename?: 'MeData', user: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type MeQuery = { __typename?: 'Query', me: { __typename: 'MeResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'MeData', user: { __typename: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type MyStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -368,11 +429,11 @@ export type MyStatusQuery = { __typename?: 'Query', me: { __typename?: 'MeRespon
 
 export const AddPostDocument = gql`
     mutation AddPost($addPostData: AddPostInput!) {
-  addPost(data: $addPostData) {
+  addPost(namespace: "AddPost", data: $addPostData) {
     status
     message
     code
-    _kind
+    namespace
     data {
       newPost {
         __typename
@@ -382,7 +443,9 @@ export const AddPostDocument = gql`
         title
         textSnippet
         points
+        userVoteStatus
         originalPoster {
+          id
           username
         }
       }
@@ -400,12 +463,12 @@ export function useAddPostMutation () {
 };
 export const PostsDocument = gql`
     query Posts($postsData: PostsInput!) {
-  posts(data: $postsData) {
+  posts(namespace: "Posts", data: $postsData) {
     __typename
     status
     message
     code
-    _kind
+    namespace
     data {
       __typename
       hasMore
@@ -417,7 +480,9 @@ export const PostsDocument = gql`
         title
         textSnippet
         points
+        userVoteStatus
         originalPoster {
+          id
           username
         }
       }
@@ -433,13 +498,37 @@ export const PostsDocument = gql`
 export function usePostsQuery (options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options })
 };
-export const ChangePasswordDocument = gql`
-    mutation ChangePassword($changePasswordData: ChangePasswordInput!) {
-  changePassword(data: $changePasswordData) {
+export const VoteDocument = gql`
+    mutation Vote($voteData: VoteInput!) {
+  vote(namespace: "Vote", data: $voteData) {
     status
     message
     code
-    _kind
+    namespace
+    data {
+      updoot {
+        value
+      }
+      postPoints
+    }
+    errors {
+      path
+      message
+    }
+  }
+}
+    `
+
+export function useVoteMutation () {
+  return Urql.useMutation<VoteMutation, VoteMutationVariables>(VoteDocument)
+};
+export const ChangePasswordDocument = gql`
+    mutation ChangePassword($changePasswordData: ChangePasswordInput!) {
+  changePassword(namespace: "ChangePassword", data: $changePasswordData) {
+    status
+    message
+    code
+    namespace
     data {
       updatedUser {
         id
@@ -460,11 +549,11 @@ export function useChangePasswordMutation () {
 };
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($forgotPasswordData: ForgotPasswordInput!) {
-  forgotPassword(data: $forgotPasswordData) {
+  forgotPassword(namespace: "ForgotPassword", data: $forgotPasswordData) {
     status
     message
     code
-    _kind
+    namespace
     data {
       wasEmailSent
     }
@@ -481,11 +570,11 @@ export function useForgotPasswordMutation () {
 };
 export const LoginDocument = gql`
     mutation Login($loginData: LoginInput!) {
-  login(data: $loginData) {
+  login(namespace: "Login", data: $loginData) {
     status
     message
     code
-    _kind
+    namespace
     data {
       user {
         id
@@ -506,11 +595,11 @@ export function useLoginMutation () {
 };
 export const LogoutDocument = gql`
     mutation Logout {
-  logout {
+  logout(namespace: "Logout") {
     status
     message
     code
-    _kind
+    namespace
     data {
       wasSessionDestroyed
     }
@@ -527,11 +616,11 @@ export function useLogoutMutation () {
 };
 export const RegisterDocument = gql`
     mutation Register($registerData: RegisterInput!) {
-  register(data: $registerData) {
+  register(namespace: "Register", data: $registerData) {
     status
     message
     code
-    _kind
+    namespace
     data {
       newUser {
         id
@@ -552,13 +641,16 @@ export function useRegisterMutation () {
 };
 export const MeDocument = gql`
     query Me {
-  me {
+  me(namespace: "Me") {
+    __typename
     status
     message
     code
-    _kind
+    namespace
     data {
+      __typename
       user {
+        __typename
         id
         username
         email
@@ -577,7 +669,7 @@ export function useMeQuery (options: Omit<Urql.UseQueryArgs<MeQueryVariables>, '
 };
 export const MyStatusDocument = gql`
     query MyStatus {
-  me {
+  me(namespace: "MyStatus") {
     status
   }
 }

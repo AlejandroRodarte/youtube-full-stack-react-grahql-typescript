@@ -1,9 +1,9 @@
 mutation Logout {
-  logout {
+  logout(namespace: "Logout") {
     status
     message
     code
-    _kind
+    namespace
     data {
       wasSessionDestroyed
     }

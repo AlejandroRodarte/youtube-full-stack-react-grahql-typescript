@@ -1,7 +1,9 @@
 import operations from './operations'
+import urql from './urql'
 
 const graphql = {
-  operations
+  operations,
+  urql
 }
 
 export default graphql

@@ -1,4 +1,4 @@
-import { Resolver, Ctx, Arg, Mutation, UseMiddleware } from 'type-graphql'
+import { Resolver, Arg, Mutation, UseMiddleware } from 'type-graphql'
 
 import Post from '../../../../../../db/orm/entities/Post'
 import DeletePostInput from './../../../../../args/resolvers/root/modules/posts/mutation/inputs/delete-post-input'
@@ -8,20 +8,19 @@ import objects from '../../../../../objects/resolvers/modules/posts/mutation/del
 import responses from '../../../../.././../constants/graphql/responses'
 import middlewares from '../../../../../../middleware/graphql/resolvers'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
-import { GraphQLContext } from '../../../../../../types/graphql'
 
 @Resolver()
 export default class DeletePostResolver {
   @Mutation(() => objects.DeletePostResponse)
   @UseMiddleware(
-    middlewares.common.Auth,
+    generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
+    generatedMiddlewares.ValidateArgs(DeletePostArgsSchema),
     generatedMiddlewares.AttachInputAction('DeletePostInput', 'posts/canMutatePost'),
-    middlewares.root.modules.posts.CanMutatePost,
-    generatedMiddlewares.ValidateArgs(DeletePostArgsSchema)
+    middlewares.root.modules.posts.CanMutatePost
   )
   async deletePost (
-    @Arg('data', () => DeletePostInput) data: DeletePostInput,
-    @Ctx() { req }: GraphQLContext.ApplicationContext
+    @Arg('namespace', () => String) namespace: string,
+    @Arg('data', () => DeletePostInput) data: DeletePostInput
   ) {
     try {
       const { affected } = await Post.delete(data.id)
@@ -32,12 +31,12 @@ export default class DeletePostResolver {
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].httpCode,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].message,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
                 'data.id',
-                'db.notfound',
+                'db.not-found',
                 'Post ID',
                 'There is no post with that ID.'
               )
@@ -51,7 +50,7 @@ export default class DeletePostResolver {
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_DELETED].httpCode,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_DELETED].message,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_DELETED].code,
-            req.body.operationName,
+            namespace,
             new objects
               .DeletePostData(data.id)
           )
@@ -64,7 +63,7 @@ export default class DeletePostResolver {
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.MUTATION_DELETE_POST_ERROR].httpCode,
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.MUTATION_DELETE_POST_ERROR].message,
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.MUTATION_DELETE_POST_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm'
 
 import Post from '../../../../../../../db/orm/entities/Post'
-import User from '../../../../../../../db/orm/entities/User'
+import FieldError from './../../../../../../objects/common/error/field-error'
 import Updoot from '../../../../../../../db/orm/entities/Updoot'
 import VoteInput from '../../../../../../args/resolvers/root/modules/updoots/mutation/inputs/vote-input'
 import objects from '../../../../../../objects/resolvers/modules/updoots/mutation/vote'
@@ -10,18 +10,18 @@ import constants from '../../../../../../../constants/graphql/args/updoots'
 import { DBRawEntities } from '../../../../../../../types/db'
 
 interface UpdootTransactionContext {
-  user: User
+  userId: number
   input: VoteInput
-  operationName: string | undefined
+  namespace: string | undefined
 }
 
-const updootTransaction = ({ user, input, operationName }: UpdootTransactionContext) => async (tm: EntityManager) => {
+const updootTransaction = ({ userId, input, namespace }: UpdootTransactionContext) => async (tm: EntityManager) => {
   let deltaPoints = 0
   let finalUpdoot: Updoot | null = null
 
   const updoot = await tm.findOne(Updoot, {
     where: {
-      userId: user.id,
+      userId,
       postId: input.postId
     }
   })
@@ -32,7 +32,16 @@ const updootTransaction = ({ user, input, operationName }: UpdootTransactionCont
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.SAME_VOTE_VALUE].httpCode,
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.SAME_VOTE_VALUE].message,
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.SAME_VOTE_VALUE].code,
-        operationName
+        namespace,
+        undefined,
+        [
+          new FieldError(
+            'data.value',
+            'server.same-value',
+            'Updoot value',
+            'Updoot value is the same as the current one'
+          )
+        ]
       )
   }
 
@@ -56,7 +65,7 @@ const updootTransaction = ({ user, input, operationName }: UpdootTransactionCont
         .createQueryBuilder()
         .insert()
         .values({
-          userId: user.id,
+          userId,
           ...input
         })
         .returning('*')
@@ -72,11 +81,20 @@ const updootTransaction = ({ user, input, operationName }: UpdootTransactionCont
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_CANT_BE_ZERO].httpCode,
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_CANT_BE_ZERO].message,
         responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_CANT_BE_ZERO].code,
-        operationName
+        namespace,
+        undefined,
+        [
+          new FieldError(
+            'data.value',
+            'server.non-zero',
+            'Updoot value',
+            'Updoot value can not be zero'
+          )
+        ]
       )
   }
 
-  await tm
+  const { raw: [rawUpdatedPost] } = await tm
     .createQueryBuilder()
     .update(Post)
     .set({ points: () => `points + ${deltaPoints}` })
@@ -84,7 +102,10 @@ const updootTransaction = ({ user, input, operationName }: UpdootTransactionCont
       'id = :id',
       { id: input.postId }
     )
+    .returning('*')
     .execute()
+
+  const updatedPost = Post.create(rawUpdatedPost as DBRawEntities.UpdatePostRawEntity)
 
   const symbol =
     finalUpdoot
@@ -96,8 +117,11 @@ const updootTransaction = ({ user, input, operationName }: UpdootTransactionCont
       responses.payloads.updootsPayloads.success[symbol].httpCode,
       responses.payloads.updootsPayloads.success[symbol].message,
       responses.payloads.updootsPayloads.success[symbol].code,
-      operationName,
-      finalUpdoot ? new objects.VoteData(finalUpdoot) : undefined
+      namespace,
+      new objects.VoteData(
+        updatedPost.points,
+        finalUpdoot || undefined
+      )
     )
 }
 

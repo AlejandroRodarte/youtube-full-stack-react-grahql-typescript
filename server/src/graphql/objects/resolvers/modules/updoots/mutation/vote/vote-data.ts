@@ -1,13 +1,17 @@
-import { ObjectType, Field } from 'type-graphql'
+import { ObjectType, Field, Int } from 'type-graphql'
 
 import Updoot from '../../../../../../../db/orm/entities/Updoot'
 
 @ObjectType()
 export default class VoteData {
-  @Field(() => Updoot)
-  updoot: Updoot
+  @Field(() => Int)
+  postPoints: number
 
-  constructor (updoot: Updoot) {
+  @Field(() => Updoot, { nullable: true })
+  updoot?: Updoot
+
+  constructor (postPoints: number, updoot?: Updoot) {
+    this.postPoints = postPoints
     this.updoot = updoot
   }
 }

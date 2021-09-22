@@ -7,7 +7,6 @@ import ForgotPasswordArgsSchema from '../../../../../args/resolvers/root/modules
 import objects from '../../../../../objects/resolvers/modules/users/mutation/forgot-password'
 import constants from '../../../../../../constants'
 import mailFunctions from '../../../../../../util/functions/mail'
-import middlewares from '../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 import { GraphQLContext } from '../../../../../../types/graphql'
 
@@ -15,12 +14,13 @@ import { GraphQLContext } from '../../../../../../types/graphql'
 export default class ForgotPasswordResolver {
   @Mutation(() => objects.ForgotPasswordResponse)
   @UseMiddleware(
-    middlewares.Anonymous,
+    generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
     generatedMiddlewares.ValidateArgs(ForgotPasswordArgsSchema)
   )
   async forgotPassword (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => ForgotPasswordInput) data: ForgotPasswordInput,
-    @Ctx() { req, redis }: GraphQLContext.ApplicationContext
+    @Ctx() { redis }: GraphQLContext.ApplicationContext
   ) {
     try {
       const user = await User.findOne({ where: { email: data.email } })
@@ -31,7 +31,7 @@ export default class ForgotPasswordResolver {
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].httpCode,
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].message,
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].code,
-            req.body.operationName,
+            namespace,
             new objects
               .ForgotPasswordData(true)
           )
@@ -58,7 +58,7 @@ export default class ForgotPasswordResolver {
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].httpCode,
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].message,
             constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.RESET_PASSWORD_EMAIL_SENT].code,
-            req.body.operationName,
+            namespace,
             new objects
               .ForgotPasswordData(wasEmailSent)
           )
@@ -72,7 +72,7 @@ export default class ForgotPasswordResolver {
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].httpCode,
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].message,
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_FORGOT_PASSWORD_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

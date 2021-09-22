@@ -1,9 +1,9 @@
 mutation AddPost($addPostData: AddPostInput!) {
-  addPost(data: $addPostData) {
+  addPost(namespace: "AddPost", data: $addPostData) {
     status
     message
     code
-    _kind
+    namespace
     data {
       newPost {
         __typename
@@ -13,7 +13,9 @@ mutation AddPost($addPostData: AddPostInput!) {
         title
         textSnippet
         points
+        userVoteStatus
         originalPoster {
+          id
           username
         }
       }

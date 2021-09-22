@@ -1,9 +1,9 @@
 import { UpdateResolver } from '@urql/exchange-graphcache'
 
-import { MeQuery, MeDocument, LogoutMutation } from '../../../../../../../generated/graphql'
+import { LogoutMutation } from '../../../../../../../generated/graphql'
 
 import operations from './operations'
-import isResponseOfKind from '../../../../../../../util/graphql/operations/functions/is-response-of-kind'
+import isResponseOfNamespace from '../../../../../../../util/graphql/operations/functions/is-response-of-namespace'
 
 import { GraphQLUsersOperations } from '../../../../../../../types/graphql/operations/users'
 
@@ -13,12 +13,13 @@ const logout: UpdateResolver<GraphQLUsersOperations.LogoutOperationResponse> = (
   cache,
   info
 ) => {
-  if (isResponseOfKind<LogoutMutation, GraphQLUsersOperations.LogoutOperationResponse>(result, 'logout', 'Logout')) {
-    return cache
-      .updateQuery<MeQuery>(
-        { query: MeDocument },
-        (data) => operations.logout.meQueryUpdaterDelegate(data)
-      )
+  if (isResponseOfNamespace<LogoutMutation, GraphQLUsersOperations.LogoutOperationResponse>(result, 'logout', 'Logout')) {
+    if (
+      result.logout.status === 401 ||
+      result.logout.status === 400 ||
+      result.logout.errors
+    ) return
+    return operations.handleLogoutOperation(cache)
   }
 }
 

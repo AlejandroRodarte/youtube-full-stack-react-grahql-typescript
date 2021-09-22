@@ -1,13 +1,12 @@
-import { AddPostMutation, PostsQuery } from '../../../../../../../../../generated/graphql'
+import { AddPostMutation, PostsQuery } from '../../../../../../../../../../generated/graphql'
 
-import { GraphQLUrqlCache } from '../../../../../../../../../types/graphql/urql/cache'
+import { GraphQLUrqlCache } from '../../../../../../../../../../types/graphql/urql/cache'
 
 const postsQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<AddPostMutation, PostsQuery> = (
   result,
   query
 ) => {
-  // if there was an error while adding the post, do nothing
-  if (result.addPost.errors || !query) return query
+  if (!query) return query
 
   // if post was added in database, use response to put it at the front of the cached response
   return {

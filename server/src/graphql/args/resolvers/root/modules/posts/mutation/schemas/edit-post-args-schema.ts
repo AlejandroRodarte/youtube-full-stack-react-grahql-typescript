@@ -1,5 +1,8 @@
 import Joi from 'joi'
 
+import { GraphQLArgs } from '../../../../../../../../types/graphql'
+
+import commonPrimitives from '../../../../../../common/primitive'
 import primitive from './primitive'
 
 interface EditPostDataFieldsSchemaInterface {
@@ -11,7 +14,7 @@ interface EditPostDataSchemaInterface {
   fields: Joi.ObjectSchema<EditPostDataFieldsSchemaInterface>
 }
 
-interface EditPostArgsSchemaInterface {
+interface EditPostArgsSchemaInterface extends GraphQLArgs.NamespaceSchema {
   data: Joi.ObjectSchema<EditPostDataSchemaInterface>
 }
 
@@ -37,6 +40,9 @@ const EditPostDataSchema =
 const EditPostArgsSchema =
   Joi
     .object<EditPostArgsSchemaInterface>()
-    .keys({ data: EditPostDataSchema })
+    .keys({
+      namespace: commonPrimitives.namespaceSchema,
+      data: EditPostDataSchema
+    })
 
 export default EditPostArgsSchema

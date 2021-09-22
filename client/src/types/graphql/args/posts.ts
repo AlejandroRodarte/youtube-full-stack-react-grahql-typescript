@@ -5,6 +5,6 @@ export namespace GraphQLPostsArgs {
   }
 
   export interface AddPostArgsErrors {
-    data: AddPostDataErrors
+    data?: AddPostDataErrors
   }
 }

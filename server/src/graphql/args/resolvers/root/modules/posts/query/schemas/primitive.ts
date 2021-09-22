@@ -14,7 +14,7 @@ const limitSchema =
     .number()
     .required()
     .min(1)
-    .max(50)
+    .max(25)
     .label('Posts limit')
 
 const baseCursorSchema =
@@ -33,9 +33,24 @@ const sortSchema =
     )
     .label('Posts sorting type')
 
+const excludeIdsSchema =
+  Joi
+    .alternatives()
+    .allow(null)
+    .conditional(
+      'sort',
+      [
+        {
+          is: constants.graphql.args.posts.SortTypes.POPULAR,
+          then: Joi.array().items(Joi.number())
+        }
+      ]
+    )
+
 const cursorSchema =
   Joi
     .alternatives()
+    .allow(null)
     .conditional(
       'sort',
       [
@@ -62,6 +77,7 @@ const primitive = {
   postIdSchema,
   limitSchema,
   sortSchema,
+  excludeIdsSchema,
   cursorSchema
 }
 

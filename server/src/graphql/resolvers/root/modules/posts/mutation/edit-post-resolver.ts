@@ -15,14 +15,15 @@ import { DBRawEntities } from '../../../../../../types/db'
 export default class EditPostResolver {
   @Mutation(() => objects.EditPostResponse)
   @UseMiddleware(
-    middlewares.common.Auth,
+    generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: true }),
+    generatedMiddlewares.ValidateArgs(EditPostArgsSchema),
     generatedMiddlewares.AttachInputAction('EditPostInput', 'posts/canMutatePost'),
-    middlewares.root.modules.posts.CanMutatePost,
-    generatedMiddlewares.ValidateArgs(EditPostArgsSchema)
+    middlewares.root.modules.posts.CanMutatePost
   )
   async editPost (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => EditPostInput) data: EditPostInput,
-    @Ctx() { db, req }: GraphQLContext.ApplicationContext
+    @Ctx() { db }: GraphQLContext.ApplicationContext
   ) {
     try {
       const { raw: [rawPost], affected } =
@@ -43,12 +44,12 @@ export default class EditPostResolver {
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].httpCode,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].message,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.POST_NOT_FOUND].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
                 'data.id',
-                'db.notfound',
+                'db.not-found',
                 'Post ID',
                 'There is no post with that ID.'
               )
@@ -64,7 +65,7 @@ export default class EditPostResolver {
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_UPDATED].httpCode,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_UPDATED].message,
             responses.payloads.postsPayloads.success[responses.symbols.PostsSymbols.POST_UPDATED].code,
-            req.body.operationName,
+            namespace,
             new objects
               .EditPostData(updatedPost)
           )
@@ -77,7 +78,7 @@ export default class EditPostResolver {
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.MUTATION_EDIT_POST_ERROR].httpCode,
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.MUTATION_EDIT_POST_ERROR].message,
           responses.payloads.postsPayloads.error[responses.symbols.PostsSymbols.MUTATION_EDIT_POST_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

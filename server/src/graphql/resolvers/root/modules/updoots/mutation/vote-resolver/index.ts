@@ -6,7 +6,6 @@ import VoteArgsSchema from '../../../../../../args/resolvers/root/modules/updoot
 import FieldError from './../../../../../../objects/common/error/field-error'
 import objects from '../../../../../../objects/resolvers/modules/updoots/mutation/vote'
 import responses from '../../../../../../../constants/graphql/responses'
-import middlewares from '../../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../../middleware/generator/graphql/resolvers'
 import { GraphQLContext } from '../../../../../../../types/graphql'
 import updootTransaction from './updoot-transaction'
@@ -15,18 +14,19 @@ import updootTransaction from './updoot-transaction'
 export default class VoteResolver {
   @Mutation(() => objects.VoteResponse)
   @UseMiddleware(
-    middlewares.Auth,
+    generatedMiddlewares.Auth({ isApplicationResponse: true, checkUserOnDatabase: false }),
     generatedMiddlewares.ValidateArgs(VoteArgsSchema)
   )
   async vote (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => VoteInput) data: VoteInput,
     @Ctx() { req, db }: GraphQLContext.ApplicationContext
   ) {
     try {
       const response = await db.transaction(updootTransaction({
-        user: req.user!,
+        userId: req.session.userId!,
         input: data,
-        operationName: req.body.operationName
+        namespace
       }))
 
       return response
@@ -39,7 +39,7 @@ export default class VoteResolver {
             responses.payloads.constraintPayloads[e.constraint].httpCode,
             responses.payloads.constraintPayloads[e.constraint].message,
             responses.payloads.constraintPayloads[e.constraint].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
@@ -57,7 +57,7 @@ export default class VoteResolver {
           responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_ERROR].httpCode,
           responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_ERROR].message,
           responses.payloads.updootsPayloads.error[responses.symbols.UpdootsSymbols.VOTE_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

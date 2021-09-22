@@ -1,0 +1,31 @@
+.animate-upvote {
+  animation: bounce-up 0.55s ease-in;
+}
+
+.animate-downvote {
+  animation: bounce-down 0.55s ease-in;
+}
+
+@keyframes bounce-up {
+  0%, 50%, 100% {
+    transform: translateY(0px);
+  }
+  18% {
+    transform: translateY(-10px);
+  }
+  68% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes bounce-down {
+  0%, 50%, 100% {
+    transform: translateY(0px);
+  }
+  18% {
+    transform: translateY(10px);
+  }
+  68% {
+    transform: translateY(5px);
+  }
+}

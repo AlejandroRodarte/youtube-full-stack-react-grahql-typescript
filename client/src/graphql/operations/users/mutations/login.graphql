@@ -1,9 +1,9 @@
 mutation Login($loginData: LoginInput!) {
-  login(data: $loginData) {
+  login(namespace: "Login", data: $loginData) {
     status
     message
     code
-    _kind
+    namespace
     data {
       user {
         id

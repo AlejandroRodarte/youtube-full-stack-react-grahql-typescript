@@ -1,7 +1,7 @@
-import logout from './logout'
+import handleLogoutOperation from './logout'
 
 const operations = {
-  logout
+  handleLogoutOperation
 }
 
 export default operations

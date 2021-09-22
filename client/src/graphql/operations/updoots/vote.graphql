@@ -1,0 +1,18 @@
+mutation Vote($voteData: VoteInput!) {
+  vote(namespace: "Vote", data: $voteData) {
+    status
+    message
+    code
+    namespace
+    data {
+      updoot {
+        value
+      }
+      postPoints
+    }
+    errors {
+      path
+      message
+    }
+  }
+}

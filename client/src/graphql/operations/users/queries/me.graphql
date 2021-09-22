@@ -1,11 +1,14 @@
 query Me {
-  me {
+  me(namespace: "Me") {
+    __typename
     status
     message
     code
-    _kind
+    namespace
     data {
+      __typename
       user {
+        __typename
         id
         username
         email

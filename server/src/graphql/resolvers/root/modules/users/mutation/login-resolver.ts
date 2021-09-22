@@ -7,7 +7,6 @@ import LoginArgsSchema from '../../../../../args/resolvers/root/modules/users/mu
 import FieldError from '../../../../../objects/common/error/field-error'
 import objects from '../../../../../objects/resolvers/modules/users/mutation/login'
 import responses from '../../../../../../constants/graphql/responses'
-import middlewares from '../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 import { GraphQLContext } from '../../../../../../types/graphql'
 
@@ -15,10 +14,11 @@ import { GraphQLContext } from '../../../../../../types/graphql'
 export default class LoginResolver {
   @Mutation(() => objects.LoginResponse)
   @UseMiddleware(
-    middlewares.Anonymous,
+    generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
     generatedMiddlewares.ValidateArgs(LoginArgsSchema)
   )
   async login (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => LoginInput) data: LoginInput,
     @Ctx() { req }: GraphQLContext.ApplicationContext
   ) {
@@ -38,12 +38,12 @@ export default class LoginResolver {
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].httpCode,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].message,
             responses.payloads.sharedPayloads.error[responses.symbols.SharedSymbols.USER_NOT_FOUND].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
                 'data.credential',
-                'db.notexists',
+                'db.not-found',
                 labelMap[key],
                 `That ${key} does not exist.`)
             ]
@@ -61,12 +61,12 @@ export default class LoginResolver {
             responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.INCORRECT_PASSWORD].httpCode,
             responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.INCORRECT_PASSWORD].message,
             responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.INCORRECT_PASSWORD].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
                 'data.password',
-                'db.wrongpassword',
+                'server.wrong-password',
                 'Password',
                 'The password is wrong.')
             ]
@@ -80,7 +80,7 @@ export default class LoginResolver {
           responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_LOGGED_IN].httpCode,
           responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_LOGGED_IN].message,
           responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_LOGGED_IN].code,
-          req.body.operationName,
+          namespace,
           new objects
             .LoginData(user)
         )
@@ -91,7 +91,7 @@ export default class LoginResolver {
           responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.MUTATION_LOGIN_ERROR].httpCode,
           responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.MUTATION_LOGIN_ERROR].message,
           responses.payloads.usersPayloads.error[responses.symbols.UsersSymbols.MUTATION_LOGIN_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }

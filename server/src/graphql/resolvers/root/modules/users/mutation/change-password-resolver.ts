@@ -7,7 +7,6 @@ import ChangePasswordArgsSchema from '../../../../../args/resolvers/root/modules
 import FieldError from '../../../../../objects/common/error/field-error'
 import objects from '../../../../../objects/resolvers/modules/users/mutation/change-password'
 import constants from '../../../../../../constants'
-import middlewares from '../../../../../../middleware/graphql/resolvers/common'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 
 import { GraphQLContext } from '../../../../../../types/graphql'
@@ -17,10 +16,11 @@ import { DBRawEntities } from '../../../../../../types/db'
 export default class ChangePasswordResolver {
   @Mutation(() => objects.ChangePasswordResponse)
   @UseMiddleware(
-    middlewares.Anonymous,
+    generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
     generatedMiddlewares.ValidateArgs(ChangePasswordArgsSchema)
   )
   async changePassword (
+    @Arg('namespace', () => String) namespace: string,
     @Arg('data', () => ChangePasswordInput) data: ChangePasswordInput,
     @Ctx() { db, req, redis }: GraphQLContext.ApplicationContext
   ) {
@@ -35,12 +35,12 @@ export default class ChangePasswordResolver {
             constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND].httpCode,
             constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND].message,
             constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.FORGOT_PASSWORD_TOKEN_NOT_FOUND].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
                 'data.token',
-                'db.notfound',
+                'db.not-found',
                 'Token',
                 'The recovery password token was not found in the database.'
               )
@@ -70,12 +70,12 @@ export default class ChangePasswordResolver {
             constants.graphql.responses.payloads.sharedPayloads.error[constants.graphql.responses.symbols.SharedSymbols.USER_NOT_FOUND].httpCode,
             constants.graphql.responses.payloads.sharedPayloads.error[constants.graphql.responses.symbols.SharedSymbols.USER_NOT_FOUND].message,
             constants.graphql.responses.payloads.sharedPayloads.error[constants.graphql.responses.symbols.SharedSymbols.USER_NOT_FOUND].code,
-            req.body.operationName,
+            namespace,
             undefined,
             [
               new FieldError(
-                'etc.id',
-                'db.notexists',
+                'etc.user.id',
+                'db.not-found',
                 'ID',
                 'There is no registered account with this user ID.'
               )
@@ -93,7 +93,7 @@ export default class ChangePasswordResolver {
           constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.USER_PASSWORD_UPDATED].httpCode,
           constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.USER_PASSWORD_UPDATED].message,
           constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.USER_PASSWORD_UPDATED].code,
-          req.body.operationName,
+          namespace,
           new objects
             .ChangePasswordData(updatedUser)
         )
@@ -104,7 +104,7 @@ export default class ChangePasswordResolver {
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR].httpCode,
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR].message,
           constants.graphql.responses.payloads.usersPayloads.error[constants.graphql.responses.symbols.UsersSymbols.MUTATION_CHANGE_PASSWORD_ERROR].code,
-          req.body.operationName
+          namespace
         )
     }
   }
