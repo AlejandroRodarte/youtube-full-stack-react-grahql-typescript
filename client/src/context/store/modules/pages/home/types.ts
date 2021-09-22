@@ -1,0 +1,7 @@
+export const RESET = 'pages/home/reset'
+export const SET_CURSOR = 'pages/home/setCursor'
+export const UPDATE_EXCLUDED_POSTS_FROM_UPDATED_POST = 'pages/home/updateExcludedPostsFromUpdatedPost'
+export const SET_SORT = 'pages/home/setSort'
+export const SET_POSTS = 'pages/home/setPosts'
+export const ADD_PRISTINE_POSTS = 'pages/home/addPristinePosts'
+export const UPDATE_EXCLUDED_POSTS_FROM_LAST_FETCHED_POST = 'pages/home/updateExcludedPostsFromLastFetchedPost'

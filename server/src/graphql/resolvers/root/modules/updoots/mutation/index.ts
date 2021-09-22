@@ -1,9 +1,9 @@
 import { NonEmptyArray } from 'type-graphql'
 
-import VoteResolver from './vote-resolver'
+import RootVoteResolver from './vote-resolver'
 
 const mutation: NonEmptyArray<Function> = [
-  VoteResolver
+  RootVoteResolver
 ]
 
 export default mutation

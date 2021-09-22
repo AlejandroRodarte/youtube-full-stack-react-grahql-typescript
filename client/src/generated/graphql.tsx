@@ -16,7 +16,7 @@ export type Scalars = {
 
 export type AddPostData = {
   __typename?: 'AddPostData';
-  newPost: Post;
+  newPost: PostDto;
 };
 
 export type AddPostInput = {
@@ -26,6 +26,7 @@ export type AddPostInput = {
 
 export type AddPostResponse = {
   __typename?: 'AddPostResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -36,7 +37,7 @@ export type AddPostResponse = {
 
 export type ChangePasswordData = {
   __typename?: 'ChangePasswordData';
-  updatedUser: User;
+  updatedUser: UserDto;
 };
 
 export type ChangePasswordFormInput = {
@@ -50,6 +51,7 @@ export type ChangePasswordInput = {
 
 export type ChangePasswordResponse = {
   __typename?: 'ChangePasswordResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -69,6 +71,7 @@ export type DeletePostInput = {
 
 export type DeletePostResponse = {
   __typename?: 'DeletePostResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -79,7 +82,7 @@ export type DeletePostResponse = {
 
 export type EditPostData = {
   __typename?: 'EditPostData';
-  updatedPost: Post;
+  updatedPost: EditedPostDto;
 };
 
 export type EditPostInput = {
@@ -89,12 +92,20 @@ export type EditPostInput = {
 
 export type EditPostResponse = {
   __typename?: 'EditPostResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
   namespace?: Maybe<Scalars['String']>;
   data?: Maybe<EditPostData>;
   errors?: Maybe<Array<FieldError>>;
+};
+
+export type EditedPostDto = {
+  __typename?: 'EditedPostDto';
+  id: Scalars['Int'];
+  title: Scalars['String'];
+  text: Scalars['String'];
 };
 
 export type FieldError = {
@@ -116,6 +127,7 @@ export type ForgotPasswordInput = {
 
 export type ForgotPasswordResponse = {
   __typename?: 'ForgotPasswordResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -126,7 +138,7 @@ export type ForgotPasswordResponse = {
 
 export type LoginData = {
   __typename?: 'LoginData';
-  user: User;
+  user: UserDto;
 };
 
 export type LoginInput = {
@@ -136,6 +148,7 @@ export type LoginInput = {
 
 export type LoginResponse = {
   __typename?: 'LoginResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -151,6 +164,7 @@ export type LogoutData = {
 
 export type LogoutResponse = {
   __typename?: 'LogoutResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -161,11 +175,12 @@ export type LogoutResponse = {
 
 export type MeData = {
   __typename?: 'MeData';
-  user: User;
+  user: UserDto;
 };
 
 export type MeResponse = {
   __typename?: 'MeResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -236,23 +251,25 @@ export type OptionalPostFieldsInput = {
   text?: Maybe<Scalars['String']>;
 };
 
-export type Post = {
-  __typename?: 'Post';
-  id: Scalars['Float'];
+export type PostData = {
+  __typename?: 'PostData';
+  post: PostDto;
+};
+
+export type PostDto = {
+  __typename?: 'PostDto';
+  id: Scalars['Int'];
   title: Scalars['String'];
   text: Scalars['String'];
-  points: Scalars['Float'];
-  originalPosterId: Scalars['Float'];
+  points: Scalars['Int'];
+  originalPosterId: Scalars['Int'];
+  trendingScore: Scalars['Int'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   textSnippet: Scalars['String'];
   userVoteStatus?: Maybe<Scalars['Int']>;
-  originalPoster?: Maybe<User>;
-};
-
-export type PostData = {
-  __typename?: 'PostData';
-  post: Post;
+  originalPoster?: Maybe<UserDto>;
+  updoots?: Maybe<Array<UpdootDto>>;
 };
 
 export type PostInput = {
@@ -261,6 +278,7 @@ export type PostInput = {
 
 export type PostResponse = {
   __typename?: 'PostResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -271,19 +289,21 @@ export type PostResponse = {
 
 export type PostsData = {
   __typename?: 'PostsData';
-  posts: Array<Post>;
+  posts: Array<PostDto>;
   hasMore: Scalars['Boolean'];
 };
 
 export type PostsInput = {
   limit: Scalars['Int'];
   sort: Scalars['String'];
+  timestamp: Scalars['String'];
   excludeIds?: Maybe<Array<Scalars['Int']>>;
   cursor?: Maybe<Scalars['String']>;
 };
 
 export type PostsResponse = {
   __typename?: 'PostsResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -315,7 +335,7 @@ export type QueryMeArgs = {
 
 export type RegisterData = {
   __typename?: 'RegisterData';
-  newUser: User;
+  newUser: UserDto;
 };
 
 export type RegisterInput = {
@@ -326,6 +346,7 @@ export type RegisterInput = {
 
 export type RegisterResponse = {
   __typename?: 'RegisterResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -334,28 +355,32 @@ export type RegisterResponse = {
   errors?: Maybe<Array<FieldError>>;
 };
 
-export type Updoot = {
-  __typename?: 'Updoot';
-  userId: Scalars['Float'];
-  postId: Scalars['Float'];
-  value: Scalars['Float'];
-  user: User;
-  post: Post;
+export type UpdootDto = {
+  __typename?: 'UpdootDto';
+  userId: Scalars['Int'];
+  postId: Scalars['Int'];
+  value: Scalars['Int'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  user?: Maybe<UserDto>;
+  post?: Maybe<PostDto>;
 };
 
-export type User = {
-  __typename?: 'User';
-  id: Scalars['Float'];
+export type UserDto = {
+  __typename?: 'UserDto';
+  id: Scalars['Int'];
   username: Scalars['String'];
   email?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  posts?: Maybe<Array<PostDto>>;
+  updoots?: Maybe<Array<UpdootDto>>;
 };
 
 export type VoteData = {
   __typename?: 'VoteData';
   postPoints: Scalars['Int'];
-  updoot?: Maybe<Updoot>;
+  updoot?: Maybe<UpdootDto>;
 };
 
 export type VoteInput = {
@@ -365,6 +390,7 @@ export type VoteInput = {
 
 export type VoteResponse = {
   __typename?: 'VoteResponse';
+  timestamp: Scalars['String'];
   status: Scalars['Int'];
   message: Scalars['String'];
   code: Scalars['String'];
@@ -377,25 +403,25 @@ export type AddPostMutationVariables = Exact<{
   addPostData: AddPostInput;
 }>;
 
-export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, userVoteStatus?: Maybe<number>, originalPoster?: Maybe<{ __typename?: 'User', id: number, username: string }> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type AddPostMutation = { __typename?: 'Mutation', addPost: { __typename?: 'AddPostResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'AddPostData', newPost: { __typename: 'PostDto', id: number, title: string, textSnippet: string, points: number, createdAt: string, updatedAt: string, userVoteStatus?: Maybe<number>, trendingScore: number, originalPoster?: Maybe<{ __typename?: 'UserDto', id: number, username: string }> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type PostsQueryVariables = Exact<{
   postsData: PostsInput;
 }>;
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, userVoteStatus?: Maybe<number>, originalPoster?: Maybe<{ __typename?: 'User', id: number, username: string }> }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'PostDto', id: number, title: string, textSnippet: string, points: number, createdAt: string, updatedAt: string, userVoteStatus?: Maybe<number>, trendingScore: number, originalPoster?: Maybe<{ __typename?: 'UserDto', id: number, username: string }> }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type VoteMutationVariables = Exact<{
   voteData: VoteInput;
 }>;
 
-export type VoteMutation = { __typename?: 'Mutation', vote: { __typename?: 'VoteResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'VoteData', postPoints: number, updoot?: Maybe<{ __typename?: 'Updoot', value: number }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type VoteMutation = { __typename?: 'Mutation', vote: { __typename?: 'VoteResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'VoteData', postPoints: number, updoot?: Maybe<{ __typename?: 'UpdootDto', value: number }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type ChangePasswordMutationVariables = Exact<{
   changePasswordData: ChangePasswordInput;
 }>;
 
-export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'ChangePasswordData', updatedUser: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'ChangePasswordData', updatedUser: { __typename?: 'UserDto', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   forgotPasswordData: ForgotPasswordInput;
@@ -407,7 +433,7 @@ export type LoginMutationVariables = Exact<{
   loginData: LoginInput;
 }>;
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'LoginData', user: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'LoginData', user: { __typename?: 'UserDto', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -417,11 +443,11 @@ export type RegisterMutationVariables = Exact<{
   registerData: RegisterInput;
 }>;
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'RegisterData', newUser: { __typename?: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename?: 'RegisterData', newUser: { __typename?: 'UserDto', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type MeQuery = { __typename?: 'Query', me: { __typename: 'MeResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'MeData', user: { __typename: 'User', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type MeQuery = { __typename?: 'Query', me: { __typename: 'MeResponse', status: number, message: string, code: string, namespace?: Maybe<string>, timestamp: string, data?: Maybe<{ __typename: 'MeData', user: { __typename: 'UserDto', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type MyStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -438,16 +464,17 @@ export const AddPostDocument = gql`
       newPost {
         __typename
         id
-        createdAt
-        updatedAt
         title
         textSnippet
         points
-        userVoteStatus
+        createdAt
+        updatedAt
         originalPoster {
           id
           username
         }
+        userVoteStatus
+        trendingScore
       }
     }
     errors {
@@ -475,16 +502,17 @@ export const PostsDocument = gql`
       posts {
         __typename
         id
-        createdAt
-        updatedAt
         title
         textSnippet
         points
-        userVoteStatus
+        createdAt
+        updatedAt
         originalPoster {
           id
           username
         }
+        userVoteStatus
+        trendingScore
       }
     }
     errors {
@@ -647,6 +675,7 @@ export const MeDocument = gql`
     message
     code
     namespace
+    timestamp
     data {
       __typename
       user {

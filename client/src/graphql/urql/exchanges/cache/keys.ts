@@ -5,7 +5,8 @@ const keys: KeyingConfig = {
   MeData: () => null,
   PostsResponse: () => null,
   PostsData: () => null,
-  FieldError: () => null
+  FieldError: () => null,
+  UpdootDto: (data) => `${data.userId}.${data.postId}`
 }
 
 export default keys

@@ -1,7 +1,9 @@
 import resolvers from './resolvers'
+import objects from './objects'
 
 const args = {
-  resolvers
+  resolvers,
+  objects
 }
 
 export default args

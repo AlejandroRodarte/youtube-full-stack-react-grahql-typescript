@@ -1,18 +1,16 @@
-
-import User from './../db/orm/entities/User'
-import Updoot from './../db/orm/entities/Updoot'
-
 export namespace CacheTypes {
-  export interface UserDataLoaderMap {
-    [key: string]: User
+  export interface LoaderMap<T> {
+    [key: string]: T
   }
 
-  export interface UpdootDataLoaderKey {
+  export interface UpdootPrimaryKey {
     userId: number
     postId: number
   }
 
-  export interface UpdootDataLoaderMap {
-    [key: string]: Updoot
+  export interface PostTrendingScoreDataLoaderKey {
+    postId: number
+    timestamp: string
   }
+
 }

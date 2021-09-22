@@ -1,9 +1,7 @@
-import ReadPostFragment from './read-post'
-import WritePostFragment from './write-post'
+import postDto from './post-dto'
 
 const fragments = {
-  ReadPostFragment,
-  WritePostFragment
+  postDto
 }
 
 export default fragments

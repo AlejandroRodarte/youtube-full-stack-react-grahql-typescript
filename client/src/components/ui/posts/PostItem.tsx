@@ -1,14 +1,14 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Flex, Box, Heading, Text } from '@chakra-ui/react'
 
 import Updoot from './Updoot/Updoot'
 
-import { Contexts } from '../../../types/context'
+import { StoreSharedTypes } from '../../../types/context'
 import { UITypes } from '../../../types/components/ui'
 
 interface PostItemProps {
-  post: Contexts.Posts[number]
-  vote: (value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => void
+  post: StoreSharedTypes.Posts[number]
+  vote: (value: UITypes.UpdootVoteValues, postId: number, postCreatedAt: string, cb: (error?: Error) => void) => void
 }
 
 const userVoteStatusMap: UITypes.PageItemUserVoteStatusMap = {
@@ -19,18 +19,21 @@ const userVoteStatusMap: UITypes.PageItemUserVoteStatusMap = {
 }
 
 const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
-  const onVote = useCallback((type: UITypes.UpdootVoteTypes, successHandler: () => void) => {
+  const [pristinePoints] = useState<number>(post.points)
+
+  const onVote = useCallback((type: UITypes.UpdootVoteTypes, cb: (error?: Error) => void) => {
     switch (type) {
       case 'upvote':
-        return vote(1, post.id, successHandler)
+        return vote(1, post.id, post.createdAt, cb)
       case 'downvote':
-        return vote(-1, post.id, successHandler)
+        return vote(-1, post.id, post.createdAt, cb)
       case 'zero':
-        return vote(0, post.id, successHandler)
-      default:
-        return vote(1, post.id, successHandler)
+        return vote(0, post.id, post.createdAt, cb)
     }
-  }, [post.id, vote])
+  }, [post.createdAt, post.id, vote])
+
+  const alteredTrendingStatus = post.trendingScore + (post.points - pristinePoints)
+  const absoluteTrendingStatus = Math.abs(alteredTrendingStatus)
 
   return (
     <Flex
@@ -44,10 +47,15 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
         vote={ onVote }
         voteStatus={ userVoteStatusMap[post.userVoteStatus] }
       />
-      <Box>
-        <Heading fontSize="xl">
-          { post.title }
-        </Heading>
+      <Box w="95%">
+        <Flex justifyContent="space-between">
+          <Heading fontSize="xl">
+            { post.title }
+          </Heading>
+          <Text>
+            { absoluteTrendingStatus === 0 ? 'No' : absoluteTrendingStatus } { alteredTrendingStatus >= 0 ? 'upvote' : 'downvote' }{ absoluteTrendingStatus === 1 ? '' : 's' } in the last hour
+          </Text>
+        </Flex>
         <Text mt={ 4 }>
           Posted by: { post.originalPoster.username }
         </Text>

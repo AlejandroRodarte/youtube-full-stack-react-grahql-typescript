@@ -1,17 +1,17 @@
 import { NonEmptyArray } from 'type-graphql'
 
-import RegisterResolver from './register-resolver'
-import LoginResolver from './login-resolver'
-import LogoutResolver from './logout-resolver'
-import ChangePasswordResolver from './change-password-resolver'
-import ForgotPasswordResolver from './forgot-password-resolver'
+import RootRegisterResolver from './register-resolver'
+import RootLoginResolver from './login-resolver'
+import RootLogoutResolver from './logout-resolver'
+import RootChangePasswordResolver from './change-password-resolver'
+import RootForgotPasswordResolver from './forgot-password-resolver'
 
 const mutation: NonEmptyArray<Function> = [
-  RegisterResolver,
-  LoginResolver,
-  LogoutResolver,
-  ChangePasswordResolver,
-  ForgotPasswordResolver
+  RootRegisterResolver,
+  RootLoginResolver,
+  RootLogoutResolver,
+  RootChangePasswordResolver,
+  RootForgotPasswordResolver
 ]
 
 export default mutation

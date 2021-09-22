@@ -9,7 +9,7 @@ import styles from './Updoot.module.css'
 import updootUtils from '../../../../util/components/ui/posts/updoot'
 
 import { UITypes } from '../../../../types/components/ui'
-import { Contexts } from '../../../../types/context'
+import { StoreSharedTypes } from '../../../../types/context'
 
 interface StyleState {
   chevronUp: {
@@ -26,10 +26,15 @@ interface StyleState {
   }
 }
 
+interface LoadingState {
+  chevronUp: boolean
+  chevronDown: boolean
+}
+
 interface UpdootProps {
-  points: Contexts.Posts[number]['points']
+  points: StoreSharedTypes.Posts[number]['points']
   voteStatus: UITypes.UpdootStatus,
-  vote: (type: UITypes.UpdootVoteTypes, successHandler: () => void) => void
+  vote: (type: UITypes.UpdootVoteTypes, cb: (error?: Error) => void) => void
 }
 
 const Updoot: React.FC<UpdootProps> = ({ points, voteStatus, vote }: UpdootProps) => {
@@ -48,6 +53,11 @@ const Updoot: React.FC<UpdootProps> = ({ points, voteStatus, vote }: UpdootProps
     }
   })
 
+  const [loadingState, setLoadingState] = useState<LoadingState>({
+    chevronUp: false,
+    chevronDown: false
+  })
+
   const updateStyles = useCallback((type: UITypes.UpdootVoteTypes) => {
     setStylesState((prevStyleProps) => ({
       ...prevStyleProps,
@@ -62,18 +72,36 @@ const Updoot: React.FC<UpdootProps> = ({ points, voteStatus, vote }: UpdootProps
     }))
   }, [setStylesState])
 
-  const onVoteSuccess = useCallback((type: UITypes.UpdootVoteTypes) => () => {
-    updateStyles(type)
+  const onVoteSuccess = useCallback((type: UITypes.UpdootVoteTypes) => (error?: Error) => {
+    setLoadingState((prevLoadingState) => ({
+      ...prevLoadingState,
+      chevronUp: false,
+      chevronDown: false
+    }))
+
+    if (!error) updateStyles(type)
   }, [updateStyles])
 
   const onUpvote = useCallback(() => {
     if (voteStatus === 'unknown') return
+
+    setLoadingState((prevLoadingState) => ({
+      ...prevLoadingState,
+      chevronUp: true
+    }))
+
     if (voteStatus === 'upvoted') return vote('zero', onVoteSuccess('zero'))
     return vote('upvote', onVoteSuccess('upvote'))
   }, [onVoteSuccess, voteStatus, vote])
 
   const onDownvote = useCallback(() => {
     if (voteStatus === 'unknown') return
+
+    setLoadingState((prevLoadingState) => ({
+      ...prevLoadingState,
+      chevronDown: true
+    }))
+
     if (voteStatus === 'downvoted') return vote('zero', onVoteSuccess('zero'))
     return vote('downvote', onVoteSuccess('downvote'))
   }, [onVoteSuccess, voteStatus, vote])
@@ -149,6 +177,7 @@ const Updoot: React.FC<UpdootProps> = ({ points, voteStatus, vote }: UpdootProps
         onClick={ onUpvote }
         aria-label="Upvote"
         _focus={ { outline: 'none' } }
+        isLoading={ loadingState.chevronUp }
         icon={
           <ChevronUpIcon
             className={ stylesState.chevronUp.iconClasses.join(' ') }
@@ -168,6 +197,7 @@ const Updoot: React.FC<UpdootProps> = ({ points, voteStatus, vote }: UpdootProps
         onClick={ onDownvote }
         aria-label="Downvote"
         _focus={ { outline: 'none' } }
+        isLoading={ loadingState.chevronDown }
         icon={
           <ChevronDownIcon
             className={ stylesState.chevronDown.iconClasses.join(' ') }

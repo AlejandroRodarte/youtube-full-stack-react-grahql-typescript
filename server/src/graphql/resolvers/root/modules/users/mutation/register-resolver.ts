@@ -3,6 +3,7 @@ import { QueryFailedError } from 'typeorm'
 import argon2 from 'argon2'
 
 import User from '../../../../../../db/orm/entities/User'
+import UserDto from '../../../../../objects/dtos/users/user-dto'
 import RegisterInput from '../../../../../args/resolvers/root/modules/users/mutation/inputs/register-input'
 import RegisterArgsSchema from '../../../../../args/resolvers/root/modules/users/mutation/schemas/register-args-schema'
 import FieldError from '../../../../../objects/common/error/field-error'
@@ -12,7 +13,7 @@ import generatedMiddlewares from '../../../../../../middleware/generator/graphql
 import { GraphQLContext } from '../../../../../../types/graphql'
 
 @Resolver()
-export default class RegisterResolver {
+export default class RootRegisterResolver {
   @Mutation(() => objects.RegisterResponse)
   @UseMiddleware(
     generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
@@ -32,6 +33,8 @@ export default class RegisterResolver {
       })
 
       await user.save()
+
+      const userDto = UserDto.fromUserEntity(user)
       req.session.userId = user.id
 
       const response =
@@ -41,8 +44,7 @@ export default class RegisterResolver {
             responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_REGISTERED].message,
             responses.payloads.usersPayloads.success[responses.symbols.UsersSymbols.USER_REGISTERED].code,
             namespace,
-            new objects
-              .RegisterData(user)
+            new objects.RegisterData(userDto)
           )
 
       return response

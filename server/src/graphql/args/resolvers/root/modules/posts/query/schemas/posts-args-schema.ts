@@ -8,8 +8,9 @@ import primitive from './primitive'
 interface PostsDataSchemaInterface {
   limit: Joi.NumberSchema
   sort: Joi.StringSchema
-  excludeIds: Joi.ArraySchema
+  excludeIds: Joi.AlternativesSchema
   cursor: Joi.AlternativesSchema
+  timestamp: Joi.AlternativesSchema
 }
 
 interface PostArgsSchemaInterface extends GraphQLArgs.NamespaceSchema {
@@ -23,7 +24,8 @@ const PostDataSchema =
       limit: primitive.limitSchema,
       sort: primitive.sortSchema,
       excludeIds: primitive.excludeIdsSchema,
-      cursor: primitive.cursorSchema
+      cursor: primitive.cursorSchema,
+      timestamp: primitive.timestampSchema
     })
 
 const PostsArgsSchema =

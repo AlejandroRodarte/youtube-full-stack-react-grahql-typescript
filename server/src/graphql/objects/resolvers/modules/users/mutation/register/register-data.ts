@@ -1,13 +1,13 @@
 import { ObjectType, Field } from 'type-graphql'
 
-import User from '../../../../../../../db/orm/entities/User'
+import UserDto from '../../../../../dtos/users/user-dto'
 
 @ObjectType()
 export default class RegisterData {
-  @Field(() => User)
-  newUser: User
+  @Field(() => UserDto)
+  newUser: UserDto
 
-  constructor (user: User) {
+  constructor (user: UserDto) {
     this.newUser = user
   }
 }

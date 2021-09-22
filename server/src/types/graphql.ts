@@ -19,9 +19,11 @@ import LoginInput from '../graphql/args/resolvers/root/modules/users/mutation/in
 import ChangePasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/change-password-input'
 import ForgotPasswordInput from '../graphql/args/resolvers/root/modules/users/mutation/inputs/forgot-password-input'
 import VoteInput from '../graphql/args/resolvers/root/modules/updoots/mutation/inputs/vote-input'
+import TrendingScoreInput from '../graphql/args/objects/entities/post/inputs/trending-score-input'
 
 import argsConstants from '../constants/graphql/args'
 import { CacheTypes } from './cache'
+import { DBRawEntities } from './db'
 
 export namespace GraphQLTuples {
   export type CreateSchemaTuple = [
@@ -36,9 +38,33 @@ export namespace GraphQLTuples {
 }
 
 export namespace GraphQLContext {
+  interface PostWithTrendingScoreEntityLoaders {
+    byId: DataLoader<number, DBRawEntities.PostWithTrendingScoreRawEntity, number>
+    byOriginalPosterId: DataLoader<number, DBRawEntities.PostWithTrendingScoreRawEntity[], number>
+  }
+
+  interface PostEntityLoaders {
+    withTrendingScore: PostWithTrendingScoreEntityLoaders
+  }
+
+  interface UpdootEntityLoaders {
+    byPostId: DataLoader<number, DBRawEntities.UpdootWithAliasRawEntity[], number>
+    byUserId: DataLoader<number, DBRawEntities.UpdootWithAliasRawEntity[], number>
+    byPrimaryKey: DataLoader<CacheTypes.UpdootPrimaryKey, Updoot | null, CacheTypes.UpdootPrimaryKey>
+  }
+
+  interface UserEntityLoaders {
+    byId: DataLoader<number, User, number>
+  }
+
+  interface EntityLoaders {
+    post: PostEntityLoaders
+    updoot: UpdootEntityLoaders
+    user: UserEntityLoaders
+  }
+
   interface ObjectLoaders {
-    updoot: DataLoader<CacheTypes.UpdootDataLoaderKey, Updoot | null, CacheTypes.UpdootDataLoaderKey>
-    user: DataLoader<number, User, number>
+    entities: EntityLoaders
   }
 
   interface DataLoaderContext {
@@ -131,6 +157,11 @@ export namespace GraphQLInputs {
     payload: VoteInput
   }
 
+  interface TrendingScoreInputAction {
+    type: 'TrendingScoreInput'
+    payload: TrendingScoreInput
+  }
+
   export type InputType =
     'PostInput' |
     'PostsInput' |
@@ -141,7 +172,8 @@ export namespace GraphQLInputs {
     'LoginInput' |
     'ChangePasswordInput' |
     'ForgotPasswordInput' |
-    'VoteInput'
+    'VoteInput' |
+    'TrendingScoreInput'
 
   export type InputPayload =
     PostInput |
@@ -153,7 +185,8 @@ export namespace GraphQLInputs {
     LoginInput |
     ChangePasswordInput |
     ForgotPasswordInput |
-    VoteInput
+    VoteInput |
+    TrendingScoreInput
 
   export type InputAction =
     PostInputAction |
@@ -165,7 +198,8 @@ export namespace GraphQLInputs {
     LoginInputAction |
     ChangePasswordInputAction |
     ForgotPasswordInputAction |
-    VoteInputAction
+    VoteInputAction |
+    TrendingScoreInputAction
 
   export type ExpressInputFields = 'input' | 'posts/canMutatePost'
 }
@@ -179,6 +213,10 @@ export namespace GraphQLResolverConstants {
     [argsConstants.posts.SortTypes.POPULAR]: {
       field: string,
       cursorParser: (cursor: string) => [Date, number]
+    },
+    [argsConstants.posts.SortTypes.TRENDING]: {
+      field: string,
+      cursorParser: (cursor: string) => [Date, number, number]
     }
   }
 }

@@ -1,17 +1,17 @@
 import { ObjectType, Field } from 'type-graphql'
 
-import Post from '../../../../../../../db/orm/entities/Post'
+import PostDto from '../../../../../dtos/posts/post-dto'
 
 @ObjectType()
 export default class PostsData {
-  @Field(() => [Post])
-  posts: Post[]
+  @Field(() => [PostDto])
+  posts: PostDto[]
 
   @Field(() => Boolean)
   hasMore: boolean
 
   constructor (
-    posts: Post[],
+    posts: PostDto[],
     hasMore: boolean
   ) {
     this.posts = posts

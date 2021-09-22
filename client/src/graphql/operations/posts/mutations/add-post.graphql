@@ -8,16 +8,17 @@ mutation AddPost($addPostData: AddPostInput!) {
       newPost {
         __typename
         id
-        createdAt
-        updatedAt
         title
         textSnippet
         points
-        userVoteStatus
+        createdAt
+        updatedAt
         originalPoster {
           id
           username
         }
+        userVoteStatus
+        trendingScore
       }
     }
     errors {

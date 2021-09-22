@@ -13,6 +13,7 @@ import withAnonymous, { AnonymousProps } from '../../hoc/withAnonymous'
 
 import commonFunctions from '../../util/common/functions'
 import { useAppContext } from '../../context/app-context'
+import * as pagesModuleHomeTypes from '../../context/store/modules/pages/home/types'
 
 import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
 
@@ -24,7 +25,7 @@ interface ChangePasswordProps extends AnonymousProps {
 }
 
 const ChangePassword: React.FC<ChangePasswordProps> = () => {
-  const { pages: { home } } = useAppContext()
+  const { store: { dispatch } } = useAppContext()
 
   const changePasswordInitialValues: FormTypes.ChangePasswordForm = {
     newPassword: ''
@@ -64,12 +65,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
       const { data, errors } = response.data.changePassword
 
       if (data) {
-        home.cursors.new.set(() => null)
-        home.posts.new.set(() => [])
-        home.cursors.popular.set(() => null)
-        home.posts.popular.set(() => [])
-        home.excludeIds.popular.set(() => null)
-        home.pristine.popular.points.set(() => [])
+        dispatch({ type: pagesModuleHomeTypes.RESET })
         router.push('/')
       }
 
@@ -83,7 +79,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
         setErrors(unflattenedErrors.data.form)
       }
     }
-  }, [changePassword, home.cursors.new, home.cursors.popular, home.excludeIds.popular, home.posts.new, home.posts.popular, home.pristine.popular.points, router, token])
+  }, [changePassword, dispatch, router, token])
 
   return (
     <Wrapper>

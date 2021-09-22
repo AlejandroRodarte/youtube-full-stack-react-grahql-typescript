@@ -2,6 +2,7 @@ import { Resolver, Arg, Ctx, Mutation, UseMiddleware } from 'type-graphql'
 import argon2 from 'argon2'
 
 import User from '../../../../../../db/orm/entities/User'
+import UserDto from '../../../../../objects/dtos/users/user-dto'
 import ChangePasswordInput from '../../../../../args/resolvers/root/modules/users/mutation/inputs/change-password-input'
 import ChangePasswordArgsSchema from '../../../../../args/resolvers/root/modules/users/mutation/schemas/change-password-args-schema'
 import FieldError from '../../../../../objects/common/error/field-error'
@@ -13,7 +14,7 @@ import { GraphQLContext } from '../../../../../../types/graphql'
 import { DBRawEntities } from '../../../../../../types/db'
 
 @Resolver()
-export default class ChangePasswordResolver {
+export default class RootChangePasswordResolver {
   @Mutation(() => objects.ChangePasswordResponse)
   @UseMiddleware(
     generatedMiddlewares.Anonymous({ isApplicationResponse: true }),
@@ -83,7 +84,7 @@ export default class ChangePasswordResolver {
           )
       }
 
-      const updatedUser = User.create(rawUser as DBRawEntities.UpdateUserRawEntity)
+      const updatedUserDto = UserDto.fromUserRawEntity(rawUser as DBRawEntities.UserRawEntity)
 
       await redis.del(key)
       req.session.userId = id
@@ -94,8 +95,7 @@ export default class ChangePasswordResolver {
           constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.USER_PASSWORD_UPDATED].message,
           constants.graphql.responses.payloads.usersPayloads.success[constants.graphql.responses.symbols.UsersSymbols.USER_PASSWORD_UPDATED].code,
           namespace,
-          new objects
-            .ChangePasswordData(updatedUser)
+          new objects.ChangePasswordData(updatedUserDto)
         )
     } catch (e) {
       if (process.env.LOG_ERRORS === 'true') console.error(e)

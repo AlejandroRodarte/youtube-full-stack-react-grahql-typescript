@@ -1,5 +1,5 @@
 import { InputType, Field, Int } from 'type-graphql'
-import { GraphQLResolverConstants } from 'src/types/graphql'
+import { GraphQLResolverConstants } from '../../../../../../../../types/graphql'
 
 @InputType()
 export default class PostsInput {
@@ -8,6 +8,9 @@ export default class PostsInput {
 
   @Field(() => String)
   sort: keyof GraphQLResolverConstants.PostsSortMapper
+
+  @Field(() => String)
+  timestamp: string
 
   @Field(() => [Int], { nullable: true })
   excludeIds?: number[]

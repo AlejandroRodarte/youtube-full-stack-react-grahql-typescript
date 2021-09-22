@@ -1,13 +1,13 @@
 import { ObjectType, Field } from 'type-graphql'
 
-import User from '../../../../../../../db/orm/entities/User'
+import UserDto from '../../../../../dtos/users/user-dto'
 
 @ObjectType()
 export default class ChangePasswordData {
-  @Field(() => User)
-  updatedUser: User
+  @Field(() => UserDto)
+  updatedUser: UserDto
 
-  constructor (updatedUser: User) {
+  constructor (updatedUser: UserDto) {
     this.updatedUser = updatedUser
   }
 }

@@ -11,7 +11,7 @@ import generatedMiddlewares from '../../../../../../middleware/generator/graphql
 import { GraphQLContext } from '../../../../../../types/graphql'
 
 @Resolver()
-export default class ForgotPasswordResolver {
+export default class RootForgotPasswordResolver {
   @Mutation(() => objects.ForgotPasswordResponse)
   @UseMiddleware(
     generatedMiddlewares.Anonymous({ isApplicationResponse: true }),

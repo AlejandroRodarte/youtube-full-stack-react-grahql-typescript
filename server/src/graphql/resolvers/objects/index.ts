@@ -1,9 +1,9 @@
 import { NonEmptyArray } from 'type-graphql'
 
-import entities from './entities'
+import dtos from './dtos'
 
 const objects: NonEmptyArray<Function> = [
-  ...entities
+  ...dtos
 ]
 
 export default objects

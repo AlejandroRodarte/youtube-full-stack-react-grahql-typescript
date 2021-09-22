@@ -3,17 +3,17 @@ import { Stack } from '@chakra-ui/layout'
 
 import PostItem from './PostItem'
 
-import { Contexts } from '../../../types/context'
+import { StoreSharedTypes } from '../../../types/context'
 import { UITypes } from '../../../types/components/ui'
 
 interface PostListProps {
-  posts: Contexts.Posts
-  vote: (value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => void
+  posts: StoreSharedTypes.Posts
+  vote: (value: UITypes.UpdootVoteValues, postId: number, postCreatedAt: string, cb: (error?: Error) => void) => void
 }
 
 const PostList: React.FC<PostListProps> = ({ posts, vote }: PostListProps) => {
-  const onVote = useCallback((value: UITypes.UpdootVoteValues, postId: number, successHandler: () => void) => {
-    vote(value, postId, successHandler)
+  const onVote = useCallback((value: UITypes.UpdootVoteValues, postId: number, postCreatedAt: string, cb: (error?: Error) => void) => {
+    vote(value, postId, postCreatedAt, cb)
   }, [vote])
 
   return (

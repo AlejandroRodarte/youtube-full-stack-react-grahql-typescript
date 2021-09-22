@@ -16,10 +16,11 @@ const meQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<ChangePas
         message: constants.queries.users.success.me.message,
         code: constants.queries.users.success.me.code,
         namespace: 'Me',
+        timestamp: new Date().getTime().toString(),
         data: {
           __typename: 'MeData',
           user: {
-            __typename: 'User',
+            __typename: 'UserDto',
             ...result.changePassword.data.updatedUser
           }
         },
@@ -37,11 +38,12 @@ const meQueryUpdaterDelegate: GraphQLUrqlCache.UpdaterDelegateFunction<ChangePas
       status: constants.queries.users.success.me.httpCode,
       message: constants.queries.users.success.me.message,
       code: constants.queries.users.success.me.code,
+      timestamp: new Date().getTime().toString(),
       data: {
         ...query.me.data,
         __typename: 'MeData',
         user: {
-          __typename: 'User',
+          __typename: 'UserDto',
           ...result.changePassword.data.updatedUser
         }
       },

@@ -1,16 +1,16 @@
 import { Cache } from '@urql/exchange-graphcache'
 
-import ReadPostFragment, { ReadPost } from './fragments/read-post'
-import WritePostFragment, { WritePost } from './fragments/write-post'
+import ReadPostDtoFragment, { ReadPostDto } from './fragments/post-dto/read'
+import WritePostDtoFragment, { WritePostDto } from './fragments/post-dto/write'
 import { VoteMutation, MutationVoteArgs } from '../../../../../../../../../../../generated/graphql'
 
 const handleClientMode = (result: VoteMutation, args: MutationVoteArgs, cache: Cache) => {
   const post =
     cache
-      .readFragment<ReadPost.Query, ReadPost.Variables>(
-        ReadPostFragment,
+      .readFragment<ReadPostDto.Query, ReadPostDto.Variables>(
+        ReadPostDtoFragment,
         {
-          __typename: 'Post',
+          __typename: 'PostDto',
           id: args.data.postId
         }
       )
@@ -23,10 +23,10 @@ const handleClientMode = (result: VoteMutation, args: MutationVoteArgs, cache: C
   else deltaPoints = -post.userVoteStatus + args.data.value
 
   cache
-    .writeFragment<WritePost.Query, WritePost.Variables>(
-      WritePostFragment,
+    .writeFragment<WritePostDto.Query, WritePostDto.Variables>(
+      WritePostDtoFragment,
       {
-        __typename: 'Post',
+        __typename: 'PostDto',
         id: args.data.postId,
         points: post.points + deltaPoints,
         userVoteStatus: args.data.value
