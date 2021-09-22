@@ -33,7 +33,6 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
   }, [post.createdAt, post.id, vote])
 
   const alteredTrendingStatus = post.trendingScore + (post.points - pristinePoints)
-  const absoluteTrendingStatus = Math.abs(alteredTrendingStatus)
 
   return (
     <Flex
@@ -53,7 +52,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
             { post.title }
           </Heading>
           <Text>
-            { absoluteTrendingStatus === 0 ? 'No' : absoluteTrendingStatus } { alteredTrendingStatus >= 0 ? 'upvote' : 'downvote' }{ absoluteTrendingStatus === 1 ? '' : 's' } in the last hour
+            { alteredTrendingStatus } points in the last hour
           </Text>
         </Flex>
         <Text mt={ 4 }>
