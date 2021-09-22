@@ -11,6 +11,7 @@ import withAnonymous, { AnonymousProps } from '../hoc/withAnonymous'
 
 import commonFunctions from '../util/common/functions'
 import { useAppContext } from '../context/app-context'
+import * as pagesModuleHomeTypes from '../context/store/modules/pages/home/types'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 
@@ -82,7 +83,7 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
       const { data, errors } = response.data.register
 
       if (data && !wasLoadedOnServer) {
-        dispatch({ type: 'home/reset' })
+        dispatch({ type: pagesModuleHomeTypes.RESET })
         router.push(redirectTo as string)
       }
 

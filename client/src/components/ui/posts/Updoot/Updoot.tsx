@@ -9,7 +9,7 @@ import styles from './Updoot.module.css'
 import updootUtils from '../../../../util/components/ui/posts/updoot'
 
 import { UITypes } from '../../../../types/components/ui'
-import { StateCommonTypes } from '../../../../types/context'
+import { StoreSharedTypes } from '../../../../types/context'
 
 interface StyleState {
   chevronUp: {
@@ -32,7 +32,7 @@ interface LoadingState {
 }
 
 interface UpdootProps {
-  points: StateCommonTypes.Posts[number]['points']
+  points: StoreSharedTypes.Posts[number]['points']
   voteStatus: UITypes.UpdootStatus,
   vote: (type: UITypes.UpdootVoteTypes, cb: (error?: Error) => void) => void
 }

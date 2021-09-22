@@ -3,11 +3,11 @@ import { Flex, Box, Heading, Text } from '@chakra-ui/react'
 
 import Updoot from './Updoot/Updoot'
 
-import { StateCommonTypes } from '../../../types/context'
+import { StoreSharedTypes } from '../../../types/context'
 import { UITypes } from '../../../types/components/ui'
 
 interface PostItemProps {
-  post: StateCommonTypes.Posts[number]
+  post: StoreSharedTypes.Posts[number]
   vote: (value: UITypes.UpdootVoteValues, postId: number, postCreatedAt: string, cb: (error?: Error) => void) => void
 }
 
@@ -33,6 +33,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
   }, [post.createdAt, post.id, vote])
 
   const alteredTrendingStatus = post.trendingScore + (post.points - pristinePoints)
+  const absoluteTrendingStatus = Math.abs(alteredTrendingStatus)
 
   return (
     <Flex
@@ -52,7 +53,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
             { post.title }
           </Heading>
           <Text>
-            { alteredTrendingStatus } upvotes in the last hour
+            { absoluteTrendingStatus === 0 ? 'No' : absoluteTrendingStatus } { alteredTrendingStatus >= 0 ? 'upvote' : 'downvote' }{ absoluteTrendingStatus === 1 ? '' : 's' } in the last hour
           </Text>
         </Flex>
         <Text mt={ 4 }>

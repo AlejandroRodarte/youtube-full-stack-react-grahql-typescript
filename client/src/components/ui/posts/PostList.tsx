@@ -3,11 +3,11 @@ import { Stack } from '@chakra-ui/layout'
 
 import PostItem from './PostItem'
 
-import { StateCommonTypes } from '../../../types/context'
+import { StoreSharedTypes } from '../../../types/context'
 import { UITypes } from '../../../types/components/ui'
 
 interface PostListProps {
-  posts: StateCommonTypes.Posts
+  posts: StoreSharedTypes.Posts
   vote: (value: UITypes.UpdootVoteValues, postId: number, postCreatedAt: string, cb: (error?: Error) => void) => void
 }
 

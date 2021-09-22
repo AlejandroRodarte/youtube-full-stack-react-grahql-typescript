@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { withUrqlClient } from 'next-urql'
 import { Heading, Flex, Button } from '@chakra-ui/react'
 import { Radio, RadioGroup } from '@chakra-ui/radio'
+import { Stack } from '@chakra-ui/layout'
 
 import { usePostsQuery, PostsQueryVariables, useLogoutMutation, useVoteMutation, VoteMutationVariables } from '../generated/graphql'
 
@@ -10,11 +11,11 @@ import MainLayout from '../layouts/MainLayout'
 import withUserData, { UserDataProps } from '../hoc/withUserData'
 
 import { useAppContext } from '../context/app-context'
-
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
+import * as pagesModuleHomeTypes from '../context/store/modules/pages/home/types'
+
+import { StoreSharedTypes } from '../types/context'
 import { UITypes } from '../types/components/ui'
-import { Stack } from '@chakra-ui/layout'
-import { StateCommonTypes } from '../types/context'
 
 interface IndexProps extends UserDataProps {}
 
@@ -70,7 +71,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
     }
 
     dispatch({
-      type: 'home/setCursor',
+      type: pagesModuleHomeTypes.SET_CURSOR,
       payload: { cursor }
     })
 
@@ -120,7 +121,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
           state.pages.home.sort === 'trending'
         ) {
           dispatch({
-            type: 'home/updateExcludedPostsFromUpdatedPost',
+            type: pagesModuleHomeTypes.UPDATE_EXCLUDED_POSTS_FROM_UPDATED_POST,
             payload: {
               post: {
                 id: postId,
@@ -145,10 +146,10 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
   ])
 
   const onRadioGroupChange = useCallback((sort: string) => {
-    const castedSort = sort as StateCommonTypes.Sort
+    const castedSort = sort as StoreSharedTypes.Sort
 
     dispatch({
-      type: 'home/setSort',
+      type: pagesModuleHomeTypes.SET_SORT,
       payload: { sort: castedSort }
     })
 
@@ -165,7 +166,7 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
   useEffect(() => {
     if (!fetching && data && data.posts.data) {
       dispatch({
-        type: 'home/setPosts',
+        type: pagesModuleHomeTypes.SET_POSTS,
         payload: { posts: data.posts.data.posts }
       })
     }
@@ -183,14 +184,14 @@ const Index: React.FC<IndexProps> = (props: IndexProps) => {
       const newPristinePosts = data.posts.data.posts.slice(-newPostsCount)
 
       dispatch({
-        type: 'home/addPristinePosts',
+        type: pagesModuleHomeTypes.ADD_PRISTINE_POSTS,
         payload: { posts: newPristinePosts }
       })
 
       const lastPost = data.posts.data.posts[data.posts.data.posts.length - 1]
 
       dispatch({
-        type: 'home/updateExcludedPostsFromLastFetchedPost',
+        type: pagesModuleHomeTypes.UPDATE_EXCLUDED_POSTS_FROM_LAST_FETCHED_POST,
         payload: { post: lastPost }
       })
     }

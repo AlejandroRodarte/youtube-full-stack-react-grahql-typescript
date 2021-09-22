@@ -1,8 +1,9 @@
 import React from 'react'
 
+import * as pagesHomeModuleStoreTypes from '../context/store/modules/pages/home/types'
 import { PostsQuery } from '../generated/graphql'
 
-export namespace StateCommonTypes {
+export namespace StoreSharedTypes {
   export type Sort = 'new' | 'popular' | 'trending'
   export type Posts = PostsQuery['posts']['data']['posts']
 
@@ -32,60 +33,67 @@ export namespace StateCommonTypes {
   }
 }
 
-export namespace HomeModule {
-
+export namespace PagesModuleHomeStore {
   interface SetCursorPayload {
     cursor: string
   }
   interface UpdateExcludedPostsFromUpdatedPostPayload {
-    post: StateCommonTypes.ExcludedPost
+    post: StoreSharedTypes.ExcludedPost
   }
 
   interface SetSortPayload {
-    sort: StateCommonTypes.Sort
+    sort: StoreSharedTypes.Sort
   }
 
   interface SetPostsPayload {
-    posts: StateCommonTypes.Posts
+    posts: StoreSharedTypes.Posts
   }
 
   interface AddPristinePostsPayload {
-    posts: StateCommonTypes.Posts
+    posts: StoreSharedTypes.Posts
   }
 
   interface UpdateExcludedPostsFromLastFetchedPostPayload {
-    post: StateCommonTypes.Posts[number]
+    post: StoreSharedTypes.Posts[number]
   }
 
   interface Reset {
-    type: 'home/reset'
+    type: typeof pagesHomeModuleStoreTypes.RESET
   }
 
-  interface SetCursor extends StateCommonTypes.HasPayload<SetCursorPayload> {
-    type: 'home/setCursor'
+  interface SetCursor extends StoreSharedTypes.HasPayload<SetCursorPayload> {
+    type: typeof pagesHomeModuleStoreTypes.SET_CURSOR
   }
 
-  interface UpdateExcludedPostsFromUpdatedPost extends StateCommonTypes.HasPayload<UpdateExcludedPostsFromUpdatedPostPayload> {
-    type: 'home/updateExcludedPostsFromUpdatedPost'
+  interface UpdateExcludedPostsFromUpdatedPost extends StoreSharedTypes.HasPayload<UpdateExcludedPostsFromUpdatedPostPayload> {
+    type: typeof pagesHomeModuleStoreTypes.UPDATE_EXCLUDED_POSTS_FROM_UPDATED_POST
   }
 
-  interface UpdateExcludedPostsFromLastFetchedPost extends StateCommonTypes.HasPayload<UpdateExcludedPostsFromLastFetchedPostPayload> {
-    type: 'home/updateExcludedPostsFromLastFetchedPost'
+  interface UpdateExcludedPostsFromLastFetchedPost extends StoreSharedTypes.HasPayload<UpdateExcludedPostsFromLastFetchedPostPayload> {
+    type: typeof pagesHomeModuleStoreTypes.UPDATE_EXCLUDED_POSTS_FROM_LAST_FETCHED_POST
   }
 
-  interface SetSort extends StateCommonTypes.HasPayload<SetSortPayload> {
-    type: 'home/setSort'
+  interface SetSort extends StoreSharedTypes.HasPayload<SetSortPayload> {
+    type: typeof pagesHomeModuleStoreTypes.SET_SORT
   }
 
-  interface SetPosts extends StateCommonTypes.HasPayload<SetPostsPayload> {
-    type: 'home/setPosts'
+  interface SetPosts extends StoreSharedTypes.HasPayload<SetPostsPayload> {
+    type: typeof pagesHomeModuleStoreTypes.SET_POSTS
   }
 
-  interface AddPristinePosts extends StateCommonTypes.HasPayload<AddPristinePostsPayload> {
-    type: 'home/addPristinePosts'
+  interface AddPristinePosts extends StoreSharedTypes.HasPayload<AddPristinePostsPayload> {
+    type: typeof pagesHomeModuleStoreTypes.ADD_PRISTINE_POSTS
   }
 
-  export type HomeModuleActions =
+  export interface State {
+    sort: StoreSharedTypes.Sort
+    posts: StoreSharedTypes.SortConfig<StoreSharedTypes.Posts>
+    cursors: StoreSharedTypes.SortConfig<string>
+    exclude: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.ExcludedPost[]>
+    pristine: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.PristinePost[]>
+  }
+
+  export type Actions =
     Reset |
     SetCursor |
     UpdateExcludedPostsFromUpdatedPost |
@@ -95,27 +103,38 @@ export namespace HomeModule {
     UpdateExcludedPostsFromLastFetchedPost
 }
 
-export namespace State {
-  export interface AppState {
-    pages: {
-      home: {
-        sort: StateCommonTypes.Sort
-        posts: StateCommonTypes.SortConfig<StateCommonTypes.Posts>
-        cursors: StateCommonTypes.SortConfig<string>
-        exclude: StateCommonTypes.OptionalSortConfig<StateCommonTypes.ExcludedPost[]>
-        pristine: StateCommonTypes.OptionalSortConfig<StateCommonTypes.PristinePost[]>
-      }
-    }
+export namespace PagesModuleStore {
+  export interface State {
+    home: PagesModuleHomeStore.State
   }
 
-  export type AppActions = HomeModule.HomeModuleActions
+  export type Actions = PagesModuleHomeStore.Actions
+}
+
+export namespace Store {
+  export interface PagesHomeState {
+    sort: StoreSharedTypes.Sort
+    posts: StoreSharedTypes.SortConfig<StoreSharedTypes.Posts>
+    cursors: StoreSharedTypes.SortConfig<string>
+    exclude: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.ExcludedPost[]>
+    pristine: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.PristinePost[]>
+  }
+  export interface PagesState {
+    home: PagesHomeState
+  }
+
+  export interface State {
+    pages: PagesModuleStore.State
+  }
+
+  export type Actions = PagesModuleStore.Actions
 }
 
 export namespace Contexts {
   export interface AppContext {
     store: {
-      state: State.AppState
-      dispatch: React.Dispatch<State.AppActions>
+      state: Store.State
+      dispatch: React.Dispatch<Store.Actions>
     }
   }
 }

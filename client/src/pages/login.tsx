@@ -15,6 +15,7 @@ import commonFunctions from '../util/common/functions'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 import { useAppContext } from '../context/app-context'
+import * as pagesModuleHomeTypes from '../context/store/modules/pages/home/types'
 
 import { FormTypes } from '../types/forms'
 import { GraphQLUsersArgs } from '../types/graphql/args/users'
@@ -72,7 +73,7 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
       const { data, errors } = response.data.login
 
       if (data && !wasLoadedOnServer) {
-        dispatch({ type: 'home/reset' })
+        dispatch({ type: pagesModuleHomeTypes.RESET })
         router.push(redirectTo as string)
       }
 
