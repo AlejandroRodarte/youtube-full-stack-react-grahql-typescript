@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import { Flex, Box, Heading, Text } from '@chakra-ui/react'
 
 import Updoot from './Updoot/Updoot'
@@ -19,8 +19,6 @@ const userVoteStatusMap: UITypes.PageItemUserVoteStatusMap = {
 }
 
 const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
-  const [pristinePoints] = useState<number>(post.points)
-
   const onVote = useCallback((type: UITypes.UpdootVoteTypes, cb: (error?: Error) => void) => {
     switch (type) {
       case 'upvote':
@@ -31,8 +29,6 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
         return vote(0, post.id, post.createdAt, cb)
     }
   }, [post.createdAt, post.id, vote])
-
-  const alteredTrendingStatus = post.trendingScore + (post.points - pristinePoints)
 
   return (
     <Flex
@@ -52,7 +48,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, vote }: PostItemProps) => {
             { post.title }
           </Heading>
           <Text>
-            { alteredTrendingStatus } point{ alteredTrendingStatus === 1 ? '' : 's' } in the last hour
+            { post.trendingScore } point{ post.trendingScore === 1 ? '' : 's' } in the last hour
           </Text>
         </Flex>
         <Text mt={ 4 }>
