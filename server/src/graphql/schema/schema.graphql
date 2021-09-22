@@ -5,6 +5,7 @@ type Query {
 }
 
 type PostsResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -14,29 +15,43 @@ type PostsResponse {
 }
 
 type PostsData {
-  posts: [Post!]!
+  posts: [PostDto!]!
   hasMore: Boolean!
 }
 
-type Post {
-  id: Float!
+type PostDto {
+  id: Int!
   title: String!
   text: String!
-  points: Float!
-  originalPosterId: Float!
+  points: Int!
+  originalPosterId: Int!
+  trendingScore: Int!
   createdAt: String!
   updatedAt: String!
   textSnippet: String!
   userVoteStatus: Int
-  originalPoster: User
+  originalPoster: UserDto
+  updoots: [UpdootDto!]
 }
 
-type User {
-  id: Float!
+type UserDto {
+  id: Int!
   username: String!
   email: String
   createdAt: String!
   updatedAt: String!
+  posts: [PostDto!]
+  updoots: [UpdootDto!]
+}
+
+type UpdootDto {
+  userId: Int!
+  postId: Int!
+  value: Int!
+  createdAt: String!
+  updatedAt: String!
+  user: UserDto
+  post: PostDto
 }
 
 type FieldError {
@@ -49,11 +64,13 @@ type FieldError {
 input PostsInput {
   limit: Int!
   sort: String!
+  timestamp: String!
   excludeIds: [Int!]
   cursor: String
 }
 
 type PostResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -63,7 +80,7 @@ type PostResponse {
 }
 
 type PostData {
-  post: Post!
+  post: PostDto!
 }
 
 input PostInput {
@@ -71,6 +88,7 @@ input PostInput {
 }
 
 type MeResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -80,7 +98,7 @@ type MeResponse {
 }
 
 type MeData {
-  user: User!
+  user: UserDto!
 }
 
 type Mutation {
@@ -96,6 +114,7 @@ type Mutation {
 }
 
 type AddPostResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -105,7 +124,7 @@ type AddPostResponse {
 }
 
 type AddPostData {
-  newPost: Post!
+  newPost: PostDto!
 }
 
 input AddPostInput {
@@ -114,6 +133,7 @@ input AddPostInput {
 }
 
 type EditPostResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -123,7 +143,13 @@ type EditPostResponse {
 }
 
 type EditPostData {
-  updatedPost: Post!
+  updatedPost: EditedPostDto!
+}
+
+type EditedPostDto {
+  id: Int!
+  title: String!
+  text: String!
 }
 
 input EditPostInput {
@@ -137,6 +163,7 @@ input OptionalPostFieldsInput {
 }
 
 type DeletePostResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -154,6 +181,7 @@ input DeletePostInput {
 }
 
 type RegisterResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -163,7 +191,7 @@ type RegisterResponse {
 }
 
 type RegisterData {
-  newUser: User!
+  newUser: UserDto!
 }
 
 input RegisterInput {
@@ -173,6 +201,7 @@ input RegisterInput {
 }
 
 type LoginResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -182,7 +211,7 @@ type LoginResponse {
 }
 
 type LoginData {
-  user: User!
+  user: UserDto!
 }
 
 input LoginInput {
@@ -191,6 +220,7 @@ input LoginInput {
 }
 
 type LogoutResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -204,6 +234,7 @@ type LogoutData {
 }
 
 type ChangePasswordResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -213,7 +244,7 @@ type ChangePasswordResponse {
 }
 
 type ChangePasswordData {
-  updatedUser: User!
+  updatedUser: UserDto!
 }
 
 input ChangePasswordInput {
@@ -226,6 +257,7 @@ input ChangePasswordFormInput {
 }
 
 type ForgotPasswordResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -243,6 +275,7 @@ input ForgotPasswordInput {
 }
 
 type VoteResponse {
+  timestamp: String!
   status: Int!
   message: String!
   code: String!
@@ -253,15 +286,7 @@ type VoteResponse {
 
 type VoteData {
   postPoints: Int!
-  updoot: Updoot
-}
-
-type Updoot {
-  userId: Float!
-  postId: Float!
-  value: Float!
-  user: User!
-  post: Post!
+  updoot: UpdootDto
 }
 
 input VoteInput {
