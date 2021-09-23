@@ -85,12 +85,19 @@ export namespace PagesModuleHomeStore {
     type: typeof pagesHomeModuleStoreTypes.ADD_PRISTINE_POSTS
   }
 
+  interface SetCurrentExcludedIds {
+    type: typeof pagesHomeModuleStoreTypes.SET_CURRENT_EXCLUDED_IDS
+  }
+
   export interface State {
     sort: StoreSharedTypes.Sort
     posts: StoreSharedTypes.SortConfig<StoreSharedTypes.Posts>
     cursors: StoreSharedTypes.SortConfig<string>
     exclude: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.ExcludedPost[]>
     pristine: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.PristinePost[]>
+    args: {
+      excludedIds: StoreSharedTypes.OptionalSortConfig<number[]>
+    }
   }
 
   export type Actions =
@@ -100,7 +107,8 @@ export namespace PagesModuleHomeStore {
     SetSort |
     SetPosts |
     AddPristinePosts |
-    UpdateExcludedPostsFromLastFetchedPost
+    UpdateExcludedPostsFromLastFetchedPost |
+    SetCurrentExcludedIds
 }
 
 export namespace PagesModuleStore {

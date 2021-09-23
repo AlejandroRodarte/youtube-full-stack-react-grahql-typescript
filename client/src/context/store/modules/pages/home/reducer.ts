@@ -31,6 +31,14 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
               ...state.pages.home.pristine,
               popular: [],
               trending: []
+            },
+            args: {
+              ...state.pages.home.args,
+              excludedIds: {
+                ...state.pages.home.args,
+                popular: [],
+                trending: []
+              }
             }
           }
         }
@@ -151,6 +159,24 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
             exclude: {
               ...state.pages.home.exclude,
               [state.pages.home.sort]: update(state.pages.home.exclude[state.pages.home.sort])
+            }
+          }
+        }
+      }
+    }
+    case types.SET_CURRENT_EXCLUDED_IDS: {
+      return {
+        ...state,
+        pages: {
+          ...state.pages,
+          home: {
+            ...state.pages.home,
+            args: {
+              ...state.pages.home.args,
+              excludedIds: {
+                ...state.pages.home.args.excludedIds,
+                [state.pages.home.sort]: state.pages.home.exclude[state.pages.home.sort].map((post) => post.id)
+              }
             }
           }
         }
