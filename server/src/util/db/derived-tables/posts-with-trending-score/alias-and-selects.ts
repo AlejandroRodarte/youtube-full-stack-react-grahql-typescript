@@ -1,7 +1,7 @@
 const alias = 'post'
 
 const selects = {
-  ID: 'post."id"',
+  ID: 'post_id',
   TITLE: 'post."title"',
   TEXT: 'post."text"',
   POINTS: 'post."points"',
