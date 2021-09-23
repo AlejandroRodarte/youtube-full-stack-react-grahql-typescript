@@ -27,6 +27,6 @@ const deleteExpiredPostPointsLogs = setInterval(async () => {
   } catch (e) {
     if (process.env.LOG_ERRORS === 'true') console.log(e)
   }
-}, 15 * 60 * 1000)
+}, 30 * 60 * 1000)
 
 export default deleteExpiredPostPointsLogs

@@ -19,6 +19,12 @@ const state: PagesModuleHomeStore.State = {
   pristine: {
     popular: [],
     trending: []
+  },
+  args: {
+    excludedIds: {
+      popular: [],
+      trending: []
+    }
   }
 }
 
