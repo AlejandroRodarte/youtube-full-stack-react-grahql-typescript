@@ -10,21 +10,29 @@ import { LoginInput, useLoginMutation, LoginMutationVariables } from '../generat
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import SimpleForm from '../components/ui/forms/SimpleForm'
 import withAnonymous, { AnonymousProps } from '../hoc/withAnonymous'
+import connect, { MapDispatchToPropsFunction } from '../hoc/connect'
 
 import commonFunctions from '../util/common/functions'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
-import { useAppContext } from '../context/app-context'
 import * as pagesModuleHomeTypes from '../context/store/modules/pages/home/types'
 
 import { FormTypes } from '../types/forms'
 import { GraphQLUsersArgs } from '../types/graphql/args/users'
 
-interface LoginProps extends AnonymousProps {}
+interface StateProps {}
+interface DispatchProps {
+  onReset: () => void
+}
 
-const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
-  const { store: { dispatch } } = useAppContext()
+type AdditionalLoginProps = AnonymousProps & StateProps & DispatchProps
+interface LoginProps extends AdditionalLoginProps {}
 
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, LoginProps> = (dispatch, _) => ({
+  onReset: () => dispatch({ type: pagesModuleHomeTypes.RESET })
+})
+
+const Login: React.FC<LoginProps> = ({ wasLoadedOnServer, onReset }: LoginProps) => {
   const loginFormInitialValues: FormTypes.LoginForm = {
     credential: '',
     password: ''
@@ -73,7 +81,7 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
       const { data, errors } = response.data.login
 
       if (data && !wasLoadedOnServer) {
-        dispatch({ type: pagesModuleHomeTypes.RESET })
+        onReset()
         router.push(redirectTo as string)
       }
 
@@ -83,7 +91,7 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
         setErrors(unflattenedErrors.data)
       }
     }
-  }, [dispatch, login, redirectTo, router, wasLoadedOnServer])
+  }, [login, onReset, redirectTo, router, wasLoadedOnServer])
 
   return (
     <Wrapper>
@@ -105,4 +113,4 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer }: LoginProps) => {
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(Login))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(connect(undefined, mapDispatchToProps)(Login)))

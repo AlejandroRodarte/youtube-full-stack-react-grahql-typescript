@@ -8,9 +8,9 @@ import { RegisterInput, useRegisterMutation, RegisterMutationVariables } from '.
 import SimpleForm from '../components/ui/forms/SimpleForm'
 import Wrapper from '../components/ui/wrappers/Wrapper'
 import withAnonymous, { AnonymousProps } from '../hoc/withAnonymous'
+import connect, { MapDispatchToPropsFunction } from '../hoc/connect'
 
 import commonFunctions from '../util/common/functions'
-import { useAppContext } from '../context/app-context'
 import * as pagesModuleHomeTypes from '../context/store/modules/pages/home/types'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
@@ -18,11 +18,19 @@ import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 import { FormTypes } from '../types/forms'
 import { GraphQLUsersArgs } from '../types/graphql/args/users'
 
-interface RegisterProps extends AnonymousProps {}
+interface StateProps {}
+interface DispatchProps {
+  onReset: () => void
+}
 
-const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps) => {
-  const { store: { dispatch } } = useAppContext()
+type AdditionalRegisterProps = AnonymousProps & StateProps & DispatchProps
+interface RegisterProps extends AdditionalRegisterProps {}
 
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, RegisterProps> = (dispatch, _) => ({
+  onReset: () => dispatch({ type: pagesModuleHomeTypes.RESET })
+})
+
+const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer, onReset }: RegisterProps) => {
   const registerFormInitialValues: FormTypes.RegisterForm = {
     username: '',
     email: '',
@@ -83,7 +91,7 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
       const { data, errors } = response.data.register
 
       if (data && !wasLoadedOnServer) {
-        dispatch({ type: pagesModuleHomeTypes.RESET })
+        onReset()
         router.push(redirectTo as string)
       }
 
@@ -93,7 +101,7 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
         setErrors(unflattenedErrors.data)
       }
     }
-  }, [dispatch, redirectTo, register, router, wasLoadedOnServer])
+  }, [onReset, redirectTo, register, router, wasLoadedOnServer])
 
   return (
     <Wrapper>
@@ -107,4 +115,4 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer }: RegisterProps)
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(Register))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(connect(undefined, mapDispatchToProps)(Register)))

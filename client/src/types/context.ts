@@ -93,10 +93,10 @@ export namespace PagesModuleHomeStore {
     sort: StoreSharedTypes.Sort
     posts: StoreSharedTypes.SortConfig<StoreSharedTypes.Posts>
     cursors: StoreSharedTypes.SortConfig<string>
-    exclude: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.ExcludedPost[]>
     pristine: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.PristinePost[]>
-    args: {
-      excludedIds: StoreSharedTypes.OptionalSortConfig<number[]>
+    excludeIds: {
+      current: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.ExcludedPost[]>,
+      previous: StoreSharedTypes.OptionalSortConfig<number[]>
     }
   }
 
@@ -120,17 +120,6 @@ export namespace PagesModuleStore {
 }
 
 export namespace Store {
-  export interface PagesHomeState {
-    sort: StoreSharedTypes.Sort
-    posts: StoreSharedTypes.SortConfig<StoreSharedTypes.Posts>
-    cursors: StoreSharedTypes.SortConfig<string>
-    exclude: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.ExcludedPost[]>
-    pristine: StoreSharedTypes.OptionalSortConfig<StoreSharedTypes.PristinePost[]>
-  }
-  export interface PagesState {
-    home: PagesHomeState
-  }
-
   export interface State {
     pages: PagesModuleStore.State
   }

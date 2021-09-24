@@ -12,16 +12,16 @@ const state: PagesModuleHomeStore.State = {
     popular: '',
     trending: ''
   },
-  exclude: {
-    popular: [],
-    trending: []
-  },
   pristine: {
     popular: [],
     trending: []
   },
-  args: {
-    excludedIds: {
+  excludeIds: {
+    current: {
+      popular: [],
+      trending: []
+    },
+    previous: {
       popular: [],
       trending: []
     }
