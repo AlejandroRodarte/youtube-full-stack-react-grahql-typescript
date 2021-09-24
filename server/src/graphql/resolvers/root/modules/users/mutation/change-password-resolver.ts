@@ -6,6 +6,7 @@ import UserDto from '../../../../../objects/dtos/users/user-dto'
 import ChangePasswordInput from '../../../../../args/resolvers/root/modules/users/mutation/inputs/change-password-input'
 import ChangePasswordArgsSchema from '../../../../../args/resolvers/root/modules/users/mutation/schemas/change-password-args-schema'
 import FieldError from '../../../../../objects/common/error/field-error'
+import entityConstants from '../../../../../../constants/db/orm/entities'
 import objects from '../../../../../objects/resolvers/modules/users/mutation/change-password'
 import constants from '../../../../../../constants'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
@@ -59,7 +60,7 @@ export default class RootChangePasswordResolver {
           .update(User)
           .set({ password: hashedNewPassword })
           .where(
-            'id = :id',
+            `${entityConstants.User.fields.ID} = :id`,
             { id }
           )
           .returning('*')

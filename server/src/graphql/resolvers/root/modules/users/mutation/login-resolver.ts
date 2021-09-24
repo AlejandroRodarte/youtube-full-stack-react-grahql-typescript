@@ -6,6 +6,7 @@ import UserDto from '../../../../../objects/dtos/users/user-dto'
 import LoginInput from '../../../../../args/resolvers/root/modules/users/mutation/inputs/login-input'
 import LoginArgsSchema from '../../../../../args/resolvers/root/modules/users/mutation/schemas/login-args-schema'
 import FieldError from '../../../../../objects/common/error/field-error'
+import entityConstants from '../../../../../../constants/db/orm/entities'
 import objects from '../../../../../objects/resolvers/modules/users/mutation/login'
 import responses from '../../../../../../constants/graphql/responses'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
@@ -23,7 +24,7 @@ export default class RootLoginResolver {
     @Arg('data', () => LoginInput) data: LoginInput,
     @Ctx() { req }: GraphQLContext.ApplicationContext
   ) {
-    const key = data.credential.includes('@') ? 'email' : 'username'
+    const key = data.credential.includes('@') ? entityConstants.User.fields.EMAIL : entityConstants.User.fields.USERNAME
 
     const labelMap = {
       email: 'Email',

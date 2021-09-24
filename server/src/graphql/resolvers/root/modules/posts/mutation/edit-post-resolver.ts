@@ -5,6 +5,7 @@ import EditedPostDto from '../../../../../objects/dtos/posts/edited-post-dto'
 import EditPostInput from './../../../../../args/resolvers/root/modules/posts/mutation/inputs/edit-post-input'
 import EditPostArgsSchema from '../../../../../args/resolvers/root/modules/posts/mutation/schemas/edit-post-args-schema'
 import FieldError from '../../../../../objects/common/error/field-error'
+import entityConstants from '../../../../../../constants/db/orm/entities'
 import objects from '../../../../../objects/resolvers/modules/posts/mutation/edit-post'
 import responses from '../../../../.././../constants/graphql/responses'
 import middlewares from '../../../../../../middleware/graphql/resolvers'
@@ -33,7 +34,7 @@ export default class RootEditPostResolver {
           .update(Post)
           .set(data.fields)
           .where(
-            'id = :id',
+            `${entityConstants.Post.fields.ID} = :id`,
             { id: data.id }
           )
           .returning('*')
