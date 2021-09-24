@@ -2,6 +2,8 @@ import DataLoader from 'dataloader'
 
 import { TypeORMConnection } from '../../../../../../db/orm/typeorm/connection'
 import derivedTables from '../../../../../../util/db/derived-tables'
+import entityConstants from '../../../../../../constants/db/orm/entities'
+import derivedTablesConstants from '../../../../../../constants/util/db/derived-tables'
 import { CacheTypes } from '../../../../../../types/cache'
 import { DBRawEntities } from '../../../../../../types/db'
 
@@ -12,8 +14,10 @@ const byId = () => {
 
     oldDate.setTime(oldDate.getTime() - (1 * 60 * 60 * 1000))
 
-    const idField = derivedTables.postsWithTrendingScore.aliasAndSelects.selects.ID
-    const createdAtField = derivedTables.postsWithTrendingScore.aliasAndSelects.selects.CREATED_AT
+    const fromAlias = derivedTablesConstants.postsWithTrendingScore.aliases.main
+
+    const idField = `${fromAlias}."${entityConstants.Post.fields.ID}"`
+    const createdAtField = `${fromAlias}."${entityConstants.Post.fields.CREATED_AT}"`
 
     try {
       const rawPosts: DBRawEntities.PostWithTrendingScoreRawEntity[] =
@@ -22,8 +26,8 @@ const byId = () => {
           .createQueryBuilder()
           .select('*')
           .from(
-            derivedTables.postsWithTrendingScore.query(oldDate, newDate),
-            derivedTables.postsWithTrendingScore.aliasAndSelects.alias
+            derivedTables.postsWithTrendingScore(oldDate, newDate),
+            fromAlias
           )
           .where(
             `${idField} IN (:...ids)`,
@@ -35,7 +39,7 @@ const byId = () => {
       const rawPostsMap: CacheTypes.LoaderMap<DBRawEntities.PostWithTrendingScoreRawEntity> = {}
 
       rawPosts.forEach((rawPost) => {
-        rawPostsMap[rawPost.post_id] = rawPost
+        rawPostsMap[rawPost.id] = rawPost
       })
 
       return ids.map((id) => rawPostsMap[id])

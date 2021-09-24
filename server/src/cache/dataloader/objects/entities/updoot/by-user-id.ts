@@ -1,7 +1,10 @@
 import DataLoader from 'dataloader'
 
 import Updoot from '../../../../../db/orm/entities/Updoot'
+import entityConstants from '../../../../../constants/db/orm/entities'
 import { DBRawEntities } from '../../../../../types/db'
+
+const alias = 'updoot'
 
 const byUserId = () => {
   return new DataLoader<number, DBRawEntities.UpdootWithAliasRawEntity[], number>(async (userIds) => {
@@ -9,12 +12,12 @@ const byUserId = () => {
       const rawUpdoots: DBRawEntities.UpdootWithAliasRawEntity[] =
         await Updoot
           .getRepository()
-          .createQueryBuilder('updoot')
+          .createQueryBuilder(alias)
           .where(
-            'updoot.userId IN (:...userIds)',
+            `${alias}."${entityConstants.Updoot.fields.USER_ID}" IN (:...userIds)`,
             { userIds }
           )
-          .orderBy('updoot.createdAt', 'DESC')
+          .orderBy(`${alias}."${entityConstants.Updoot.fields.CREATED_AT}"`, 'DESC')
           .getRawMany()
 
       return userIds.map((userId) => rawUpdoots.filter((rawUpdoot) => rawUpdoot.updoot_userId === userId))

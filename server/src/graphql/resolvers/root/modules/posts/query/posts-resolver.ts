@@ -4,7 +4,9 @@ import PostDto from '../../../../../objects/dtos/posts/post-dto'
 import PostsInput from './../../../../../args/resolvers/root/modules/posts/query/inputs/posts-input'
 import PostsArgsSchema from '../../../../../args/resolvers/root/modules/posts/query/schemas/posts-args-schema'
 import objects from '../../../../../objects/resolvers/modules/posts/query/posts'
-import constants from '../../../../.././../constants/graphql'
+import constants from '../../../../../../constants/graphql'
+import utilConstants from '../../../../../../constants/util'
+import entityConstants from '../../../../../../constants/db/orm/entities'
 import generatedMiddlewares from '../../../../../../middleware/generator/graphql/resolvers'
 import derivedTables from '../../../../../../util/db/derived-tables'
 import { GraphQLContext } from '../../../../../../types/graphql'
@@ -27,9 +29,11 @@ export default class RootPostsResolver {
     const sortMapper = constants.resolvers.root.modules.posts.sortMapper
     const sortTypes = constants.args.posts.SortTypes
 
-    const createdAtField = derivedTables.postsWithTrendingScore.aliasAndSelects.selects.CREATED_AT
-    const pointsField = derivedTables.postsWithTrendingScore.aliasAndSelects.selects.POINTS
-    const idField = derivedTables.postsWithTrendingScore.aliasAndSelects.selects.ID
+    const fromAlias = utilConstants.db.derivedTables.postsWithTrendingScore.aliases.main
+
+    const createdAtField = `${fromAlias}."${entityConstants.Post.fields.CREATED_AT}"`
+    const pointsField = `${fromAlias}."${entityConstants.Post.fields.POINTS}"`
+    const idField = `${fromAlias}."${entityConstants.Post.fields.ID}"`
 
     const field = sortMapper[data.sort].field
 
@@ -39,8 +43,8 @@ export default class RootPostsResolver {
           .createQueryBuilder()
           .select('*')
           .from(
-            derivedTables.postsWithTrendingScore.query(oldDate, newDate),
-            derivedTables.postsWithTrendingScore.aliasAndSelects.alias
+            derivedTables.postsWithTrendingScore(oldDate, newDate),
+            fromAlias
           )
           .orderBy(field, 'DESC')
           .take(data.limit + 1)

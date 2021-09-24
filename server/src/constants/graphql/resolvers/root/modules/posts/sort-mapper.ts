@@ -1,14 +1,16 @@
 import * as SortTypes from '../../../../args/posts/sort'
+import postEntityConstants from '../../../../../db/orm/entities/Post'
+import derivedTableConstants from '../../../../../util/db/derived-tables'
 
 import { GraphQLResolverConstants } from '../../../../../../types/graphql'
 
 const sortMapper: GraphQLResolverConstants.PostsSortMapper = {
   [SortTypes.NEW]: {
-    field: 'post."createdAt"',
+    field: `${derivedTableConstants.postsWithTrendingScore.aliases.main}."${postEntityConstants.fields.CREATED_AT}"`,
     cursorParser: (cursor: string) => new Date(+cursor)
   },
   [SortTypes.POPULAR]: {
-    field: 'post."points"',
+    field: `${derivedTableConstants.postsWithTrendingScore.aliases.main}."${postEntityConstants.fields.POINTS}"`,
     cursorParser: (cursor: string) => {
       const [createdAtParam, pointsParam] = cursor.split(',')
 
@@ -19,7 +21,7 @@ const sortMapper: GraphQLResolverConstants.PostsSortMapper = {
     }
   },
   [SortTypes.TRENDING]: {
-    field: 'post."trendingscore"',
+    field: `${derivedTableConstants.postsWithTrendingScore.aliases.main}."${derivedTableConstants.postsWithTrendingScore.additionalSelects.aliases.TRENDING_SCORE}"`,
     cursorParser: (cursor: string) => {
       const [createdAtParam, pointsParam, trendingScoreParam] = cursor.split(',')
 

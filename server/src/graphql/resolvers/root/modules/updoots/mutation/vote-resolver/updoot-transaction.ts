@@ -6,6 +6,7 @@ import UpdootDto from '../../../../../../objects/dtos/updoots/updoot-dto'
 import FieldError from './../../../../../../objects/common/error/field-error'
 import Updoot from '../../../../../../../db/orm/entities/Updoot'
 import VoteInput from '../../../../../../args/resolvers/root/modules/updoots/mutation/inputs/vote-input'
+import entityConstants from '../../../../../../../constants/db/orm/entities'
 import objects from '../../../../../../objects/resolvers/modules/updoots/mutation/vote'
 import responses from '../../../../../../../constants/graphql/responses'
 import constants from '../../../../../../../constants/graphql/args/updoots'
@@ -101,7 +102,7 @@ const updootTransaction = ({ userId, input, namespace }: UpdootTransactionContex
     .update(Post)
     .set({ points: () => `points + ${deltaPoints}` })
     .where(
-      'id = :id',
+      `${entityConstants.Post.fields.ID} = :id`,
       { id: input.postId }
     )
     .returning('*')
