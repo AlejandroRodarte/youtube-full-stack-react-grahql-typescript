@@ -2,6 +2,12 @@ import Joi from 'joi'
 
 import constants from '../../../../../../../../constants'
 
+const baseCursorSchema =
+  Joi
+    .string()
+    .optional()
+    .label('Posts cursor')
+
 const numberArraySchema =
   Joi
     .array()
@@ -20,14 +26,8 @@ const limitSchema =
     .number()
     .required()
     .min(1)
-    .max(25)
+    .max(20)
     .label('Posts limit')
-
-const baseCursorSchema =
-  Joi
-    .string()
-    .optional()
-    .label('Posts cursor')
 
 const sortSchema =
   Joi
@@ -40,26 +40,18 @@ const sortSchema =
     )
     .label('Posts sorting type')
 
-const excludeIdsSchema =
+const timestampSchema =
   Joi
-    .alternatives()
-    .conditional(
-      'sort',
-      [
-        {
-          is: constants.graphql.args.posts.SortTypes.NEW,
-          then: Joi.valid(null)
-        },
-        {
-          is: constants.graphql.args.posts.SortTypes.POPULAR,
-          then: numberArraySchema.allow(null)
-        },
-        {
-          is: constants.graphql.args.posts.SortTypes.TRENDING,
-          then: numberArraySchema.allow(null)
-        }
-      ]
-    )
+    .string()
+    .optional()
+    .allow(null)
+    .regex(constants.regex.positiveIntegers)
+    .label('Timestamp')
+    .messages({
+      'string.pattern.base': '"Timestamp" must be a positive integer.'
+    })
+
+const idsSchema = numberArraySchema.allow(null)
 
 const cursorSchema =
   Joi
@@ -97,22 +89,12 @@ const cursorSchema =
       ]
     )
 
-const timestampSchema =
-  Joi
-    .string()
-    .required()
-    .regex(constants.regex.positiveIntegers)
-    .messages({
-      'string.pattern.base': '"Timestamp" must be a positive integer.'
-    })
-    .label('Timestamp')
-
 const primitive = {
   postIdSchema,
   limitSchema,
   sortSchema,
-  excludeIdsSchema,
   cursorSchema,
+  idsSchema,
   timestampSchema
 }
 

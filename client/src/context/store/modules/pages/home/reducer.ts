@@ -22,20 +22,20 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
               popular: '',
               trending: ''
             },
-            exclude: {
-              ...state.pages.home.exclude,
-              popular: [],
-              trending: []
-            },
             pristine: {
               ...state.pages.home.pristine,
               popular: [],
               trending: []
             },
-            args: {
-              ...state.pages.home.args,
-              excludedIds: {
-                ...state.pages.home.args,
+            excludeIds: {
+              ...state.pages.home.excludeIds,
+              current: {
+                ...state.pages.home.excludeIds.current,
+                popular: [],
+                trending: []
+              },
+              previous: {
+                ...state.pages.home.excludeIds.previous,
                 popular: [],
                 trending: []
               }
@@ -83,9 +83,12 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
           ...state.pages,
           home: {
             ...state.pages.home,
-            exclude: {
-              ...state.pages.home.exclude,
-              [state.pages.home.sort]: update(state.pages.home.exclude[state.pages.home.sort])
+            excludeIds: {
+              ...state.pages.home.excludeIds,
+              current: {
+                ...state.pages.home.excludeIds.current,
+                [state.pages.home.sort]: update(state.pages.home.excludeIds.current[state.pages.home.sort])
+              }
             }
           }
         }
@@ -156,9 +159,12 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
           ...state.pages,
           home: {
             ...state.pages.home,
-            exclude: {
-              ...state.pages.home.exclude,
-              [state.pages.home.sort]: update(state.pages.home.exclude[state.pages.home.sort])
+            excludeIds: {
+              ...state.pages.home.excludeIds,
+              current: {
+                ...state.pages.home.excludeIds.current,
+                [state.pages.home.sort]: update(state.pages.home.excludeIds.current[state.pages.home.sort])
+              }
             }
           }
         }
@@ -171,11 +177,11 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
           ...state.pages,
           home: {
             ...state.pages.home,
-            args: {
-              ...state.pages.home.args,
-              excludedIds: {
-                ...state.pages.home.args.excludedIds,
-                [state.pages.home.sort]: state.pages.home.exclude[state.pages.home.sort].map((post) => post.id)
+            excludeIds: {
+              ...state.pages.home.excludeIds,
+              previous: {
+                ...state.pages.home.excludeIds.previous,
+                [state.pages.home.sort]: state.pages.home.excludeIds.current[state.pages.home.sort].map((post) => post.id)
               }
             }
           }

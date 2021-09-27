@@ -9,7 +9,7 @@ import { usePostsQuery, PostsQueryVariables, useLogoutMutation, useVoteMutation,
 import PostList from '../components/ui/posts/PostList'
 import MainLayout from '../layouts/MainLayout'
 import withUserData, { UserDataProps } from '../hoc/withUserData'
-import connect, { MapStateToPropsFunction } from '../hoc/connect'
+import connect, { MapDispatchToPropsFunction, MapStateToPropsFunction } from '../hoc/connect'
 
 import nextUrqlClientConfig from '../graphql/urql/next-urql-client-config'
 import * as pagesModuleHomeTypes from '../context/store/modules/pages/home/types'
@@ -29,12 +29,12 @@ interface StateProps {
       lastPostPoints: number
     }
   }
-  excludedIds: {
+  excludeIds: {
     current: {
       popular: number[],
       trending: number[]
     },
-    previous: Store.State['pages']['home']['args']['excludedIds']
+    previous: Store.State['pages']['home']['excludeIds']['previous']
   }
 }
 
@@ -55,7 +55,6 @@ const mapStateToProps: MapStateToPropsFunction<StateProps, IndexProps> = (state,
   sort: state.pages.home.sort,
   cursors: state.pages.home.cursors,
   posts: state.pages.home.posts,
-  exclude: state.pages.home.exclude,
   pristine: {
     popular: {
       lastPostPoints:
@@ -70,16 +69,16 @@ const mapStateToProps: MapStateToPropsFunction<StateProps, IndexProps> = (state,
           : state.pages.home.pristine.trending[state.pages.home.pristine.trending.length - 1].points
     }
   },
-  excludedIds: {
+  excludeIds: {
     current: {
-      popular: state.pages.home.exclude.popular.map((post) => post.id),
-      trending: state.pages.home.exclude.trending.map((post) => post.id)
+      popular: state.pages.home.excludeIds.current.popular.map((post) => post.id),
+      trending: state.pages.home.excludeIds.current.trending.map((post) => post.id)
     },
-    previous: state.pages.home.args.excludedIds
+    previous: state.pages.home.excludeIds.previous
   }
 })
 
-const mapDispatchToProps = (dispatch: React.Dispatch<Store.Actions>, _: IndexProps): DispatchProps => ({
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, IndexProps> = (dispatch: React.Dispatch<Store.Actions>, _: IndexProps): DispatchProps => ({
   onSetCursor: (cursor) => dispatch({ type: pagesModuleHomeTypes.SET_CURSOR, payload: { cursor } }),
   onUpdateExcludedPostsFromUpdatedPost: (post) => dispatch({ type: pagesModuleHomeTypes.UPDATE_EXCLUDED_POSTS_FROM_UPDATED_POST, payload: { post } }),
   onSetSort: (sort) => dispatch({ type: pagesModuleHomeTypes.SET_SORT, payload: { sort } }),
@@ -95,7 +94,7 @@ const Index: React.FC<IndexProps> = ({
   posts,
   pristine,
   cursors,
-  excludedIds,
+  excludeIds,
   onSetSort,
   onSetCursor,
   onAddPristinePosts,
@@ -113,9 +112,9 @@ const Index: React.FC<IndexProps> = ({
       excludeIds:
         sort === 'new'
           ? null
-          : excludedIds.previous[sort].length === 0
+          : excludeIds.previous[sort].length === 0
             ? null
-            : excludedIds.previous[sort]
+            : excludeIds.previous[sort]
     }
   })
 
@@ -125,7 +124,7 @@ const Index: React.FC<IndexProps> = ({
 
   const onLoadMoreClick = useCallback(() => {
     let cursor = ''
-    let excludeIds: number[] | null = null
+    let excludeIdsArg: number[] | null = null
     const lastPost = posts[sort][posts[sort].length - 1]
 
     switch (sort) {
@@ -136,21 +135,21 @@ const Index: React.FC<IndexProps> = ({
         const createdAt = lastPost.createdAt
         cursor = `createdAt=${createdAt},points=${pristine.popular.lastPostPoints}`
 
-        excludeIds =
-          excludedIds.current.popular.length === 0
+        excludeIdsArg =
+          excludeIds.current.popular.length === 0
             ? null
-            : excludedIds.current.popular
+            : excludeIds.current.popular
         break
       }
       case 'trending': {
         const createdAt = lastPost.createdAt
         const trendingScore = lastPost.trendingScore
-        cursor = `createdAt=${createdAt},points=${pristine.popular.lastPostPoints},trendingScore=${trendingScore}`
+        cursor = `createdAt=${createdAt},points=${pristine.trending.lastPostPoints},trendingScore=${trendingScore}`
 
-        excludeIds =
-          excludedIds.current.trending.length === 0
+        excludeIdsArg =
+          excludeIds.current.trending.length === 0
             ? null
-            : excludedIds.current.trending
+            : excludeIds.current.trending
         break
       }
     }
@@ -162,14 +161,15 @@ const Index: React.FC<IndexProps> = ({
       postsData: {
         ...prevPostsQueryInput.postsData,
         cursor,
-        excludeIds
+        excludeIds: excludeIdsArg
       }
     }))
   }, [
-    excludedIds,
+    excludeIds,
     onSetCursor,
     posts,
     pristine.popular.lastPostPoints,
+    pristine.trending.lastPostPoints,
     sort
   ])
 
@@ -232,15 +232,15 @@ const Index: React.FC<IndexProps> = ({
         cursor: cursors[castedSort] || null,
         excludeIds: castedSort === 'new'
           ? null
-          : excludedIds.previous[castedSort].length === 0
+          : excludeIds.previous[castedSort].length === 0
             ? null
-            : excludedIds.previous[castedSort]
+            : excludeIds.previous[castedSort]
       }
     }))
   }, [
     onSetSort,
     cursors,
-    excludedIds.previous
+    excludeIds.previous
   ])
 
   useEffect(() => {

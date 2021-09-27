@@ -10,9 +10,9 @@ import { useChangePasswordMutation, ChangePasswordInput, ChangePasswordMutationV
 import Wrapper from '../../components/ui/wrappers/Wrapper'
 import SimpleForm from '../../components/ui/forms/SimpleForm'
 import withAnonymous, { AnonymousProps } from '../../hoc/withAnonymous'
+import connect, { MapDispatchToPropsFunction } from '../../hoc/connect'
 
 import commonFunctions from '../../util/common/functions'
-import { useAppContext } from '../../context/app-context'
 import * as pagesModuleHomeTypes from '../../context/store/modules/pages/home/types'
 
 import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
@@ -20,13 +20,19 @@ import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
 import { FormTypes } from '../../types/forms'
 import { GraphQLUsersArgs } from '../../types/graphql/args/users'
 
-interface ChangePasswordProps extends AnonymousProps {
-  token: string
+interface StateProps {}
+interface DispatchProps {
+  onReset: () => void
 }
 
-const ChangePassword: React.FC<ChangePasswordProps> = () => {
-  const { store: { dispatch } } = useAppContext()
+type AdditionalChangePasswordProps = AnonymousProps & StateProps & DispatchProps
+interface ChangePasswordProps extends AdditionalChangePasswordProps {}
 
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, ChangePasswordProps> = (dispatch, _) => ({
+  onReset: () => dispatch({ type: pagesModuleHomeTypes.RESET })
+})
+
+const ChangePassword: React.FC<ChangePasswordProps> = ({ onReset }: ChangePasswordProps) => {
   const changePasswordInitialValues: FormTypes.ChangePasswordForm = {
     newPassword: ''
   }
@@ -65,7 +71,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
       const { data, errors } = response.data.changePassword
 
       if (data) {
-        dispatch({ type: pagesModuleHomeTypes.RESET })
+        onReset()
         router.push('/')
       }
 
@@ -79,7 +85,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
         setErrors(unflattenedErrors.data.form)
       }
     }
-  }, [changePassword, dispatch, router, token])
+  }, [changePassword, onReset, router, token])
 
   return (
     <Wrapper>
@@ -108,4 +114,4 @@ const ChangePassword: React.FC<ChangePasswordProps> = () => {
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(ChangePassword))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(connect(undefined, mapDispatchToProps)(ChangePassword)))

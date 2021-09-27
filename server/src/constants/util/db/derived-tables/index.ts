@@ -1,7 +1,9 @@
 import postsWithTrendingScore from './posts-with-trending-score'
+import postIdsWithLogActivity from './post-ids-with-log-activity'
 
 const derivedTables = {
-  postsWithTrendingScore
+  postsWithTrendingScore,
+  postIdsWithLogActivity
 }
 
 export default derivedTables
