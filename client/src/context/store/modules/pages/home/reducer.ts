@@ -1,5 +1,5 @@
 import * as types from './types'
-import { Store, PagesModuleHomeStore, StoreSharedTypes } from '../../../../../types/context'
+import { Store, PagesModuleHomeStore } from '../../../../../types/context'
 
 const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Store.State = (state, action) => {
   switch (action.type) {
@@ -22,20 +22,37 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
               popular: '',
               trending: ''
             },
+            timestamps: {
+              ...state.pages.home.timestamps,
+              current: {
+                ...state.pages.home.timestamps.current,
+                new: '',
+                popular: '',
+                trending: ''
+              },
+              previous: {
+                ...state.pages.home.timestamps.previous,
+                new: '',
+                popular: '',
+                trending: ''
+              }
+            },
             pristine: {
               ...state.pages.home.pristine,
               popular: [],
               trending: []
             },
-            excludeIds: {
-              ...state.pages.home.excludeIds,
+            ids: {
+              ...state.pages.home.ids,
               current: {
-                ...state.pages.home.excludeIds.current,
+                ...state.pages.home.ids.current,
+                new: [],
                 popular: [],
                 trending: []
               },
               previous: {
-                ...state.pages.home.excludeIds.previous,
+                ...state.pages.home.ids.previous,
+                new: [],
                 popular: [],
                 trending: []
               }
@@ -54,41 +71,6 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
             cursors: {
               ...state.pages.home.cursors,
               [state.pages.home.sort]: action.payload.cursor
-            }
-          }
-        }
-      }
-    }
-    case types.UPDATE_EXCLUDED_POSTS_FROM_UPDATED_POST: {
-      const update = (posts: StoreSharedTypes.ExcludedPost[]): StoreSharedTypes.ExcludedPost[] => {
-        const currentPoints = action.payload.post.points
-        const pristinePoints = state.pages.home.pristine[state.pages.home.sort].find((post) => post.id === action.payload.post.id).points
-
-        if (currentPoints < pristinePoints) {
-          const index = posts.findIndex((post) => post.id === action.payload.post.id)
-
-          if (index === -1) return [...posts, action.payload.post]
-          else {
-            return posts.map((post) => {
-              if (post.id === action.payload.post.id) return { ...post, points: action.payload.post.points }
-              return post
-            })
-          }
-        } else return posts.filter((post) => post.id !== action.payload.post.id)
-      }
-
-      return {
-        ...state,
-        pages: {
-          ...state.pages,
-          home: {
-            ...state.pages.home,
-            excludeIds: {
-              ...state.pages.home.excludeIds,
-              current: {
-                ...state.pages.home.excludeIds.current,
-                [state.pages.home.sort]: update(state.pages.home.excludeIds.current[state.pages.home.sort])
-              }
             }
           }
         }
@@ -121,6 +103,24 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
         }
       }
     }
+    case types.SET_TIMESTAMP: {
+      return {
+        ...state,
+        pages: {
+          ...state.pages,
+          home: {
+            ...state.pages.home,
+            timestamps: {
+              ...state.pages.home.timestamps,
+              current: {
+                ...state.pages.home.timestamps.current,
+                [state.pages.home.sort]: action.payload.timestamp
+              }
+            }
+          }
+        }
+      }
+    }
     case types.ADD_PRISTINE_POSTS: {
       return {
         ...state,
@@ -142,46 +142,65 @@ const reducer: (state: Store.State, action: PagesModuleHomeStore.Actions) => Sto
         }
       }
     }
-    case types.UPDATE_EXCLUDED_POSTS_FROM_LAST_FETCHED_POST: {
-      const update = (posts: StoreSharedTypes.ExcludedPost[]): StoreSharedTypes.ExcludedPost[] => {
-        return posts.filter((post) => {
-          if (
-            (action.payload.post.points < post.points) ||
-            (action.payload.post.points <= post.points && +action.payload.post.createdAt < +post.createdAt)
-          ) return false
-          return true
-        })
-      }
-
+    case types.ADD_IDS: {
       return {
         ...state,
         pages: {
           ...state.pages,
           home: {
             ...state.pages.home,
-            excludeIds: {
-              ...state.pages.home.excludeIds,
+            ids: {
+              ...state.pages.home.ids,
               current: {
-                ...state.pages.home.excludeIds.current,
-                [state.pages.home.sort]: update(state.pages.home.excludeIds.current[state.pages.home.sort])
+                ...state.pages.home.ids.current,
+                [state.pages.home.sort]: [
+                  ...state.pages.home.ids.current[state.pages.home.sort],
+                  ...action.payload.ids
+                ]
               }
             }
           }
         }
       }
     }
-    case types.SET_CURRENT_EXCLUDED_IDS: {
+    case types.SET_PREVIOUS_ARGS: {
       return {
         ...state,
         pages: {
           ...state.pages,
           home: {
             ...state.pages.home,
-            excludeIds: {
-              ...state.pages.home.excludeIds,
+            timestamps: {
+              ...state.pages.home.timestamps,
               previous: {
-                ...state.pages.home.excludeIds.previous,
-                [state.pages.home.sort]: state.pages.home.excludeIds.current[state.pages.home.sort].map((post) => post.id)
+                ...state.pages.home.timestamps.previous,
+                [state.pages.home.sort]: state.pages.home.timestamps.current[state.pages.home.sort]
+              }
+            },
+            ids: {
+              ...state.pages.home.ids,
+              previous: {
+                ...state.pages.home.ids.previous,
+                [state.pages.home.sort]: [...state.pages.home.ids.current[state.pages.home.sort]]
+              }
+            }
+          }
+        }
+      }
+    }
+    case types.REGISTER_NEW_POST: {
+      if (!state.pages.home.timestamps.current.new) return state
+      return {
+        ...state,
+        pages: {
+          ...state.pages,
+          home: {
+            ...state.pages.home,
+            ids: {
+              ...state.pages.home.ids,
+              current: {
+                ...state.pages.home.ids.current,
+                new: [...state.pages.home.ids.current.new, action.payload.id]
               }
             }
           }

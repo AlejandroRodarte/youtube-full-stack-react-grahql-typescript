@@ -21,6 +21,7 @@ interface StateProps {
   sort: Store.State['pages']['home']['sort']
   cursors: Store.State['pages']['home']['cursors']
   posts: Store.State['pages']['home']['posts'],
+  timestamps: Store.State['pages']['home']['timestamps']
   pristine: {
     popular: {
       lastPostPoints: number
@@ -29,23 +30,17 @@ interface StateProps {
       lastPostPoints: number
     }
   }
-  excludeIds: {
-    current: {
-      popular: number[],
-      trending: number[]
-    },
-    previous: Store.State['pages']['home']['excludeIds']['previous']
-  }
+  ids: Store.State['pages']['home']['ids']
 }
 
 interface DispatchProps {
   onSetCursor: (cursor: string) => void
-  onUpdateExcludedPostsFromUpdatedPost: (post: StoreSharedTypes.ExcludedPost) => void
   onSetSort: (sort: StoreSharedTypes.Sort) => void
   onSetPosts: (posts: PostsQuery['posts']['data']['posts']) => void
+  onSetTimestamp: (timestamp: string) => void
+  onAddIds: (ids: number[]) => void
+  onSetPreviousArgs: () => void
   onAddPristinePosts: (posts: PostsQuery['posts']['data']['posts']) => void
-  onUpdateExcludedPostsFromLastFetchedPost: (post: PostsQuery['posts']['data']['posts'][number]) => void
-  onSetCurrentExcludedIds: () => void
 }
 
 type AdditionalIndexProps = UserDataProps & StateProps & DispatchProps
@@ -55,6 +50,7 @@ const mapStateToProps: MapStateToPropsFunction<StateProps, IndexProps> = (state,
   sort: state.pages.home.sort,
   cursors: state.pages.home.cursors,
   posts: state.pages.home.posts,
+  timestamps: state.pages.home.timestamps,
   pristine: {
     popular: {
       lastPostPoints:
@@ -69,52 +65,43 @@ const mapStateToProps: MapStateToPropsFunction<StateProps, IndexProps> = (state,
           : state.pages.home.pristine.trending[state.pages.home.pristine.trending.length - 1].points
     }
   },
-  excludeIds: {
-    current: {
-      popular: state.pages.home.excludeIds.current.popular.map((post) => post.id),
-      trending: state.pages.home.excludeIds.current.trending.map((post) => post.id)
-    },
-    previous: state.pages.home.excludeIds.previous
-  }
+  ids: state.pages.home.ids
 })
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, IndexProps> = (dispatch: React.Dispatch<Store.Actions>, _: IndexProps): DispatchProps => ({
   onSetCursor: (cursor) => dispatch({ type: pagesModuleHomeTypes.SET_CURSOR, payload: { cursor } }),
-  onUpdateExcludedPostsFromUpdatedPost: (post) => dispatch({ type: pagesModuleHomeTypes.UPDATE_EXCLUDED_POSTS_FROM_UPDATED_POST, payload: { post } }),
   onSetSort: (sort) => dispatch({ type: pagesModuleHomeTypes.SET_SORT, payload: { sort } }),
   onSetPosts: (posts) => dispatch({ type: pagesModuleHomeTypes.SET_POSTS, payload: { posts } }),
-  onAddPristinePosts: (posts) => dispatch({ type: pagesModuleHomeTypes.ADD_PRISTINE_POSTS, payload: { posts } }),
-  onUpdateExcludedPostsFromLastFetchedPost: (post) => dispatch({ type: pagesModuleHomeTypes.UPDATE_EXCLUDED_POSTS_FROM_LAST_FETCHED_POST, payload: { post } }),
-  onSetCurrentExcludedIds: () => dispatch({ type: pagesModuleHomeTypes.SET_CURRENT_EXCLUDED_IDS })
+  onSetTimestamp: (timestamp) => dispatch({ type: pagesModuleHomeTypes.SET_TIMESTAMP, payload: { timestamp } }),
+  onAddIds: (ids) => dispatch({ type: pagesModuleHomeTypes.ADD_IDS, payload: { ids } }),
+  onSetPreviousArgs: () => dispatch({ type: pagesModuleHomeTypes.SET_PREVIOUS_ARGS }),
+  onAddPristinePosts: (posts) => dispatch({ type: pagesModuleHomeTypes.ADD_PRISTINE_POSTS, payload: { posts } })
 })
 
 const Index: React.FC<IndexProps> = ({
   me,
   sort,
   posts,
+  timestamps,
   pristine,
   cursors,
-  excludeIds,
+  ids,
   onSetSort,
   onSetCursor,
-  onAddPristinePosts,
-  onUpdateExcludedPostsFromLastFetchedPost,
   onSetPosts,
-  onUpdateExcludedPostsFromUpdatedPost,
-  onSetCurrentExcludedIds
+  onSetTimestamp,
+  onAddIds,
+  onSetPreviousArgs,
+  onAddPristinePosts
 }: IndexProps) => {
+  // use previous timestamp/ids to avoid retriggering cache
   const [postsQueryVariables, setPostsQueryVariables] = useState<PostsQueryVariables>({
     postsData: {
       limit: 10,
       sort,
-      timestamp: me.timestamp,
       cursor: cursors[sort] || null,
-      excludeIds:
-        sort === 'new'
-          ? null
-          : excludeIds.previous[sort].length === 0
-            ? null
-            : excludeIds.previous[sort]
+      timestamp: timestamps.previous[sort] || null,
+      ids: ids.previous[sort].length === 0 ? null : ids.previous[sort]
     }
   })
 
@@ -124,9 +111,10 @@ const Index: React.FC<IndexProps> = ({
 
   const onLoadMoreClick = useCallback(() => {
     let cursor = ''
-    let excludeIdsArg: number[] | null = null
     const lastPost = posts[sort][posts[sort].length - 1]
 
+    // sort-based cursor computation
+    // for popular/trending, set points cursor based off the last post's original (pristine) value
     switch (sort) {
       case 'new':
         cursor = lastPost.createdAt
@@ -134,43 +122,36 @@ const Index: React.FC<IndexProps> = ({
       case 'popular': {
         const createdAt = lastPost.createdAt
         cursor = `createdAt=${createdAt},points=${pristine.popular.lastPostPoints}`
-
-        excludeIdsArg =
-          excludeIds.current.popular.length === 0
-            ? null
-            : excludeIds.current.popular
         break
       }
       case 'trending': {
         const createdAt = lastPost.createdAt
         const trendingScore = lastPost.trendingScore
         cursor = `createdAt=${createdAt},points=${pristine.trending.lastPostPoints},trendingScore=${trendingScore}`
-
-        excludeIdsArg =
-          excludeIds.current.trending.length === 0
-            ? null
-            : excludeIds.current.trending
         break
       }
     }
 
     onSetCursor(cursor)
 
+    // set cursor and current timestamp/ids args to trigger cache
     setPostsQueryVariables((prevPostsQueryInput) => ({
       ...prevPostsQueryInput,
       postsData: {
         ...prevPostsQueryInput.postsData,
         cursor,
-        excludeIds: excludeIdsArg
+        timestamp: timestamps.current[sort] || null,
+        ids: ids.current[sort].length === 0 ? null : ids.current[sort]
       }
     }))
   }, [
-    excludeIds,
+    ids,
     onSetCursor,
     posts,
     pristine.popular.lastPostPoints,
     pristine.trending.lastPostPoints,
-    sort
+    sort,
+    timestamps
   ])
 
   const onTryAgainClick = useCallback(() => {
@@ -193,56 +174,36 @@ const Index: React.FC<IndexProps> = ({
 
     if (response.data) {
       const { message, data } = response.data.vote
-
-      if (data) {
-        cb()
-        if (
-          sort === 'popular' ||
-          sort === 'trending'
-        ) {
-          onUpdateExcludedPostsFromUpdatedPost({
-            id: postId,
-            points: data.postPoints,
-            createdAt: postCreatedAt
-          })
-        }
-        return
-      }
-
-      cb(new Error(message))
-      return
+      if (data) return cb()
+      return cb(new Error(message))
     }
 
     cb(new Error('The server is not responding.'))
-  }, [
-    onUpdateExcludedPostsFromUpdatedPost,
-    sort,
-    vote
-  ])
+  }, [vote])
 
   const onRadioGroupChange = useCallback((sort: string) => {
     const castedSort = sort as StoreSharedTypes.Sort
     onSetSort(castedSort)
 
+    // changing sort mode should not retrigger cache, so use previous timestamp/ids args
     setPostsQueryVariables((prevPostsQueryVariables) => ({
       ...prevPostsQueryVariables,
       postsData: {
         ...prevPostsQueryVariables.postsData,
         sort: castedSort,
         cursor: cursors[castedSort] || null,
-        excludeIds: castedSort === 'new'
-          ? null
-          : excludeIds.previous[castedSort].length === 0
-            ? null
-            : excludeIds.previous[castedSort]
+        timestamp: timestamps.previous[castedSort] || null,
+        ids: ids.previous[castedSort].length === 0 ? null : ids.previous[castedSort]
       }
     }))
   }, [
     onSetSort,
     cursors,
-    excludeIds.previous
+    ids.previous,
+    timestamps.previous
   ])
 
+  // triggers when cache changes (new posts arrive from server, post.userVoteStatus & post.points change due to user voting)
   useEffect(() => {
     if (!fetching && data && data.posts.data) onSetPosts(data.posts.data.posts)
   }, [
@@ -251,29 +212,39 @@ const Index: React.FC<IndexProps> = ({
     onSetPosts
   ])
 
+  // triggers when we succesfully fetch data from the server
   useEffect(() => {
     if (
-      (sort === 'popular' || sort === 'trending') &&
+      !fetching &&
       data &&
       data.posts.data &&
-      data.posts.data.posts.length !== posts[sort].length
+      data.posts.data.posts.length - posts[sort].length === postsQueryVariables.postsData.limit
     ) {
-      onSetCurrentExcludedIds()
+      // migrate current timestamp/ids args to previous to avoid triggering cache
+      onSetPreviousArgs()
 
+      // get new posts
       const newPostsCount = data.posts.data.posts.length - posts[sort].length
       const newPristinePosts = data.posts.data.posts.slice(-newPostsCount)
 
-      onAddPristinePosts(newPristinePosts)
+      // set pristine post values (points) to set unaltered cursor in the future and ids
+      if (sort === 'popular' || sort === 'trending') {
+        onAddPristinePosts(newPristinePosts)
+        onAddIds(newPristinePosts.map((post) => post.id))
+      }
 
-      const lastPost = data.posts.data.posts[data.posts.data.posts.length - 1]
-      onUpdateExcludedPostsFromLastFetchedPost(lastPost)
+      // set timestamp to know when we fetched this posts page
+      onSetTimestamp(data.posts.timestamp)
     }
   }, [
     data,
+    fetching,
+    onAddIds,
     onAddPristinePosts,
-    onSetCurrentExcludedIds,
-    onUpdateExcludedPostsFromLastFetchedPost,
+    onSetPreviousArgs,
+    onSetTimestamp,
     posts,
+    postsQueryVariables.postsData.limit,
     sort
   ])
 

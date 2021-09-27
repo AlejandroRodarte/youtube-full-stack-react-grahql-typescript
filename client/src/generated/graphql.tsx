@@ -296,8 +296,8 @@ export type PostsData = {
 export type PostsInput = {
   limit: Scalars['Int'];
   sort: Scalars['String'];
-  timestamp: Scalars['String'];
-  excludeIds?: Maybe<Array<Scalars['Int']>>;
+  ids?: Maybe<Array<Scalars['Int']>>;
+  timestamp?: Maybe<Scalars['String']>;
   cursor?: Maybe<Scalars['String']>;
 };
 
@@ -409,7 +409,7 @@ export type PostsQueryVariables = Exact<{
   postsData: PostsInput;
 }>;
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'PostDto', id: number, title: string, textSnippet: string, points: number, createdAt: string, updatedAt: string, userVoteStatus?: Maybe<number>, trendingScore: number, originalPoster?: Maybe<{ __typename?: 'UserDto', id: number, username: string }> }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename: 'PostsResponse', status: number, message: string, code: string, namespace?: Maybe<string>, timestamp: string, data?: Maybe<{ __typename: 'PostsData', hasMore: boolean, posts: Array<{ __typename: 'PostDto', id: number, title: string, textSnippet: string, points: number, createdAt: string, updatedAt: string, userVoteStatus?: Maybe<number>, trendingScore: number, originalPoster?: Maybe<{ __typename?: 'UserDto', id: number, username: string }> }> }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type VoteMutationVariables = Exact<{
   voteData: VoteInput;
@@ -447,7 +447,7 @@ export type RegisterMutation = { __typename?: 'Mutation', register: { __typename
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type MeQuery = { __typename?: 'Query', me: { __typename: 'MeResponse', status: number, message: string, code: string, namespace?: Maybe<string>, timestamp: string, data?: Maybe<{ __typename: 'MeData', user: { __typename: 'UserDto', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
+export type MeQuery = { __typename?: 'Query', me: { __typename: 'MeResponse', status: number, message: string, code: string, namespace?: Maybe<string>, data?: Maybe<{ __typename: 'MeData', user: { __typename: 'UserDto', id: number, username: string, email?: Maybe<string> } }>, errors?: Maybe<Array<{ __typename?: 'FieldError', path: string, message: string }>> } };
 
 export type MyStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -496,6 +496,7 @@ export const PostsDocument = gql`
     message
     code
     namespace
+    timestamp
     data {
       __typename
       hasMore
@@ -675,7 +676,6 @@ export const MeDocument = gql`
     message
     code
     namespace
-    timestamp
     data {
       __typename
       user {

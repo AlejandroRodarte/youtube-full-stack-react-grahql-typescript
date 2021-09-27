@@ -5,6 +5,7 @@ query Posts($postsData: PostsInput!) {
     message
     code
     namespace
+    timestamp
     data {
       __typename
       hasMore

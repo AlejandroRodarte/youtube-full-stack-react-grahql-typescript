@@ -5,7 +5,6 @@ query Me {
     message
     code
     namespace
-    timestamp
     data {
       __typename
       user {

@@ -10,17 +10,29 @@ import { AddPostInput, AddPostMutationVariables, useAddPostMutation, useLogoutMu
 import SimpleForm from '../../components/ui/forms/SimpleForm'
 import MainLayout from '../../layouts/MainLayout'
 import withAuth, { AuthProps } from '../../hoc/withAuth'
+import connect, { MapDispatchToPropsFunction } from '../../hoc/connect'
 
 import commonFunctions from '../../util/common/functions'
 
 import nextUrqlClientConfig from '../../graphql/urql/next-urql-client-config'
+import * as pagesModuleHomeTypes from '../../context/store/modules/pages/home/types'
 
 import { GraphQLPostsArgs } from '../../types/graphql/args/posts'
 import { FormTypes } from '../../types/forms'
+import { Store } from '../../types/context'
 
-interface CreatePostProps extends AuthProps {}
+interface DispatchProps {
+  onRegisterNewPost: (id: number) => void
+}
 
-const CreatePost: React.FC<CreatePostProps> = ({ me }: CreatePostProps) => {
+type AdditionalCreatePostProps = DispatchProps & AuthProps
+interface CreatePostProps extends AdditionalCreatePostProps {}
+
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, CreatePostProps> = (dispatch: React.Dispatch<Store.Actions>, _: CreatePostProps): DispatchProps => ({
+  onRegisterNewPost: (id) => dispatch({ type: pagesModuleHomeTypes.REGISTER_NEW_POST, payload: { id } })
+})
+
+const CreatePost: React.FC<CreatePostProps> = ({ me, onRegisterNewPost }: CreatePostProps) => {
   const createPostFormInitialValues: FormTypes.CreatePostForm = {
     title: '',
     text: ''
@@ -73,6 +85,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ me }: CreatePostProps) => {
       }
 
       if (data) {
+        onRegisterNewPost(data.newPost.id)
         router.push('/')
       }
     }
@@ -106,4 +119,4 @@ const CreatePost: React.FC<CreatePostProps> = ({ me }: CreatePostProps) => {
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAuth(CreatePost))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAuth(connect(undefined, mapDispatchToProps)(CreatePost)))
