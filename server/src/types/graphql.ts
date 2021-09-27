@@ -225,4 +225,9 @@ export namespace GraphQLArgs {
   export interface NamespaceSchema {
     namespace: Joi.StringSchema
   }
+
+  export type Args<T> = {
+    namespace: string
+    data: T
+  }
 }

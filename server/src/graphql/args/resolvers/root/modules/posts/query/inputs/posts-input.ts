@@ -9,11 +9,11 @@ export default class PostsInput {
   @Field(() => String)
   sort: keyof GraphQLResolverConstants.PostsSortMapper
 
-  @Field(() => String)
-  timestamp: string
-
   @Field(() => [Int], { nullable: true })
-  excludeIds?: number[]
+  ids?: number[]
+
+  @Field(() => String, { nullable: true })
+  timestamp?: string
 
   @Field(() => String, { nullable: true })
   cursor?: string
