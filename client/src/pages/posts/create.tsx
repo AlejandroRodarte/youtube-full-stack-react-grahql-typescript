@@ -19,8 +19,8 @@ import * as pagesModuleHomeTypes from '../../context/store/modules/pages/home/ty
 
 import { GraphQLPostsArgs } from '../../types/graphql/args/posts'
 import { FormTypes } from '../../types/forms'
-import { Store } from '../../types/context'
 
+interface StateProps {}
 interface DispatchProps {
   onRegisterNewPost: (id: number) => void
 }
@@ -28,7 +28,7 @@ interface DispatchProps {
 type AdditionalCreatePostProps = DispatchProps & AuthProps
 interface CreatePostProps extends AdditionalCreatePostProps {}
 
-const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, CreatePostProps> = (dispatch: React.Dispatch<Store.Actions>, _: CreatePostProps): DispatchProps => ({
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps> = (dispatch) => ({
   onRegisterNewPost: (id) => dispatch({ type: pagesModuleHomeTypes.REGISTER_NEW_POST, payload: { id } })
 })
 
@@ -119,4 +119,4 @@ const CreatePost: React.FC<CreatePostProps> = ({ me, onRegisterNewPost }: Create
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAuth(connect(undefined, mapDispatchToProps)(CreatePost)))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAuth(connect<StateProps, DispatchProps, CreatePostProps>(undefined, mapDispatchToProps)(CreatePost)))

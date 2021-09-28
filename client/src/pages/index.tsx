@@ -46,7 +46,7 @@ interface DispatchProps {
 type AdditionalIndexProps = UserDataProps & StateProps & DispatchProps
 interface IndexProps extends AdditionalIndexProps {}
 
-const mapStateToProps: MapStateToPropsFunction<StateProps, IndexProps> = (state, _) => ({
+const mapStateToProps: MapStateToPropsFunction<StateProps> = (state) => ({
   sort: state.pages.home.sort,
   cursors: state.pages.home.cursors,
   posts: state.pages.home.posts,
@@ -68,7 +68,7 @@ const mapStateToProps: MapStateToPropsFunction<StateProps, IndexProps> = (state,
   ids: state.pages.home.ids
 })
 
-const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, IndexProps> = (dispatch: React.Dispatch<Store.Actions>, _: IndexProps): DispatchProps => ({
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps> = (dispatch) => ({
   onSetCursor: (cursor) => dispatch({ type: pagesModuleHomeTypes.SET_CURSOR, payload: { cursor } }),
   onSetSort: (sort) => dispatch({ type: pagesModuleHomeTypes.SET_SORT, payload: { sort } }),
   onSetPosts: (posts) => dispatch({ type: pagesModuleHomeTypes.SET_POSTS, payload: { posts } }),
@@ -342,4 +342,4 @@ const Index: React.FC<IndexProps> = ({
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: true })(withUserData(connect(mapStateToProps, mapDispatchToProps)(Index)))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: true })(withUserData(connect<StateProps, DispatchProps, IndexProps>(mapStateToProps, mapDispatchToProps)(Index)))

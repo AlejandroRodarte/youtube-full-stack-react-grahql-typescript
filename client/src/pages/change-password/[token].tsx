@@ -28,7 +28,7 @@ interface DispatchProps {
 type AdditionalChangePasswordProps = AnonymousProps & StateProps & DispatchProps
 interface ChangePasswordProps extends AdditionalChangePasswordProps {}
 
-const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, ChangePasswordProps> = (dispatch, _) => ({
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps> = (dispatch) => ({
   onReset: () => dispatch({ type: pagesModuleHomeTypes.RESET })
 })
 
@@ -114,4 +114,4 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onReset }: ChangePasswo
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(connect(undefined, mapDispatchToProps)(ChangePassword)))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(connect<StateProps, DispatchProps, ChangePasswordProps>(undefined, mapDispatchToProps)(ChangePassword)))

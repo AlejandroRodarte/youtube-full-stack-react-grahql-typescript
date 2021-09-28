@@ -28,7 +28,7 @@ interface DispatchProps {
 type AdditionalLoginProps = AnonymousProps & StateProps & DispatchProps
 interface LoginProps extends AdditionalLoginProps {}
 
-const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, LoginProps> = (dispatch, _) => ({
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps> = (dispatch) => ({
   onReset: () => dispatch({ type: pagesModuleHomeTypes.RESET })
 })
 
@@ -113,4 +113,4 @@ const Login: React.FC<LoginProps> = ({ wasLoadedOnServer, onReset }: LoginProps)
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(connect(undefined, mapDispatchToProps)(Login)))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(connect<StateProps, DispatchProps, LoginProps>(undefined, mapDispatchToProps)(Login)))

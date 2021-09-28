@@ -26,7 +26,7 @@ interface DispatchProps {
 type AdditionalRegisterProps = AnonymousProps & StateProps & DispatchProps
 interface RegisterProps extends AdditionalRegisterProps {}
 
-const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, RegisterProps> = (dispatch, _) => ({
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps> = (dispatch) => ({
   onReset: () => dispatch({ type: pagesModuleHomeTypes.RESET })
 })
 
@@ -115,4 +115,4 @@ const Register: React.FC<RegisterProps> = ({ wasLoadedOnServer, onReset }: Regis
   )
 }
 
-export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(connect(undefined, mapDispatchToProps)(Register)))
+export default withUrqlClient(nextUrqlClientConfig, { ssr: false })(withAnonymous(connect<StateProps, DispatchProps, RegisterProps>(undefined, mapDispatchToProps)(Register)))
