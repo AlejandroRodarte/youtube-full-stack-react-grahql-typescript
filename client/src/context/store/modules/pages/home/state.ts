@@ -12,16 +12,30 @@ const state: PagesModuleHomeStore.State = {
     popular: '',
     trending: ''
   },
+  timestamps: {
+    current: {
+      new: '',
+      popular: '',
+      trending: ''
+    },
+    previous: {
+      new: '',
+      popular: '',
+      trending: ''
+    }
+  },
   pristine: {
     popular: [],
     trending: []
   },
-  excludeIds: {
+  ids: {
     current: {
+      new: [],
       popular: [],
       trending: []
     },
     previous: {
+      new: [],
       popular: [],
       trending: []
     }
